@@ -5,6 +5,7 @@ supported_bots = [
     "telegram",
     "discord",
     "web",
+    "web2",
     "test",
 ]
 
@@ -27,6 +28,10 @@ def run_bot(bot):
         DiscordBot().start_bot()
     elif bot == "web":
         from . import web
+    
+    elif bot == "web2":
+        from . import web2
+        web2.start()
 
     elif bot == "test":
         from ..bots.test import TestBot # type: ignore
