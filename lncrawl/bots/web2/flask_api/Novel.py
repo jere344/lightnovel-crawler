@@ -88,7 +88,7 @@ class Novel:
             "clicks": self.clicks,
             "rank": self.rank,
             "prefered_source": self.prefered_source.slug,
-            "sources": [source.slug for source in self.sources],
+            "sources": {source.slug: source.language for source in self.sources},
             # "ratings": self.ratings,
             # "search_words": self.search_words,
             "overall_rating": self.overall_rating,
