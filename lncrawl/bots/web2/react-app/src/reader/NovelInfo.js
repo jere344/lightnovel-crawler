@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Metadata from '../components/Metadata';
-import { useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import RatingStars from '../components/RatingStars';
+import { nFormatter, toFlag, languageDict } from '../Utils';
+import logo from '../assets/logo.bmp'
 
 import "../assets/stylesheets/navbar.min.css"
 import "../assets/stylesheets/media-mobile.min.css"
@@ -19,12 +21,12 @@ import "../assets/stylesheets/select.css"
 
 
 function NovelInfo() {
+    const currentUrlSplitted = window.location.href.split('/');
 
-    const title = "Read Light Novels Online For Free | LnCrawler";
-    const description = "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 140 different websites."
-    const imageUrl = "WEBSITE_URL + '/static/assets/logo.bmp'"
-    const imageAlt = "LnCrawler"
-    const imageType = "image/bmp"
+    let _navigate = useNavigate();
+    const routeChange = (path) => {
+        _navigate(path);
+    }
 
     const { novelSlug, sourceSlug } = useParams();
 
@@ -33,7 +35,7 @@ function NovelInfo() {
         "chapter_count": 0,
         "cover": undefined,
         "first": "Loading ...",
-        "language": undefined,
+        "language": "en",
         "latest": "Loading ...",
         "novel": {
             "author": "Loading ...",
@@ -44,24 +46,24 @@ function NovelInfo() {
             "language": "Loading ...",
             "latest": "Loading ...",
             "overall_rating": 0,
-            "prefered_source": "Loading ...",
+            "prefered_source": currentUrlSplitted[currentUrlSplitted.length - 1],
             "rank": 0,
             "ratings_count": 0,
-            "slug": "Loading ...",
+            "slug": currentUrlSplitted[currentUrlSplitted.length - 2],
             "source_count": 0,
-            "sources": [],
+            "sources": {},
             "str_path": "Loading ...",
-            "title": "Loading ...",
+            "title": currentUrlSplitted[currentUrlSplitted.length - 2],
             "volume_count": 0
         },
-        "slug": "Loading ...",
+        "slug": currentUrlSplitted[currentUrlSplitted.length - 1],
         "str_path": "Loading ...",
         "summary": "Loading ...",
-        "title": "Loading ...",
+        "title": currentUrlSplitted[currentUrlSplitted.length - 2],
         "volume_count": 0
     });
     useEffect(() => {
-        fetch(`/api/novel/${novelSlug}/${sourceSlug}`).then(
+        fetch(`/api/novel?novel=${novelSlug}&source=${sourceSlug}`).then(
             response => response.json()
         ).then(
             data => {
@@ -70,19 +72,22 @@ function NovelInfo() {
         )
     }, [novelSlug, sourceSlug]);
 
+    const title = `Read ${source.title} in ${languageDict[source.language]} for free | LnCrawler`;
+    const description = `Read ${source.title} in ${languageDict[source.language]} and thousands of famous Light Novels and Web Novels in any language from more that 140 different websites`;
+    const imageUrl = logo; // Not an url but whatever
+    const imageAlt = "LnCrawler"
+    const imageType = "image/bmp"
 
-    let sourceList = <option>Loading ...</option>;
-    if (!typeof source.novel === 'undefined') {
-        let sourceList = [];
-        for (let i = 0; i < source.novel.sources.length; i++) {
-            let s = source.novel.sources[i];
-            if (!s.slug === source.slug) {
-                sourceList.push(<option value={`api/novel/${s.novel.slug}/${s.slug}`}>{s.language} - {s.slug}</option>) /* emoji_flag(source.language) */
-            }
 
+
+    const sourceList = [];
+    for (const [s, lang] of Object.entries(source.novel.sources)) {
+        if (!(s === source.slug)) {
+            sourceList.push(<option key={s} value={`/novel/${source.novel.slug}/${s}`}>{toFlag(lang)} - {s}</option>) /* emoji_flag(source.language) */
         }
-    }
 
+
+    }
 
 
     return (
@@ -109,7 +114,7 @@ function NovelInfo() {
                                     {source.title}
                                 </h1>
                                 <div className="author">
-                                    <span>Author:</span>
+                                    <span>Author: </span>
                                     <span itemProp="author">{source.author}</span>
                                 </div>
                                 <div className="rating">
@@ -133,8 +138,7 @@ function NovelInfo() {
                                     <small>Sources</small>
                                 </span>
                                 <span>
-                                    <strong><i className="icon-eye"></i> {source.novel.clicks}</strong>
-                                    {/* Human format : 100000 => 100k */}
+                                    <strong><i className="icon-eye"></i> {nFormatter(source.novel.clicks)}</strong>
                                     <small>Views</small>
                                 </span>
                                 <span>
@@ -148,9 +152,9 @@ function NovelInfo() {
 
                             <div className="source-select">
 
-                                {/* <select className="sel" onChange={location = this.value}> */}
-                                <select className="sel">
-                                    <option value={`../${source.slug}`}>{source.slug}</option>
+                                {/* TODO <select className="sel" onChange={location = this.value}> */}
+                                <select className="sel" onChange={e => routeChange(e.target.value)} >
+                                    <option value={`/novel/${source.novel.slug}/${source.slug}`}>{toFlag(source.language)} - {source.slug}</option>
                                     {sourceList}
                                 </select>
 
@@ -161,16 +165,16 @@ function NovelInfo() {
                 </header>
                 <div className="novel-body container">
                     <nav className="content-nav">
-                        <a className="grdbtn reviews-latest-container" title={source.title + "First Chapter"}
-                            href="./chapter-1">
+                        <Link className="grdbtn reviews-latest-container" title={source.title + "First Chapter"}
+                            to="chapter-1">
                             <div className="body">
                                 <h4>FIRST CHAPTER</h4>
                                 <p className="latest text1row"> {source.first}</p>
                             </div>
                             <i className="icon-right-open"></i>
-                        </a>
-                        <a className="grdbtn chapter-latest-container" title={source.title + "Chapters"}
-                            href="./chapterlist">
+                        </Link>
+                        <Link className="grdbtn chapter-latest-container" title={source.title + "Chapters"}
+                            to="chapterlist">
                             <div className="body">
                                 <h4>Novel Chapters</h4>
                                 <p className="latest text1row">
@@ -179,7 +183,7 @@ function NovelInfo() {
 
                             </div>
                             <i className="icon-right-open"></i>
-                        </a>
+                        </Link>
 
                     </nav>
                     <section id="info">

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Browse from './reader/Browse';
 import NovelInfo from './reader/NovelInfo';
+import Chapter from './reader/Chapter';
 import reportWebVitals from './reportWebVitals';
 import { CookiesProvider } from 'react-cookie';
 import Header from './components/Header'
@@ -19,6 +20,7 @@ root.render(
         <Route path="/browse/" element={<Navigate to="/browse/page-1" />} />
         <Route path="/browse/page-:page" element={<Browse />} />
         <Route path="/novel/:novelSlug/:sourceSlug" element={<NovelInfo />} />
+        <Route path="/novel/:novelSlug/:sourceSlug/chapter-:chapterId" element={<Chapter />} />
       </Routes>
       <Footer />
     </Router>

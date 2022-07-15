@@ -46,7 +46,7 @@ function Header() {
                                         className="icon-search"></i> Search</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" title="Explore the Most Popular Light Novels" to="/browse"><i
+                                    <Link className="nav-link" title="Explore the Most Popular Light Novels" to="/browse/page-1"><i
                                         className="icon-th-large"></i> Browse</Link>
                                 </li>
                                 <li className="nav-item">
