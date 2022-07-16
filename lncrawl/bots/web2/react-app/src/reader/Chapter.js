@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom'
 
 
 import "../assets/stylesheets/navbar.min.css"
@@ -9,7 +10,9 @@ import "../assets/stylesheets/media-1270.min.css"
 import "../assets/stylesheets/fontello.css"
 import "../assets/stylesheets/chaptertts.css"
 import "../assets/stylesheets/chapterpg.min.css"
-import { Link, useParams } from 'react-router-dom'
+
+import SettingsWheel from '../components/SettingsWheel';
+
 
 
 
@@ -19,6 +22,8 @@ function Chapter() {
     function decodeUrlParameter(str) {
         return decodeURIComponent((str + '').replace(/\+/g, '%20'));
     }
+
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const { novelSlug, sourceSlug, chapterId } = useParams();
 
@@ -95,15 +100,13 @@ function Chapter() {
                         <span className="chapter-title">{response.title}</span>
                     </h1>
                     <div className="control-action-btn">
-                        <a href="#chsetting">
-                            <svg>
-                                {/* <use xlink:href="#i-set"></use> */}
-                            </svg>
+                        <a href="#chsetting" onClick={() => setMenuOpen(!menuOpen)}>
+                            <SettingsWheel />
                         </a>
                     </div>
 
                 </div>
-                <div id="chapter-container" className="chapter-content font_default" itemProp="description"
+                <div id="chapter-container" className="chapter-content font_default" itemProp="description" onClick={() => { window.innerWidth > 768 ? setMenuOpen(false) : setMenuOpen(!menuOpen) }}
                     style={{ "fontSize": "16px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="/api/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
                 </div>
                 <div className="chapternav skiptranslate">
@@ -122,7 +125,7 @@ function Chapter() {
                         <i className="icon-right-open"></i>
                     </Link>
                 </div>
-                <dialog className="mobile-title-bar">
+                <dialog className="mobile-title-bar" style={{ "display": (window.innerWidth > 768 ? "none" : "block"), "transformOrigin": "top", "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
                     <div className="bar-body">
                         <i className="bar-nav-back"><svg viewBox="0 0 24 24" fill="none" width="30" height="30">
                             <path d="M6.975 13.3L12 20H9l-6-8 6-8h3l-5.025 6.7H21v2.6H6.975z"></path>
@@ -135,7 +138,7 @@ function Chapter() {
                         </div>
                     </div>
                 </dialog>
-                <dialog className="control-action" translate="no" style={{ "display": "none" }}>
+                <dialog className="control-action" translate="no" style={{ "display": "block", "transformOrigin": (window.innerWidth > 768 ? "top" : "bottom"), "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
                     <nav className="action-items">
                         <div className="action-select">
                             <Link rel="prev" className={(response.is_prev ? "" : 'isDisabled ') + "chnav prev"}
@@ -202,6 +205,7 @@ function Chapter() {
 
                     </nav>
                 </dialog>
+
                 <div className="guide-message">
                     <span className="mobile">Tap the screen to use reading tools</span>
                     <span className="desktop">Tip: You can use left and right keyboard keys to browse between

@@ -1,7 +1,7 @@
 import logo from '../assets/logo.bmp'
 import Helmet from 'react-helmet';
 import { useCookies } from 'react-cookie';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 function Header() {
@@ -15,9 +15,14 @@ function Header() {
     const [pannelOpen, setPannelOpen] = useState(false);
 
 
+    const innerRef = useOuterClick(ev => {
+        setPannelOpen(false);
+    });
+
+
     return (
         <div className="header">
-            <header className="main-header skiptranslate">
+            <header className="main-header skiptranslate" ref={innerRef}>
                 <Helmet>
                     <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
                         theme={darkModeCookie.darkMode === 'true' ? "dark" : "light"}
@@ -37,7 +42,7 @@ function Header() {
                             <img src={logo} alt="Light Novel" />
                         </Link>
                     </div>
-                    <div className="navigation-bar">
+                    <div className="navigation-bar" ref={innerRef}>
                         <nav>
                             <span className="lnw-slog">Your fictional stories hub.</span>
                             <ul className="navbar-menu">
@@ -83,3 +88,27 @@ function Header() {
 }
 
 export default Header
+
+
+
+
+// https://stackoverflow.com/a/41581491
+function useOuterClick(callback) {
+    const callbackRef = useRef(); // initialize mutable ref, which stores callback
+    const innerRef = useRef(); // returned to client, who marks "border" element
+
+    // update cb on each render, so second useEffect has access to current value 
+    useEffect(() => { callbackRef.current = callback; });
+
+    useEffect(() => {
+        document.addEventListener("click", handleClick);
+        return () => document.removeEventListener("click", handleClick);
+        function handleClick(e) {
+            if (innerRef.current && callbackRef.current &&
+                !innerRef.current.contains(e.target)
+            ) callbackRef.current(e);
+        }
+    }, []); // no dependencies -> stable click listener
+
+    return innerRef; // convenience for client (doesn't need to init ref himself) 
+}

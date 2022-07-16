@@ -14,8 +14,8 @@ select.sel {
 	select.sel {
 		margin: 2em auto;
 		width: 80%;
-		color: black;
-		border-bottom: rgba(0, 0, 0, 0.4) 3px solid;
+		color: var(--text-color);
+		border-bottom: var(--text-color) 3px solid;
 		font-size: 1.5em;
 	}
 

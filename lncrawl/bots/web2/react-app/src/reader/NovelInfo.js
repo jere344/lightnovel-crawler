@@ -6,17 +6,19 @@ import { nFormatter, toFlag, languageDict } from '../Utils';
 import logo from '../assets/logo.bmp'
 
 import "../assets/stylesheets/navbar.min.css"
-import "../assets/stylesheets/media-mobile.min.css"
-import "../assets/stylesheets/media-768.min.css"
-import "../assets/stylesheets/media-1024.min.css"
-import "../assets/stylesheets/media-1270.min.css"
-import "../assets/stylesheets/novel.min.css"
 import "../assets/stylesheets/fontello.css"
-import "../assets/stylesheets/novel.768.min.css"
-import "../assets/stylesheets/novel.1024.min.css"
-import "../assets/stylesheets/novel.1270.min.css"
-import "../assets/stylesheets/select.css"
 
+import "../assets/stylesheets/novel.min.css"
+import "../assets/stylesheets/novel.768.min.css"
+// import "../assets/stylesheets/novel.1024.min.css"
+// import "../assets/stylesheets/novel.1270.min.css"
+
+import "../assets/stylesheets/media-mobile.min.css"
+// import "../assets/stylesheets/media-768.min.css"
+// import "../assets/stylesheets/media-1024.min.css"
+// import "../assets/stylesheets/media-1270.min.css"
+
+import "../assets/stylesheets/select.css"
 
 
 

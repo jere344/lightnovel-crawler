@@ -65,10 +65,6 @@
 #chapter-article .chapter-content {
 	font-size: 16px;
 	line-height: 1.6;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 	font-family: "Nunito Sans", sans-serif;
 	padding-top: 1rem;
 	padding-bottom: 1rem;
@@ -722,7 +718,6 @@
 		font-size: 18px;
 		line-height: 1.7;
 		padding: 30px 19px 40px;
-		user-select: none;
 		background-color: var(--bg-color-2);
 		border: 2px solid var(--border-color-3);
 		border-top: none;
