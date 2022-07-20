@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom'
+import { useCookies } from 'react-cookie';
 
-
-import "../assets/stylesheets/navbar.min.css"
-import "../assets/stylesheets/media-mobile.min.css"
-import "../assets/stylesheets/media-768.min.css"
-import "../assets/stylesheets/media-1024.min.css"
-import "../assets/stylesheets/media-1270.min.css"
-import "../assets/stylesheets/fontello.css"
-import "../assets/stylesheets/chaptertts.css"
+// import "../assets/stylesheets/navbar.min.css"
+// import "../assets/stylesheets/media-mobile.min.css"
+// import "../assets/stylesheets/media-768.min.css"
+// import "../assets/stylesheets/media-1024.min.css"
+// import "../assets/stylesheets/media-1270.min.css"
+// import "../assets/stylesheets/fontello.css"
+// import "../assets/stylesheets/chaptertts.css"
 import "../assets/stylesheets/chapterpg.min.css"
 
 import SettingsWheel from '../components/SettingsWheel';
@@ -18,6 +18,57 @@ import SettingsWheel from '../components/SettingsWheel';
 
 
 function Chapter() {
+
+    const fontSizes = ["14", "16", "18", "20", "22", "24", "26", "28"]
+    // const fontSizes = ["1", "2", "3", "4", "5", "6", "7", "8"]
+
+    const [fontSizeCookie, setFontSizeCookie] = useCookies(['fontSize']);
+
+    function setFontSize(size) {
+        setFontSizeCookie('fontSize', size.toString(), { path: '/', sameSite: 'strict' });
+        document.getElementById("fontsize-slider").value = size
+    }
+
+    if (fontSizeCookie.fontSize === undefined) {
+        setFontSize("18");
+    }
+    const fontRangeOption = []
+
+    fontSizes.forEach(
+        (fontSize) => {
+            fontRangeOption.push(
+                <li className={(fontSize === fontSizeCookie.fontSize ? "active " : "") + (fontSize <= parseInt(fontSizeCookie.fontSize) ? "selected" : "")}
+                    key={fontSize}
+                    onClick={() => { setFontSize(fontSize) }}>
+                    {fontSize}
+                </li >
+            )
+        });
+
+    const fontSizeInt = parseInt(fontSizeCookie.fontSize)
+    const fontSizeStartInt = parseInt(fontSizes[0])
+    const fontSizeEndInt = parseInt(fontSizes[fontSizes.length - 1])
+    const percent = (fontSizeInt - fontSizeStartInt) / (fontSizeEndInt - fontSizeStartInt) * 100
+    const linearGradient = `linear-gradient(to right, var(--anchor-color) 0%, var(--anchor-color) ${percent}%, #b2b2b2 ${percent}%, #b2b2b2 100%)`;
+
+    const rangeStyle = {
+        "input": {
+            "&::-webkit-slider-runnable-track ": {
+                "background": linearGradient,
+            },
+            "&::-moz-range-track ": {
+                "background": linearGradient,
+            },
+            "&::-ms-track ": {
+                "background": linearGradient,
+            }
+        },
+        "background": linearGradient,
+
+    }
+
+
+
 
     function decodeUrlParameter(str) {
         return decodeURIComponent((str + '').replace(/\+/g, '%20'));
@@ -60,7 +111,6 @@ function Chapter() {
                 "slug": "Loading...",
                 "source_count": 0,
                 "sources": {},
-                "str_path": "Loading...",
                 "title": "Loading...",
                 "volume_count": 0
             },
@@ -86,6 +136,8 @@ function Chapter() {
     }, [novelSlug, sourceSlug, chapterId]);
 
 
+
+
     return (
         <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
             <div className="head-stick-offset"></div>
@@ -93,21 +145,21 @@ function Chapter() {
             <section className="page-in content-wrap">
                 <div className="titles">
                     <h1 itemProp="headline">
-                        <a className="booktitle" href="./" title="{ source.title }" rel="up"
+                        <a className="booktitle" href="./" title={source.title} rel="up"
                             itemProp="sameAs">{source.title}</a>
                         <span hidden=""></span>
                         <br />
                         <span className="chapter-title">{response.title}</span>
                     </h1>
                     <div className="control-action-btn">
-                        <a href="#chsetting" onClick={() => setMenuOpen(!menuOpen)}>
+                        <button onClick={() => setMenuOpen(!menuOpen)}>
                             <SettingsWheel />
-                        </a>
+                        </button>
                     </div>
 
                 </div>
                 <div id="chapter-container" className="chapter-content font_default" itemProp="description" onClick={() => { window.innerWidth > 768 ? setMenuOpen(false) : setMenuOpen(!menuOpen) }}
-                    style={{ "fontSize": "16px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="/api/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
+                    style={{ "fontSize": fontSizeCookie.fontSize + "px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="/api/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
                 </div>
                 <div className="chapternav skiptranslate">
                     <Link rel="prev" className={`button prevchap ${response.is_prev ? "" : 'isDisabled'}`}
@@ -171,35 +223,28 @@ function Chapter() {
                             </div>
                         </div>
                         <div className="action-select range-slider">
-                            <span className="svgbtn" id="svgFontMinus">
+                            <button className={"svgbtn" + (fontSizeCookie.fontSize === fontSizes[0] ? " isDisabled" : "")} id="svgFontMinus" onClick={() => { setFontSize(fontSizeInt - 2) }} style={{ "background-color": "transparent", "border": "none" }}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <path fillRule="evenodd" clipRule="evenodd"
                                         d="M14.333 21l-1.703-4.6H5.37L3.667 21H1L7.667 3h2.666L17 21h-2.667zM9 6.6l2.74 7.4H6.26L9 6.6zM23 5h-8v2h8V5z"
                                         fill="#000"></path>
                                 </svg>
-                            </span>
+                            </button>
                             <div className="range-fontsize">
-                                <div className="range">
-                                    <input type="range" min="1" max="8" step="1" defaultValue="1" />
+                                <div className="range" style={rangeStyle}>
+                                    <input type="range" id="fontsize-slider" min={fontSizes[0]} max={fontSizes[fontSizes.length - 1]} step="2" defaultValue={fontSizeCookie.fontSize} onChange={e => { setFontSize(e.target.valueAsNumber) }} />
                                 </div>
-                                <ul className="range-labels">
-                                    <li className="selected">14</li>
-                                    <li className="active selected">16</li>
-                                    <li>18</li>
-                                    <li>20</li>
-                                    <li>22</li>
-                                    <li>24</li>
-                                    <li>26</li>
-                                    <li>28</li>
-                                </ul>
+                                <datalist className="range-labels" id="fontStepList">
+                                    {fontRangeOption}
+                                </datalist>
                             </div>
-                            <span className="svgbtn" id="svgFontPlus">
+                            <button className={"svgbtn" + (fontSizeCookie.fontSize === fontSizes[fontSizes.length - 1] ? " isDisabled" : "")} id="svgFontPlus" onClick={() => { setFontSize(fontSizeInt + 2) }} style={{ "background-color": "transparent", "border": "none" }}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <path fillRule="evenodd" clipRule="evenodd"
                                         d="M20 2v3h3v2h-3v3h-2V7h-3V5h3V2h2zm-5.667 19l-1.703-4.6H5.37L3.667 21H1L7.667 3h2.666L17 21h-2.667zM9 6.6l2.74 7.4H6.26L9 6.6z"
                                         fill="#000"></path>
                                 </svg>
-                            </span>
+                            </button>
                         </div>
 
 
