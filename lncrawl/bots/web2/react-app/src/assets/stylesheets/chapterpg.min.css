@@ -1,3 +1,8 @@
+@font-face {
+	font-family: 'opendyslexic3';
+	src: local('opendyslexic3'), url(../../assets/fonts/OpenDyslexic3-Regular.ttf) format('truetype');
+}
+
 #chapter-article {
 	position: relative;
 	background-color: var(--bg-color-sub);
@@ -77,12 +82,12 @@
 }
 
 #chapter-article .chapter-content.font_lora {
-	font-family: Lora, serif, serif;
+	font-family: "Lora", serif, serif;
 }
 
 
 #chapter-article .chapter-content.font_dyslexic {
-	font-family: opendyslexic3;
+	font-family: "opendyslexic3";
 	text-rendering: optimizeLegibility;
 }
 
@@ -389,7 +394,8 @@
 	border: 1px solid #272727;
 }
 
-.control-action .action-items .action-select a {
+.control-action .action-items .action-select a,
+.control-action .action-items .action-select button {
 	-webkit-box-flex: 1;
 	-ms-flex: 1;
 	flex: 1;
@@ -406,42 +412,52 @@
 	color: #a7a7a7;
 	border-right: 1px solid #272727;
 	border-left: 1px solid #272727;
+	border-top: none;
+	border-bottom: none;
 	margin-right: -1px;
 	-webkit-box-ordinal-group: 2;
 	-ms-flex-order: 1;
 	order: 1;
+	background-color: transparent;
 }
 
-.control-action .action-items .action-select a svg {
+.control-action .action-items .action-select a svg,
+.control-action .action-items .action-select button svg {
 	color: #b3b4bf;
 	width: 1.4rem;
 	height: 1.4rem;
 }
 
-.control-action .action-items .action-select a svg path {
+.control-action .action-items .action-select a svg path,
+.control-action .action-items .action-select button svg path {
 	fill: currentColor;
 	fill-opacity: 1;
 }
 
-.control-action .action-items .action-select a i {
+.control-action .action-items .action-select a i,
+.control-action .action-items .action-select button i {
 	font-size: 1.2rem;
 }
 
-.control-action .action-items .action-select a.chnav span {
+.control-action .action-items .action-select a.chnav span,
+.control-action .action-items .action-select button.chnav span {
 	display: none;
 }
 
-.control-action .action-items .action-select a.next {
+.control-action .action-items .action-select a.next,
+.control-action .action-items .action-select button.next {
 	-webkit-box-ordinal-group: 3;
 	-ms-flex-order: 2;
 }
 
-.control-action .action-items .action-select a.prev {
+.control-action .action-items .action-select a.prev,
+.control-action .action-items .action-select button.prev {
 	-webkit-box-ordinal-group: 1;
 	-ms-flex-order: 0;
 }
 
-.control-action .action-items .action-select a.fill {
+.control-action .action-items .action-select a.fill,
+.control-action .action-items .action-select button.fill {
 	font-size: 1.2rem;
 	line-height: .4rem;
 	border: none;
@@ -452,11 +468,13 @@
 	flex-wrap: wrap;
 }
 
-.control-action .action-items .action-select a.fill small {
+.control-action .action-items .action-select a.fill small,
+.control-action .action-items .action-select button.fill small {
 	font-size: .725rem;
 }
 
-.control-action .action-items .action-select a.desktop {
+.control-action .action-items .action-select a.desktop,
+.control-action .action-items .action-select button.desktop {
 	display: none;
 }
 
