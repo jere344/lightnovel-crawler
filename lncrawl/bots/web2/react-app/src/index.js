@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Browse from './reader/Browse';
-import NovelInfo from './reader/NovelInfo';
-import Chapter from './reader/Chapter';
+import Browse from './pages/Browse';
+import NovelInfo from './pages/NovelInfo';
+import Chapter from './pages/Chapter';
 import reportWebVitals from './reportWebVitals';
 import { CookiesProvider } from 'react-cookie';
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import ScrollToTop from './scrollToTop';
-import ChapterList from './reader/ChapterList';
+import PageNotFound from './pages/PageNotFound';
+import ChapterList from './pages/ChapterList';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,6 +24,7 @@ root.render(
         <Route path="/novel/:novelSlug/:sourceSlug" element={<NovelInfo />} />
         <Route path="/novel/:novelSlug/:sourceSlug/chapter-:chapterId" element={<Chapter />} />
         <Route path="/novel/:novelSlug/:sourceSlug/chapterlist/page-:page" element={<ChapterList />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
       <Footer />
     </Router>

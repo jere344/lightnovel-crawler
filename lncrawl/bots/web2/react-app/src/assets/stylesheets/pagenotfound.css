@@ -1,0 +1,30 @@
+p {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+}
+
+.button:not(:last-child) {
+    margin-right: 1rem;
+}
+
+hr {
+    margin: 2rem 0;
+}
+
+.white-boxed {
+    text-align: center;
+    padding: 3rem;
+}
+
+@media screen and (max-width: 767px) {
+    .white-boxed {
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    p {
+        margin: 1rem 0;
+        font-size: 1rem;
+    }
+}

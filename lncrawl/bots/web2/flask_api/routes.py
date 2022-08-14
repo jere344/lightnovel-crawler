@@ -80,6 +80,9 @@ def get_chapter():
         / "json"
     )
     chapter_path = chapter_folder / f"{str(chapter_id).zfill(5)}.json"
+    if not chapter_path.exists():
+        return "", 404
+
     with open(chapter_path, "r") as f:
         chapter = json.load(f)
 
@@ -121,7 +124,7 @@ def get_chapter_list():
         chapter_list = json.load(f)["chapters"]
 
     start = page * 100
-    stop = min((page + 1) * 100, len(chapter_list))
+    stop = min((page + 1) * 100, len(chapter_list) + 1)
 
     is_next = (page + 1) * 100 < len(chapter_list)
     is_prev = page > 0

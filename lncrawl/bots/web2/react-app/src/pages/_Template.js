@@ -1,6 +1,6 @@
 import Metadata from '../components/Metadata';
 
-function Example() {
+function Template() {
 
     const title = "Read Light Novels Online For Free | LnCrawler";
     const description = "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 140 different websites."
@@ -24,4 +24,4 @@ function Example() {
     )
 }
 
-export default Example
+export default Template

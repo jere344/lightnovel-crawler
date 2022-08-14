@@ -1,6 +1,6 @@
 import Metadata from '../components/Metadata';
 import Pagination from '../components/Pagination';
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react';
 
 
@@ -80,6 +80,7 @@ function ChapterList() {
         ).then(
             data => {
                 setResponse(data);
+                console.log(data);
             }
         )
     }, [novelSlug, sourceSlug, page]);
@@ -110,6 +111,17 @@ function ChapterList() {
             </li>
         );
     }
+
+
+    const [goToChapNoValue, setGoToChapNoValue] = useState(undefined);
+
+    let navigate = useNavigate();
+    const routeChange = () => {
+        if (goToChapNoValue) {
+            navigate(`/novel/${novelSlug}/${sourceSlug}/chapter-${goToChapNoValue}`);
+        }
+    }
+
 
 
     return (
@@ -149,10 +161,9 @@ function ChapterList() {
                         </symbol>
                     </svg>
                     <div className="filters">
-                        <form method="post" id="gotochap" data-ajax="true" data-ajax-method="post"
-                            data-ajax-success="onGotoChapSuccess" action="../gotochap">
-                            <input id="gotochapno" name="chapno" type="number" placeholder="Enter Chapter No" />
-                            <input className="button" type="submit" value="Go" />
+                        <form id="gotochap">
+                            <input id="gotochapno" name="chapno" type="number" placeholder="Enter Chapter No" onChange={(e) => { setGoToChapNoValue(e.target.value) }} value={undefined} />
+                            <button className="button" onClick={(e) => { routeChange(e) }}>Go</button>
                         </form>
                         <div className="pagenav">
                             <div className="pagination-container">
@@ -165,6 +176,13 @@ function ChapterList() {
                     <ul className="chapter-list">
                         {chapterList}
                     </ul>
+                    <div className="pagenav" style={{ paddingTop: "1rem" }}>
+                        <div className="pagination-container">
+                            <ul className="pagination">
+                                {pagination}
+                            </ul>
+                        </div>
+                    </div>
                 </section>
             </article>
         </main >

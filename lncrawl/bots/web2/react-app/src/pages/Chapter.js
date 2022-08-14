@@ -109,8 +109,8 @@ function Chapter() {
     const [response, setResponse] = useState({
         "content": {
             "body": "<p>Loading...</p>",
-            "id": 0,
-            "title": "Loading...",
+            "id": chapterId,
+            "title": novelSlug,
             "url": "Loading...",
             "volume": 0,
             "volume_title": "Loading...",
@@ -150,43 +150,53 @@ function Chapter() {
         }
     }
     );
-    const chapter = response.content;
-    const source = response.source;
+
 
     useEffect(() => {
         fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
-            response => response.json()
+            (response) => { console.log(response.status); return ((response.status === 404) ? undefined : response.json()) }
         ).then(
             data => {
                 setResponse(data);
             }
         )
     }, [novelSlug, sourceSlug, chapterId]);
+    console.log(response)
+    if (response === undefined) {
+
+        return (
+            <main role="main">
+                <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
+                    <section className="page-in content-wrap" ref={innerRef}>
+                        <p>This chapter does not exist</p>
+                        <Link to={`/novel/${novelSlug}/${sourceSlug}/chapter-1`}>Chapter 1</Link>
+                        <br />
+                        <Link to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>Index</Link>
+                    </section>
+                </article>
+            </main >)
+    } else {
+        const chapter = response.content;
+        const source = response.source;
+
+        const title = `${source.title} - Chapter ${chapter.id} : ${chapter.title}`;
+        const description = `Read ${source.title} Chapter ${chapter.id} : ${chapter.title} Online For Free [${source.novel.language}]`
+        const imageUrl = source.cover;
+        const imageAlt = title + " cover";
+        const imageType = "image/bmp"
 
 
 
-    const title = `${source.title} - Chapter ${chapter.id} : ${chapter.title}`;
-    const description = `Read ${source.title} Chapter ${chapter.id} : ${chapter.title} Online For Free [${source.novel.language}]`
-    const imageUrl = source.cover;
-    const imageAlt = title + " cover";
-    const imageType = "image/bmp"
-
-
-
-
-
-    return (
-        <main role="main">
+        return (<main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
-
                 <div className="head-stick-offset"></div>
                 <div className="container"></div>
-                <section className="page-in content-wrap" ref={innerRef}>
+                (<section className="page-in content-wrap" ref={innerRef}>
                     <div className="titles">
                         <h1 itemProp="headline">
-                            <a className="booktitle" href="./" title={source.title} rel="up"
-                                itemProp="sameAs">{source.title}</a>
+                            <Link className="booktitle" to={`/novel/${novelSlug}/${sourceSlug}`} title={source.title} rel="up"
+                                itemProp="sameAs">{source.title}</Link>
                             <span hidden=""></span>
                             <br />
                             <span className="chapter-title">{response.title}</span>
@@ -204,16 +214,16 @@ function Chapter() {
                     </div>
                     <div className="chapternav skiptranslate">
                         <Link rel="prev" className={`button prevchap ${response.is_prev ? "" : 'isDisabled'}`}
-                            to={`/novel/${source.novel.slug}/${source.slug}/chapter-${chapter.id - 1}`}>
+                            to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
                             <i className="icon-left-open"></i>
                             <span>Prev</span>
                         </Link>
-                        <Link title="Magic System in a Parallel World Chapter List" className="button chapindex" to={`/novel/${source.novel.slug}/${source.slug}/chapterlist/page-1`}>
+                        <Link title={source.title} className="button chapindex" to={`/novel/${source.novel.slug}/${source.slug}/chapterlist/page-1`}>
                             <i className="icon-home"></i>
                             <span>Index</span>
                         </Link>
-                        <Link rel="next" className={"button nextchap" + (response.is_next ? "" : 'isDisabled')}
-                            to={`/novel/${source.novel.slug}/${source.slug}/chapter-${chapter.id + 1}`}>
+                        <Link rel="next" className={`button nextchap ${response.is_next ? "" : 'isDisabled'}`}
+                            to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}>
                             <span>Next</span>
                             <i className="icon-right-open"></i>
                         </Link>
@@ -235,7 +245,7 @@ function Chapter() {
                         <nav className="action-items">
                             <div className="action-select">
                                 <Link rel="prev" className={(response.is_prev ? "" : 'isDisabled ') + "chnav prev"}
-                                    to={`/novel/${source.novel.slug}/${source.slug}/chapter-${chapter.id - 1}`}>
+                                    to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
                                     <i className="icon-left-open"></i>
                                     <span>Prev</span>
                                 </Link>
@@ -246,7 +256,7 @@ function Chapter() {
                                     <i className="icon-moon"></i>
                                 </button>
                                 <Link rel="next" className={(response.is_next ? "" : 'isDisabled ') + "chnav next"}
-                                    to={`/novel/${source.novel.slug}/${source.slug}/chapter-${chapter.id + 1}`}>
+                                    to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}>
                                     <span>Next</span>
                                     <i className="icon-right-open"></i>
                                 </Link>
@@ -297,10 +307,12 @@ function Chapter() {
                         <span className="desktop">Tip: You can use left and right keyboard keys to browse between
                             chapters.</span>
                     </div>
-                </section>
+                </section>)
             </article>
         </main>
-    )
+        )
+    }
+
 }
 
 export default Chapter
