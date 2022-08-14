@@ -169,7 +169,7 @@ function NovelInfo() {
                             <i className="icon-right-open"></i>
                         </Link>
                         <Link className="grdbtn chapter-latest-container" title={source.title + "Chapters"}
-                            to="chapterlist">
+                            to="chapterlist/page-1">
                             <div className="body">
                                 <h4>Novel Chapters</h4>
                                 <p className="latest text1row">

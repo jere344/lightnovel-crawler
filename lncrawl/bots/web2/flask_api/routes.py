@@ -97,3 +97,40 @@ def get_chapter():
         "is_prev": is_prev,
         "source": source.asdict(),
     }
+
+
+@flaskapp.app.route("/api/chapterlist/")
+def get_chapter_list():
+    novel_slug = request.args.get("novel")
+    source_slug = request.args.get("source")
+    page = request.args.get("page")
+    if not novel_slug or not source_slug or not page:
+        return "novel or source missing : invalid request", 400
+    page = int(page) - 1
+
+    meta_file = (
+        lib.LIGHTNOVEL_FOLDER
+        / unquote_plus(novel_slug)
+        / unquote_plus(source_slug)
+        / "meta.json"
+    )
+
+    source = utils.find_source_with_path(meta_file.parent)
+
+    with open(meta_file, "r") as f:
+        chapter_list = json.load(f)["chapters"]
+
+    start = page * 100
+    stop = min((page + 1) * 100, len(chapter_list))
+
+    is_next = (page + 1) * 100 < len(chapter_list)
+    is_prev = page > 0
+    total_pages = math.ceil(len(chapter_list) / 100)
+
+    return {
+        "content": chapter_list[start:stop],
+        "source": source.asdict(),
+        "is_next": is_next,
+        "is_prev": is_prev,
+        "total_pages": total_pages,
+    }

@@ -9,6 +9,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import ScrollToTop from './scrollToTop';
+import ChapterList from './reader/ChapterList';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -21,6 +22,7 @@ root.render(
         <Route path="/browse/page-:page" element={<Browse />} />
         <Route path="/novel/:novelSlug/:sourceSlug" element={<NovelInfo />} />
         <Route path="/novel/:novelSlug/:sourceSlug/chapter-:chapterId" element={<Chapter />} />
+        <Route path="/novel/:novelSlug/:sourceSlug/chapterlist/page-:page" element={<ChapterList />} />
       </Routes>
       <Footer />
     </Router>

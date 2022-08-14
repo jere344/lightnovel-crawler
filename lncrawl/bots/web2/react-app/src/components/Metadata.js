@@ -1,7 +1,9 @@
 import React from 'react'
 import { Helmet } from "react-helmet";
 
-function Metadata(description, title, imageUrl, imageAlt, imageType) {
+function Metadata(data) {
+    const { description, title, imageUrl, imageAlt, imageType } = data;
+
     return (
         <Helmet>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -25,7 +27,7 @@ function Metadata(description, title, imageUrl, imageAlt, imageType) {
             <meta name="apple-mobile-web-app-status-bar-style" content="black" />
             <meta name="apple-mobile-web-app-title" content="LnCrawler" />
 
-            <title>title </title>
+            <title>{title}</title>
             <meta name="description" content={description} />
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
