@@ -86,7 +86,6 @@ function ChapterList() {
 
 
     const pagination = <Pagination page={parseInt(page)} maxPage={parseInt(response.total_pages)} />;
-    console.log(response.total_pages);
 
 
     const chapterList = [];
@@ -94,18 +93,18 @@ function ChapterList() {
     //     <li data-chapterno="{{ chapter['id'] }}" data-volumeno="{{ chapter['volume'] }}"
     //         data-orderno="{{ chapter['id'] }}">
     //         <a href="../chapter-{{ chapter['id'] }}" title="{{ chapter['title'] }}">
-    //             <span class="chapter-no ">{{ chapter['id'] }}</span>
-    //             <strong class="chapter-title">
+    //             <span className="chapter-no ">{{ chapter['id'] }}</span>
+    //             <strong className="chapter-title">
     //                 {{ chapter['title'] }} </strong>
     //         </a>
     //     </li>
     // {% endfor %}
     for (let i = 0; i < chapter.length; i++) {
         chapterList.push(
-            <li data-chapterno={chapter[i].id} data-volumeno={chapter[i].volume} data-orderno={chapter[i].id}>
+            <li data-chapterno={chapter[i].id} data-volumeno={chapter[i].volume} data-orderno={chapter[i].id} key={chapter[i].id}>
                 <Link to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter[i].id}`} title={chapter[i].title}>
-                    <span class="chapter-no ">{chapter[i].id}</span>
-                    <strong class="chapter-title">
+                    <span className="chapter-no ">{chapter[i].id}</span>
+                    <strong className="chapter-title">
                         {chapter[i].title} </strong>
                 </Link>
             </li>
@@ -117,22 +116,22 @@ function ChapterList() {
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <article id="chapter-list-page">
-                <header class="container">
-                    <div class="novel-item">
-                        <div class="cover-wrap">
+                <header className="container">
+                    <div className="novel-item">
+                        <div className="cover-wrap">
                             <a title={source.title} href="../">
-                                <figure class="novel-cover">
-                                    <img src={`/api/image/${source.cover}`} alt={source.title} />
+                                <figure className="novel-cover">
+                                    <img src={source.cover ? `/api/image/${source.cover}` : undefined} alt={source.title} />
                                 </figure>
                             </a>
                         </div>
-                        <div class="item-body">
+                        <div className="item-body">
                             <h1>
-                                <a class="text2row" title="God of Tricksters" href="../">{source.title}</a>
+                                <a className="text2row" title="God of Tricksters" href="../">{source.title}</a>
                             </h1>
                         </div>
                     </div>
-                    <span class="divider"></span>
+                    <span className="divider"></span>
                     <h2>{source.title} Chapters - Page {page}</h2>
                     <p dangerouslySetInnerHTML={{ __html: source.summary }} />
                     <br />
@@ -141,7 +140,7 @@ function ChapterList() {
                         <Link to={`/novel/${novelSlug}/${sourceSlug}/chapter-${source.chapter_count}`} title={source.latest}>{source.latest}</Link>
                     </p>
                 </header>
-                <section class="container" id="chpagedlist" data-load="0">
+                <section className="container" id="chpagedlist" data-load="0">
                     <svg aria-hidden="true" style={{ position: "absolute", width: "0px", height: "0px", overflow: "hidden" }}>
                         <symbol id="i-rank-up" viewBox="0 0 1308 1024">
                             <path
@@ -149,21 +148,21 @@ function ChapterList() {
                             </path>
                         </symbol>
                     </svg>
-                    <div class="filters">
+                    <div className="filters">
                         <form method="post" id="gotochap" data-ajax="true" data-ajax-method="post"
                             data-ajax-success="onGotoChapSuccess" action="../gotochap">
                             <input id="gotochapno" name="chapno" type="number" placeholder="Enter Chapter No" />
-                            <input class="button" type="submit" value="Go" />
+                            <input className="button" type="submit" value="Go" />
                         </form>
-                        <div class="pagenav">
-                            <div class="pagination-container">
+                        <div className="pagenav">
+                            <div className="pagination-container">
                                 <ul className="pagination">
                                     {pagination}
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <ul class="chapter-list">
+                    <ul className="chapter-list">
                         {chapterList}
                     </ul>
                 </section>
