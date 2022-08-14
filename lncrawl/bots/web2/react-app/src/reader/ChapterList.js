@@ -119,15 +119,15 @@ function ChapterList() {
                 <header className="container">
                     <div className="novel-item">
                         <div className="cover-wrap">
-                            <a title={source.title} href="../">
+                            <Link title={source.title} to={`/novel/${novelSlug}/${sourceSlug}`}>
                                 <figure className="novel-cover">
                                     <img src={source.cover ? `/api/image/${source.cover}` : undefined} alt={source.title} />
                                 </figure>
-                            </a>
+                            </Link>
                         </div>
                         <div className="item-body">
                             <h1>
-                                <a className="text2row" title="God of Tricksters" href="../">{source.title}</a>
+                                <Link className="text2row" title={source.title} to={`/novel/${novelSlug}/${sourceSlug}`}>{source.title}</Link>
                             </h1>
                         </div>
                     </div>
