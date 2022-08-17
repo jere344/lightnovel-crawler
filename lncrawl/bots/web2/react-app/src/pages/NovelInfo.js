@@ -33,29 +33,19 @@ function NovelInfo() {
         "language": "en",
         "latest": "Loading ...",
         "novel": {
-            "author": "Loading ...",
             "chapter_count": 0,
             "clicks": 0,
-            "cover": undefined,
             "first": "Loading ...",
-            "language": "Loading ...",
             "latest": "Loading ...",
             "overall_rating": 0,
-            "prefered_source": currentUrlSplitted[currentUrlSplitted.length - 1],
             "rank": 0,
             "ratings_count": 0,
-            "slug": currentUrlSplitted[currentUrlSplitted.length - 2],
             "source_count": 0,
             "sources": {},
-            "str_path": "Loading ...",
-            "title": currentUrlSplitted[currentUrlSplitted.length - 2],
-            "volume_count": 0
         },
         "slug": currentUrlSplitted[currentUrlSplitted.length - 1],
-        "str_path": "Loading ...",
         "summary": "Loading ...",
         "title": currentUrlSplitted[currentUrlSplitted.length - 2],
-        "volume_count": 0
     });
     useEffect(() => {
         fetch(`/api/novel?novel=${novelSlug}&source=${sourceSlug}`).then(
@@ -78,7 +68,7 @@ function NovelInfo() {
     const sourceList = [];
     for (const [s, lang] of Object.entries(source.novel.sources)) {
         if (!(s === source.slug)) {
-            sourceList.push(<option key={s} value={`/novel/${source.novel.slug}/${s}`}>{toFlag(lang)} - {s}</option>) /* emoji_flag(source.language) */
+            sourceList.push(<option key={s} value={`/novel/${novelSlug}/${s}`}>{toFlag(lang)} - {s}</option>) /* emoji_flag(source.language) */
         }
 
 
@@ -146,10 +136,8 @@ function NovelInfo() {
                             </div>
 
                             <div className="source-select">
-
-                                {/* TODO <select className="sel" onChange={location = this.value}> */}
                                 <select className="sel" onChange={e => routeChange(e.target.value)} >
-                                    <option value={`/novel/${source.novel.slug}/${source.slug}`}>{toFlag(source.language)} - {source.slug}</option>
+                                    <option value={`/novel/${source.novelSlug}/${source.slug}`}>{toFlag(source.language)} - {source.slug}</option>
                                     {sourceList}
                                 </select>
 

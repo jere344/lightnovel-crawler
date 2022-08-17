@@ -38,35 +38,11 @@ function ChapterList() {
         "is_prev": false,
         "total_pages": 1,
         "source": {
-            "author": "Loading...",
             "chapter_count": 0,
             "cover": undefined,
-            "first": "Loading...",
-            "language": "en",
             "latest": "Loading...",
-            "slug": "lightnovelreader-org",
-            "str_path": "Loading...",
             "summary": "",
             "title": "Loading...",
-            "volume_count": 0,
-            "novel": {
-                "author": "Loading...",
-                "chapter_count": 0,
-                "clicks": 0,
-                "cover": undefined,
-                "first": "Loading...",
-                "language": "en",
-                "latest": "Loading...",
-                "overall_rating": 0,
-                "prefered_source": "Loading...",
-                "rank": 0,
-                "ratings_count": 0,
-                "slug": "Loading...",
-                "source_count": 0,
-                "sources": {},
-                "title": "Loading...",
-                "volume_count": 0
-            }
         }
     }
     );
@@ -80,7 +56,6 @@ function ChapterList() {
         ).then(
             data => {
                 setResponse(data);
-                console.log(data);
             }
         )
     }, [novelSlug, sourceSlug, page]);

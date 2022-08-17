@@ -118,35 +118,11 @@ function Chapter() {
         "is_next": false,
         "is_prev": false,
         "source": {
-            "author": "Loading...",
-            "chapter_count": 0,
             "cover": undefined,
-            "first": "Loading...",
-            "language": "en",
-            "latest": "Loading...",
             "novel": {
-                "author": "Loading...",
-                "chapter_count": 0,
-                "clicks": 0,
-                "cover": undefined,
-                "first": "Loading...",
-                "language": "en",
-                "latest": "Loading...",
-                "overall_rating": 0,
-                "prefered_source": "Loading...",
-                "rank": 0,
-                "ratings_count": 0,
-                "slug": "Loading...",
-                "source_count": 0,
-                "sources": {},
-                "title": "Loading...",
-                "volume_count": 0
+                "language": "Loading...",
             },
-            "slug": "lightnovelreader-org",
-            "str_path": "Loading...",
-            "summary": "",
             "title": "Loading...",
-            "volume_count": 0
         }
     }
     );
@@ -154,14 +130,13 @@ function Chapter() {
 
     useEffect(() => {
         fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
-            (response) => { console.log(response.status); return ((response.status === 404) ? undefined : response.json()) }
+            (response) => { return ((response.status === 404) ? undefined : response.json()) }
         ).then(
             data => {
                 setResponse(data);
             }
         )
     }, [novelSlug, sourceSlug, chapterId]);
-    console.log(response)
     if (response === undefined) {
 
         return (
@@ -218,7 +193,7 @@ function Chapter() {
                             <i className="icon-left-open"></i>
                             <span>Prev</span>
                         </Link>
-                        <Link title={source.title} className="button chapindex" to={`/novel/${source.novel.slug}/${source.slug}/chapterlist/page-1`}>
+                        <Link title={source.title} className="button chapindex" to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>
                             <i className="icon-home"></i>
                             <span>Index</span>
                         </Link>
@@ -234,7 +209,7 @@ function Chapter() {
                                 <path d="M6.975 13.3L12 20H9l-6-8 6-8h3l-5.025 6.7H21v2.6H6.975z"></path>
                             </svg></i>
                             <div className="bar-titles">
-                                <Link className="booktitle text1row" to={`/novel/${source.novel.slug}/${source.slug}`}
+                                <Link className="booktitle text1row" to={`/novel/${novelSlug}/${sourceSlug}`}
                                     title={chapter.title}>{chapter.title}
                                 </Link>
                                 <span className="chapter-title">{chapter.title}</span>
@@ -249,7 +224,7 @@ function Chapter() {
                                     <i className="icon-left-open"></i>
                                     <span>Prev</span>
                                 </Link>
-                                <Link className="chap-index" title="Chapter Index" to={`/novel/${source.novel.slug}/${source.slug}/chapterlist/page-1`}>
+                                <Link className="chap-index" title="Chapter Index" to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>
                                     <i className="icon-home"></i>
                                 </Link>
                                 <button className="nightmode_switch" title="Night mode" data-night="0" data-content="Dark Theme" onClick={switchDarkMode}>

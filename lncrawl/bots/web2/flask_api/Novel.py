@@ -80,8 +80,8 @@ class Novel:
             "cover": self.cover,
             "author": self.author,
             "chapter_count": self.chapter_count,
-            "volume_count": self.volume_count,
-            "first": self.first,
+            # "volume_count": self.volume_count,
+            # "first": self.first,
             "latest": self.latest,
             # "summary": self.summary,
             "language": self.language,
@@ -95,7 +95,7 @@ class Novel:
             "ratings_count": self.ratings_count,
             "source_count": self.source_count,
             "slug": self.slug,
-            "str_path": self.str_path,
+            # "str_path": self.str_path,
         }
 
 
@@ -138,11 +138,11 @@ class NovelFromSource:
             "cover": self.cover,
             "author": self.author,
             "chapter_count": self.chapter_count,
-            "volume_count": self.volume_count,
+            # "volume_count": self.volume_count,
             "slug": self.slug,
             "first": self.first,
             "latest": self.latest,
             "summary": self.summary,
             "language": self.language,
-            "str_path": self.str_path,
+            # "str_path": self.str_path,
         }
