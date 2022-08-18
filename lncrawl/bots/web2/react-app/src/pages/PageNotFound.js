@@ -1,5 +1,6 @@
 import Metadata from '../components/Metadata';
 import logo from '../assets/logo.bmp'
+import { Link } from 'react-router-dom';
 
 
 import "../assets/stylesheets/pagenotfound.css"
@@ -37,8 +38,8 @@ function PageNotFound() {
                             <p>Please use the search function for the content you want to access or go to home page and start exploring the light novels.</p>
                             <hr />
                             <div className="mt-2">
-                                <a className="button" href="/search" role="button">Start Search</a>
-                                <a className="button" href="/" role="button">Go Homepage</a>
+                                <Link className="button" to="/search" role="button">Start Search</Link>
+                                <Link className="button" to="/" role="button">Go Homepage</Link>
                             </div>
                         </div>
                     </div>

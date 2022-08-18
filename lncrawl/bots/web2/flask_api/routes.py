@@ -7,6 +7,10 @@ import pathlib
 import math
 from urllib.parse import unquote_plus
 import json
+from typing import List
+from .Novel import Novel, NovelFromSource
+import difflib
+from . import sanatize
 
 
 @flaskapp.app.route("/api/image/<path:file>")
@@ -136,4 +140,38 @@ def get_chapter_list():
         "is_next": is_next,
         "is_prev": is_prev,
         "total_pages": total_pages,
+    }
+
+
+@flaskapp.app.route("/api/search/")
+def search():
+    """
+    => return a list of max 20 best matches from downloaded novels
+    """
+    query = request.args.get("query")
+
+    if not query or len(query) < 3:
+        return "Invalid query", 400
+
+    query = sanatize.sanitize(query).split(" ")
+    ratio: List[tuple[Novel, int]] = []
+    for downloaded in database.all_downloaded_novels:
+        count = 0
+        for search_word in query:
+            count += len(
+                difflib.get_close_matches(search_word, downloaded.search_words)
+            )
+        ratio.append((downloaded, count))
+
+    ratio.sort(key=lambda x: x[1], reverse=True)
+
+    number_of_results = min(20, len(database.all_downloaded_novels))
+
+    search_results = [
+        novel.asdict() for novel, ratio in ratio[:number_of_results] if ratio != 0
+    ]
+
+    return {
+        "content": search_results,
+        "results": number_of_results,
     }

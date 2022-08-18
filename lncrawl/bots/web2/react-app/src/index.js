@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import ScrollToTop from './scrollToTop';
 import PageNotFound from './pages/PageNotFound';
 import ChapterList from './pages/ChapterList';
+import Search from './pages/Search';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -24,6 +25,7 @@ root.render(
         <Route path="/novel/:novelSlug/:sourceSlug" element={<NovelInfo />} />
         <Route path="/novel/:novelSlug/:sourceSlug/chapter-:chapterId" element={<Chapter />} />
         <Route path="/novel/:novelSlug/:sourceSlug/chapterlist/page-:page" element={<ChapterList />} />
+        <Route path="/search/" element={<Search />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
       <Footer />
