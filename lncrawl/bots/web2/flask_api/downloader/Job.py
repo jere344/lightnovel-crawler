@@ -8,10 +8,12 @@ import logging
 from urllib.parse import urlparse
 from slugify import slugify
 from pathlib import Path
+
 logger = logging.getLogger(__name__)
 from .. import lib
 from .. import database
 from .. import read_novel_info
+
 
 class JobHandler:
     original_query: str = ""
@@ -233,8 +235,6 @@ class JobHandler:
         if not is_in_all_novels:
             novel_info.rank = len(database.all_downloaded_novels) + 1
             database.all_downloaded_novels.append(novel_info)
-
-
 
 
 class FinishedJob:

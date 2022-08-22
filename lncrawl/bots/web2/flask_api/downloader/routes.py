@@ -8,29 +8,27 @@ import random
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/search/")
-def search_input_page():
-
-    job_id = random.randint(0, 1000000)
-    while job_id in database.jobs:
-        job_id = random.randint(0, 1000000)
-
-    return render_template("downloader/search_novel.html", job_id=job_id)
-
-
-@app.route("/lncrawl/addnovel/search/form", methods=["POST"])
+@app.route(
+    "/api/addnovel/search/",
+)
 def search_form():
-    form = request.json
-    if not form:
-        return {"error": "No form data"}, 400
+    query = request.args.get("query")
+    job_id = request.args.get("job_id")
 
-    query = form["inputContent"]
+    if not query:
+        return {"status": "error", "message": "No query"}
     if len(query) < 4:
-        return {"status": "error", "html": "Query too short"}, 400
-    job_id = form["job_id"]
+        return {"status": "error", "message": "Query too short"}, 400
 
-    if job_id in database.jobs:
-        database.jobs[job_id].destroy()
+    if not job_id:
+        while True:
+            job_id = random.randint(1, 1000000)
+            if job_id not in database.jobs:
+                break
+
+    if isinstance(database.jobs[job_id], JobHandler):
+        return {"status": "error", "message": "Job already exists"}, 400
+
     database.jobs[job_id] = job = JobHandler(job_id)
 
     job.get_list_of_novel(query)
@@ -41,21 +39,26 @@ def search_form():
 # ----------------------------------------------- Choose Novel ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/choose_novel/<string:job_id>")
-def novel_select_page(job_id: int):
+@app.route("/lncrawl/addnovel/choose_novel/")
+def novel_select_page():
     """Return search results"""
+    job_id = request.args.get("job_id")
+
     if not job_id in database.jobs:
-        return redirect("/lncrawl/addnovel/search")
+        return {"status": "error", "message": "Job do not exist"}, 400
 
     job = database.jobs[job_id]
     if job.is_busy:
-        return {"status": "pending", "html": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 200
 
     if isinstance(job, FinishedJob):
-        return redirect("/lncrawl/addnovel/search")
+        return {
+            "status": "error",
+            "message": f"Job aldready finished : {job.get_status()}",
+        }, 400
 
     if not job.search_results:
-        return {"status": "error", "html": "No search results"}, 400
+        return {"status": "error", "message": "No search results"}, 400
 
     return {"status": "success", "novels": job.search_results}, 200
 
@@ -63,17 +66,24 @@ def novel_select_page(job_id: int):
 # ----------------------------------------------- Choose Source ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/choose_source/<int:novel_id>/<string:job_id>")
-def novel_selected(novel_id: int, job_id: int):
+@app.route("/lncrawl/addnovel/choose_source/")
+def novel_selected():
     """Return list of sources for selected novel"""
+    job_id = request.args.get("job_id")
+    novel_id = request.args.get("novel_id")
+
     if not job_id in database.jobs:
-        return redirect("/lncrawl/addnovel/search")
+        return {"status": "error", "message": "Job do not exist"}, 400
+
     job = database.jobs[job_id]
     if job.is_busy:
-        return {"status": "pending", "html": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 200
 
     if isinstance(job, FinishedJob):
-        return redirect("/lncrawl/addnovel/search")
+        return {
+            "status": "error",
+            "message": f"Job aldready finished : {job.get_status()}",
+        }, 400
 
     job.select_novel(novel_id)
 
@@ -83,60 +93,68 @@ def novel_selected(novel_id: int, job_id: int):
 # ----------------------------------------------- Start Download ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/download/<int:novel_id>/<int:source_id>/<string:job_id>")
-def download(novel_id: int, source_id: int, job_id: int):
+@app.route("/lncrawl/addnovel/download/")
+def download():
     """Select Source and start download"""
-    if not job_id in database.jobs:
-        return redirect("/lncrawl/addnovel/search")
-    job = database.jobs[job_id]
+    job_id = request.args.get("job_id")
+    novel_id = request.args.get("novel_id")
+    source_id = request.args.get("source_id")
 
+    if not job_id in database.jobs:
+        return {"status": "error", "message": "Job do not exist"}, 400
+
+    job = database.jobs[job_id]
     if job.is_busy:
-        return {"status": "pending", "html": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 200
 
     if isinstance(job, FinishedJob):
-        return {"status": "success", "html": job.get_status()}, 200
+        return {
+            "status": "error",
+            "message": f"Job aldready finished : {job.get_status()}",
+        }, 400
 
     if not job.metadata_downloaded:
         job.select_novel(novel_id)
         job.select_source(source_id)
-        return {"status": "pending", "html": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 200
 
     job.start_download()
 
-    return {"status": "pending", "html": job.get_status()}, 200
+    return {"status": "pending", "message": job.get_status()}, 200
 
 
 # ----------------------------------------------- Direct Download ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/direct_download/<string:job_id>/")
-def direct_download(job_id: str):
+@app.route("/lncrawl/addnovel/direct_download/")
+def direct_download():
     """Directly download a novel using the novel url"""
+
+    job_id = request.args.get("job_id")
 
     novel_url = request.args.get("url")
     if not novel_url:
-        return {"status": "error", "html": "Missing url"}, 400
-
+        return {"status": "error", "message": "Missing url"}, 400
     if not novel_url.startswith("http"):
-        {"status": "error", "html": "Invalid URL"}
+        {"status": "error", "message": "Invalid URL"}
 
     if not job_id in database.jobs or (
         isinstance(database.jobs[job_id], FinishedJob)
-        and database.jobs[job_id].original_query == novel_url
+        and database.jobs[job_id].original_query != novel_url
     ):
         database.jobs[job_id] = job = JobHandler(job_id)
     else:
         job = database.jobs[job_id]
 
     if job.is_busy:
-        return {"status": "pending", "html": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 200
 
     if isinstance(job, FinishedJob):
-        return {"status": "success", "html": job.get_status()}, 200
+        return {"status": "success", "message": job.get_status()}, 200
 
     if not job.metadata_downloaded:
         job.prepare_direct_download(novel_url)
-        return {"status": "pending", "html": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 200
 
     job.start_download()
 
