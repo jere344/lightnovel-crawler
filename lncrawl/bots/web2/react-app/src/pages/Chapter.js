@@ -249,13 +249,15 @@ function Chapter() {
                                 </div>
                             </div>
                             <div className="action-select range-slider">
-                                <button className={"svgbtn" + (fontSizeCookie.fontSize === fontSizes[0] ? " isDisabled" : "")} id="svgFontMinus" onClick={() => { setFontSize(fontSizeInt - 2) }} style={{ "backgroundColor": "transparent", "border": "none" }}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path fillRule="evenodd" clipRule="evenodd"
-                                            d="M14.333 21l-1.703-4.6H5.37L3.667 21H1L7.667 3h2.666L17 21h-2.667zM9 6.6l2.74 7.4H6.26L9 6.6zM23 5h-8v2h8V5z"
-                                            fill="#000"></path>
-                                    </svg>
-                                </button>
+                                <div className='font-minus'>
+                                    <button className={"svgbtn" + (fontSizeCookie.fontSize === fontSizes[0] ? " isDisabled" : "")} id="svgFontMinus" onClick={() => { setFontSize(fontSizeInt - 2) }} style={{ "backgroundColor": "transparent", "border": "none" }}>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path fillRule="evenodd" clipRule="evenodd"
+                                                d="M14.333 21l-1.703-4.6H5.37L3.667 21H1L7.667 3h2.666L17 21h-2.667zM9 6.6l2.74 7.4H6.26L9 6.6zM23 5h-8v2h8V5z"
+                                                fill="#000"></path>
+                                        </svg>
+                                    </button>
+                                </div>
                                 <div className="range-fontsize">
                                     <div className="range" style={rangeStyle}>
                                         <input type="range" id="fontsize-slider" min={fontSizes[0]} max={fontSizes[fontSizes.length - 1]} step="2" defaultValue={fontSizeCookie.fontSize} onChange={e => { setFontSize(e.target.valueAsNumber) }} />
@@ -264,13 +266,15 @@ function Chapter() {
                                         {fontRangeOption}
                                     </datalist>
                                 </div>
-                                <button className={"svgbtn" + (fontSizeCookie.fontSize === fontSizes[fontSizes.length - 1] ? " isDisabled" : "")} id="svgFontPlus" onClick={() => { setFontSize(fontSizeInt + 2) }} style={{ "backgroundColor": "transparent", "border": "none" }}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path fillRule="evenodd" clipRule="evenodd"
-                                            d="M20 2v3h3v2h-3v3h-2V7h-3V5h3V2h2zm-5.667 19l-1.703-4.6H5.37L3.667 21H1L7.667 3h2.666L17 21h-2.667zM9 6.6l2.74 7.4H6.26L9 6.6z"
-                                            fill="#000"></path>
-                                    </svg>
-                                </button>
+                                <div className='font-plus'>
+                                    <button className={"svgbtn" + (fontSizeCookie.fontSize === fontSizes[fontSizes.length - 1] ? " isDisabled" : "")} id="svgFontPlus" onClick={() => { setFontSize(fontSizeInt + 2) }} style={{ "backgroundColor": "transparent", "border": "none" }}>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path fillRule="evenodd" clipRule="evenodd"
+                                                d="M20 2v3h3v2h-3v3h-2V7h-3V5h3V2h2zm-5.667 19l-1.703-4.6H5.37L3.667 21H1L7.667 3h2.666L17 21h-2.667zM9 6.6l2.74 7.4H6.26L9 6.6z"
+                                                fill="#000"></path>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
 
 

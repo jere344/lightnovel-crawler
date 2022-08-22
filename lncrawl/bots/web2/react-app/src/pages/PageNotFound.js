@@ -25,7 +25,7 @@ function PageNotFound() {
     return (
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
-            <article id="explore" className="container">
+            <article id="page-not-found" className="container">
                 <main role="main">
                     <style>
 

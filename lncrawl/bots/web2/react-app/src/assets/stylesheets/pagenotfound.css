@@ -1,29 +1,29 @@
-p {
+#page-not-found p {
     margin: 1rem 0;
     font-size: 1.2rem;
 }
 
-.button:not(:last-child) {
+#page-not-found .button:not(:last-child) {
     margin-right: 1rem;
 }
 
-hr {
+#page-not-found hr {
     margin: 2rem 0;
 }
 
-.white-boxed {
+#page-not-found .white-boxed {
     text-align: center;
     padding: 3rem;
 }
 
 @media screen and (max-width: 767px) {
-    .white-boxed {
+    #page-not-found .white-boxed {
         padding: 0;
         background: transparent;
         box-shadow: none;
     }
 
-    p {
+    #page-not-found p {
         margin: 1rem 0;
         font-size: 1rem;
     }
