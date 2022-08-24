@@ -60,7 +60,7 @@ function Header() {
                                             className="icon-megaphone"></i> DEV</a>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" title="Add Novel" to="/lncrawl/addnovel/search/"><i className="plus"></i>Add
+                                    <Link className="nav-link" title="Add Novel" to="/addnovel"><i className="plus"></i>Add
                                         Novel</Link>
                                 </li>
                                 <li className="nav-item">

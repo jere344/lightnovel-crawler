@@ -1,17 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import reportWebVitals from './reportWebVitals';
+import { CookiesProvider } from 'react-cookie';
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import ScrollToTop from './scrollToTop';
+
+import Header from './components/Header'
+import Footer from './components/Footer'
+
 import Browse from './pages/Browse';
 import NovelInfo from './pages/NovelInfo';
 import Chapter from './pages/Chapter';
-import reportWebVitals from './reportWebVitals';
-import { CookiesProvider } from 'react-cookie';
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import ScrollToTop from './scrollToTop';
 import PageNotFound from './pages/PageNotFound';
 import ChapterList from './pages/ChapterList';
 import Search from './pages/Search';
+import AddNovel from './pages/AddNovel';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -26,6 +29,7 @@ root.render(
         <Route path="/novel/:novelSlug/:sourceSlug/chapter-:chapterId" element={<Chapter />} />
         <Route path="/novel/:novelSlug/:sourceSlug/chapterlist/page-:page" element={<ChapterList />} />
         <Route path="/search/" element={<Search />} />
+        <Route path="/addnovel/" element={<AddNovel />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
       <Footer />

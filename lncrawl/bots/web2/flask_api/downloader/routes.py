@@ -1,3 +1,5 @@
+from curses.ascii import FF
+from fcntl import F_FULLFSYNC
 from ..flaskapp import app
 from flask import redirect, request, render_template
 from .. import lib
@@ -21,13 +23,7 @@ def search_form():
         return {"status": "error", "message": "Query too short"}, 400
 
     if not job_id:
-        while True:
-            job_id = random.randint(1, 1000000)
-            if job_id not in database.jobs:
-                break
-
-    if isinstance(database.jobs[job_id], JobHandler):
-        return {"status": "error", "message": "Job already exists"}, 400
+        return {"status": "error", "message": "No job_id"}, 400
 
     database.jobs[job_id] = job = JobHandler(job_id)
 
@@ -109,9 +105,10 @@ def download():
 
     if isinstance(job, FinishedJob):
         return {
-            "status": "error",
-            "message": f"Job aldready finished : {job.get_status()}",
-        }, 400
+            "status": "success",
+            "message": job.get_status(),
+            "url": "not implemented",
+        }, 200
 
     if not job.metadata_downloaded:
         job.select_novel(novel_id)
@@ -121,6 +118,16 @@ def download():
     job.start_download()
 
     return {"status": "pending", "message": job.get_status()}, 200
+
+    # Busy : Downloading metadata or downloading novel
+    #    --> send status
+    # Not busy :
+    #    Job is finished :
+    #        -> send status and url
+    #    Metadata not downloaded :
+    #       --> Select novel, select source (=> download metadata) --> busy
+    #    Metadata downloaded :
+    #       --> Start download --> busy
 
 
 # ----------------------------------------------- Direct Download ----------------------------------------------- #
@@ -135,15 +142,17 @@ def direct_download():
     novel_url = request.args.get("url")
     if not novel_url:
         return {"status": "error", "message": "Missing url"}, 400
-    if not novel_url.startswith("http"):
+    elif not novel_url.startswith("http"):
         {"status": "error", "message": "Invalid URL"}
 
     if not job_id in database.jobs or (
         isinstance(database.jobs[job_id], FinishedJob)
         and database.jobs[job_id].original_query != novel_url
     ):
+        # If the job is finished and the query doesn't match, overwrite the old job
         database.jobs[job_id] = job = JobHandler(job_id)
     else:
+        # If they match it means it is the current job, continue with it
         job = database.jobs[job_id]
 
     if job.is_busy:
@@ -156,6 +165,6 @@ def direct_download():
         job.prepare_direct_download(novel_url)
         return {"status": "pending", "message": job.get_status()}, 200
 
-    job.start_download()
-
-    return {"status": "pending", "html": job.get_status()}, 200
+    else:
+        job.start_download()
+        return {"status": "pending", "html": job.get_status()}, 200
