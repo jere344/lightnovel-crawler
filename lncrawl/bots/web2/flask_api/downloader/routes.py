@@ -1,19 +1,14 @@
-from curses.ascii import FF
-from fcntl import F_FULLFSYNC
 from ..flaskapp import app
-from flask import redirect, request, render_template
-from .. import lib
+from flask import request
 from .. import database
 from .Job import JobHandler, FinishedJob
-import random
 
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
 
 
-@app.route(
-    "/api/addnovel/search/",
-)
-def search_form():
+@app.route("/api/addnovel/search")
+def addnovel():
+    """Create session"""
     query = request.args.get("query")
     job_id = request.args.get("job_id")
 
@@ -35,7 +30,7 @@ def search_form():
 # ----------------------------------------------- Choose Novel ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/choose_novel/")
+@app.route("/api/addnovel/choose_novel")
 def novel_select_page():
     """Return search results"""
     job_id = request.args.get("job_id")
@@ -62,7 +57,7 @@ def novel_select_page():
 # ----------------------------------------------- Choose Source ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/choose_source/")
+@app.route("/api/addnovel/choose_source")
 def novel_selected():
     """Return list of sources for selected novel"""
     job_id = request.args.get("job_id")
@@ -89,7 +84,7 @@ def novel_selected():
 # ----------------------------------------------- Start Download ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/download/")
+@app.route("/api/addnovel/download")
 def download():
     """Select Source and start download"""
     job_id = request.args.get("job_id")
@@ -133,7 +128,7 @@ def download():
 # ----------------------------------------------- Direct Download ----------------------------------------------- #
 
 
-@app.route("/lncrawl/addnovel/direct_download/")
+@app.route("/api/addnovel/direct_download")
 def direct_download():
     """Directly download a novel using the novel url"""
 

@@ -15,7 +15,76 @@ function AddNovel() {
     let [showAdvanceOptions, setShowAdvanceOptions] = useState(false)
 
     const [searchQuery, setSearchQuery] = useState("");
-    console.log(searchQuery);
+
+    const [novels, setNovels] = useState([]);
+
+    for (let i = 0; i < novels.length; i++) {
+        console.log(novels[i]);
+    }
+
+    console.log(novels);
+
+
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+
+    const [status, setStatus] = useState("");
+
+    async function queue(queueTarget) {
+        let response = false;
+        let finished = false;
+        while (!finished) {
+            response = await fetch(queueTarget).then(res => res.json());
+
+            if (response.status === "success") {
+                finished = true;
+            } else if (response.status === "pending") {
+                console.log(response.message);
+                setStatus(response.message)
+                console.log("sleeping");
+                await sleep(3000); // wait 3 seconds and try again
+            } else if (response.status === "error") {
+                console.log(response.message);
+                finished = true;
+                setStatus(response.message)
+            } else {
+                console.log("Unexpected response :" + response);
+                finished = true;
+            }
+        }
+        setStatus("finished");
+
+        return response
+    }
+
+
+    async function sendSearchRequest() {
+
+        console.log("sendSearchRequest" + searchQuery);
+        fetch(`/api/addnovel/search?query=${searchQuery}&job_id=${job_id}`).then(
+            response => response.json()
+        ).then(
+            response => {
+                if (response.status === "success") {
+                    chooseNovel()
+                } else {
+                    console.log(response);
+                }
+            }
+        )
+    }
+
+
+    async function chooseNovel() {
+        console.log("chooseNovel");
+        let response = await queue(`/api/addnovel/choose_novel?job_id=${job_id}`)
+        if (response.status === "success") {
+            setNovels(response.novels.content)
+        } else {
+            console.log(response);
+        }
+    }
+
 
     return (
         <main role="main">
@@ -55,9 +124,6 @@ function AddNovel() {
         </main >
     )
 
-    function sendSearchRequest() {
-        console.log("sendSearchRequest" + searchQuery);
-    }
 }
 
 export default AddNovel

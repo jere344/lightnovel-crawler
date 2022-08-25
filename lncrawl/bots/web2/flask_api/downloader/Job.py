@@ -105,6 +105,10 @@ class JobHandler:
         except Exception as e:
             return self.crash(f"Fail to init crawler : {e}")
 
+        # WARNING # TODO : remove this
+        self.app.crawler_links = self.app.crawler_links[8:10]
+        # WARNING
+
         try:
             self.set_last_action("Searching")
             self.app.search_novel()
@@ -125,6 +129,9 @@ class JobHandler:
             ],
             "query": query,
         }
+        # WARNING # TODO : remove this
+        print("search results : ", self.search_results)
+        # WARNING
 
     def select_novel(self, novel_id: int) -> None:
         self.selected_novel = self.app.search_results[novel_id]
