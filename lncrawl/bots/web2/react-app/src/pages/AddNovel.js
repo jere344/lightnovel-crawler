@@ -1,6 +1,7 @@
 import Metadata from '../components/Metadata';
 import logo from '../assets/logo.bmp'
 import { useState } from 'react';
+import "../assets/stylesheets/addnovel.css";
 
 function AddNovel() {
 
@@ -10,7 +11,8 @@ function AddNovel() {
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"
 
-    const job_id = Math.random().toString().slice(2)
+    const [jobId] = useState(Math.random().toString().slice(2))
+    console.log("jobId: " + jobId)
 
     let [showAdvanceOptions, setShowAdvanceOptions] = useState(false)
 
@@ -18,11 +20,35 @@ function AddNovel() {
 
     const [novels, setNovels] = useState([]);
 
-    for (let i = 0; i < novels.length; i++) {
-        console.log(novels[i]);
-    }
 
-    console.log(novels);
+    const novelItems = novels.map((novel, index) => {
+        console.log(novel, novel.sourcesList)
+
+        let sourceItem = null;
+        if (novel.sourcesList !== undefined) {
+            console.log("source defined")
+            sourceItem = novel.sourcesList.map((source, index) => {
+                return (
+                    <li className="source-item" key={index}>
+                        <i className="download-icon icon-check-empty" onClick={() => startDownload(novel.id, source.id)}></i>
+                        <div>
+                            <a className="source-url" href={source.url}>{source.url}</a>
+                            {source.info ? <label>{source.info}</label> : null}
+                        </div>
+                    </li>
+                )
+            }
+            )
+        }
+
+        return (
+            <li className="novel-item" key={index}>
+                <i className="icon-right-open" onClick={() => getSourcesFounds(index)}></i>
+                <span>{novel.title}</span>
+                {sourceItem ? <ul className="source-list">{sourceItem}</ul> : null}
+            </li>
+        )
+    })
 
 
     const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -39,12 +65,9 @@ function AddNovel() {
             if (response.status === "success") {
                 finished = true;
             } else if (response.status === "pending") {
-                console.log(response.message);
                 setStatus(response.message)
-                console.log("sleeping");
                 await sleep(3000); // wait 3 seconds and try again
             } else if (response.status === "error") {
-                console.log(response.message);
                 finished = true;
                 setStatus(response.message)
             } else {
@@ -58,15 +81,15 @@ function AddNovel() {
     }
 
 
-    async function sendSearchRequest() {
+    async function createSession() {
+        // Create a session with query
 
-        console.log("sendSearchRequest" + searchQuery);
-        fetch(`/api/addnovel/search?query=${searchQuery}&job_id=${job_id}`).then(
+        fetch(`/api/addnovel/create_session?query=${searchQuery}&job_id=${jobId}`).then(
             response => response.json()
         ).then(
             response => {
                 if (response.status === "success") {
-                    chooseNovel()
+                    getNovelsFounds()
                 } else {
                     console.log(response);
                 }
@@ -75,14 +98,33 @@ function AddNovel() {
     }
 
 
-    async function chooseNovel() {
+    async function getNovelsFounds() {
+        // Get the novels founds, set Novels
         console.log("chooseNovel");
-        let response = await queue(`/api/addnovel/choose_novel?job_id=${job_id}`)
+        let response = await queue(`/api/addnovel/get_novels_founds?job_id=${jobId}`)
         if (response.status === "success") {
             setNovels(response.novels.content)
         } else {
             console.log(response);
         }
+    }
+
+    async function getSourcesFounds(novelId) {
+        // Get the sources founds, set Sources for the novel
+        console.log("chooseSource" + novelId);
+        let response = await queue(`/api/addnovel/get_sources_founds?job_id=${jobId}&novel_id=${novelId}`)
+        if (response.status === "success") {
+            novels[novelId].sourcesList = response.sources.content
+            setNovels([...novels])
+        } else {
+            console.log(response);
+        }
+    }
+
+    async function startDownload(novelId, sourceId) {
+        // Start the download of the novel
+        console.log("startDownload" + novelId + " " + sourceId);
+        // let response = await queue(`/api/addnovel/start_download?job_id=${job_id}&novel_id=${novelId}&source_id=${sourceId}`)
     }
 
 
@@ -91,9 +133,9 @@ function AddNovel() {
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <article id="search-section" className="container">
                 <div className="search container">
-                    <form id="novelSearchForm" onSubmit={(e) => { e.preventDefault(); sendSearchRequest() }}>
+                    <form id="novelSearchForm" onSubmit={(e) => { e.preventDefault(); createSession() }}>
                         <div className="form-group single">
-                            <button type="button" onClick={() => sendSearchRequest()} className="search_label"
+                            <button type="button" onClick={() => createSession()} className="search_label"
                                 style={{ border: "0px", background: "none" }}>
                                 <svg width="16" height="16" viewBox="0 0 16 16"
                                     className="styles_icon__3eEqS dib vam pa_auto _no_color">
@@ -109,7 +151,7 @@ function AddNovel() {
                             <input type="submit" hidden />
                         </div>
 
-                        <input type="number" className="form-control" id="job_id" name="job_id" style={{ display: (showAdvanceOptions) ? "block" : "none" }} defaultValue={job_id} />
+                        <input type="number" className="form-control" id="job_id" name="job_id" style={{ display: (showAdvanceOptions) ? "block" : "none" }} defaultValue={jobId} />
 
                     </form>
                 </div>
@@ -118,8 +160,12 @@ function AddNovel() {
                 <p>Show advanced settings :
                     <button onClick={() => setShowAdvanceOptions(!showAdvanceOptions)}>o</button>
                 </p>
-
-                <section id="novelListBase"></section>
+                <p>{status}</p>
+                <section id="novelListBase">
+                    <ul className="novel-list">
+                        {novelItems}
+                    </ul>
+                </section>
             </article>
         </main >
     )

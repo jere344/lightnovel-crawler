@@ -6,9 +6,8 @@ from .Job import JobHandler, FinishedJob
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
 
 
-@app.route("/api/addnovel/search")
-def addnovel():
-    """Create session"""
+@app.route("/api/addnovel/create_session")
+def create_session():
     query = request.args.get("query")
     job_id = request.args.get("job_id")
 
@@ -30,8 +29,8 @@ def addnovel():
 # ----------------------------------------------- Choose Novel ----------------------------------------------- #
 
 
-@app.route("/api/addnovel/choose_novel")
-def novel_select_page():
+@app.route("/api/addnovel/get_novels_founds")
+def get_novels_founds():
     """Return search results"""
     job_id = request.args.get("job_id")
 
@@ -57,11 +56,11 @@ def novel_select_page():
 # ----------------------------------------------- Choose Source ----------------------------------------------- #
 
 
-@app.route("/api/addnovel/choose_source")
-def novel_selected():
+@app.route("/api/addnovel/get_sources_founds")
+def get_sources_founds():
     """Return list of sources for selected novel"""
     job_id = request.args.get("job_id")
-    novel_id = request.args.get("novel_id")
+    novel_id = int(request.args.get("novel_id"))
 
     if not job_id in database.jobs:
         return {"status": "error", "message": "Job do not exist"}, 400
@@ -88,8 +87,8 @@ def novel_selected():
 def download():
     """Select Source and start download"""
     job_id = request.args.get("job_id")
-    novel_id = request.args.get("novel_id")
-    source_id = request.args.get("source_id")
+    novel_id = int(request.args.get("novel_id"))
+    source_id = int(request.args.get("source_id"))
 
     if not job_id in database.jobs:
         return {"status": "error", "message": "Job do not exist"}, 400
