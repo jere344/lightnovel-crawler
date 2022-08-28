@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 from lncrawl.core.app import App
 from lncrawl.core.crawler import Crawler
 import logging
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote_plus
 from slugify import slugify
 from pathlib import Path
 
@@ -51,6 +51,14 @@ class JobHandler:
                 self.last_activity,
                 self.original_query,
             )
+            try:
+                database.jobs[self.job_id].url = (
+                    quote_plus(self.app.good_file_name)
+                    + "/"
+                    + quote_plus(slugify(urlparse(self.app.crawler.home_url).netloc))
+                )
+            except Exception as e:
+                print(e)
 
             self.app.destroy()
             self.executor.shutdown(wait=False)
@@ -105,10 +113,6 @@ class JobHandler:
         except Exception as e:
             return self.crash(f"Fail to init crawler : {e}")
 
-        # WARNING # TODO : remove this
-        self.app.crawler_links = self.app.crawler_links[8:10]
-        # WARNING
-
         try:
             self.set_last_action("Searching")
             self.app.search_novel()
@@ -129,9 +133,6 @@ class JobHandler:
             ],
             "query": query,
         }
-        # WARNING # TODO : remove this
-        print("search results : ", self.search_results)
-        # WARNING
 
     def select_novel(self, novel_id: int) -> None:
         self.selected_novel = self.app.search_results[novel_id]
@@ -252,9 +253,14 @@ class FinishedJob:
 
     is_busy = False
     last_action = "Finished"
+    url = ""
 
     def __init__(
-        self, success: bool, message: str, end_date: datetime, original_query: str
+        self,
+        success: bool,
+        message: str,
+        end_date: datetime,
+        original_query: str,
     ):
         print(f"FinishedJob: {success}, {message}, {end_date}")
         self.original_query = original_query

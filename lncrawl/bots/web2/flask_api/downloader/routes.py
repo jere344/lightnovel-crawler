@@ -98,10 +98,16 @@ def download():
         return {"status": "pending", "message": job.get_status()}, 200
 
     if isinstance(job, FinishedJob):
+        url = ""
+        try:
+            url = job.url
+        except Exception as e:
+            print(e)
+
         return {
             "status": "success",
             "message": job.get_status(),
-            "url": "not implemented",
+            "url": url,
         }, 200
 
     if not job.metadata_downloaded:

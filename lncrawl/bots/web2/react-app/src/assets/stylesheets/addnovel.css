@@ -1,32 +1,32 @@
-ul.source-list,
-ul.novel-list {
+#novelListBase ul.source-list,
+#novelListBase ul.novel-list {
     display: initial
 }
 
-ul.source-list li.source-item,
-ul.novel-list li.novel-item {
+#novelListBase ul.source-list li.source-item,
+#novelListBase ul.novel-list li.novel-item {
     line-height: 1.5em;
     width: auto;
 }
 
-ul.novel-list li.novel-item i {
+#novelListBase ul.novel-list li.novel-item i {
     cursor: pointer;
     font-style: normal;
     font-weight: bold;
     margin-right: 3px;
 }
 
-ul.novel-list li.novel-item span {
+#novelListBase ul.novel-list li.novel-item span {
     display: contents
 }
 
-ul.source-list li.source-item {
+#novelListBase ul.source-list li.source-item {
     margin-left: 40px;
     display: flex;
 }
 
-ul.source-list li.source-item a,
-ul.source-list li.source-item a {
+#novelListBase ul.source-list li.source-item a,
+#novelListBase ul.source-list li.source-item a {
     line-height: 1.5em;
     width: 100%;
     white-space: nowrap;
@@ -34,7 +34,7 @@ ul.source-list li.source-item a {
     text-overflow: ellipsis
 }
 
-ul.source-list li.source-item label {
+#novelListBase ul.source-list li.source-item label {
     margin-left: 5%;
     cursor: auto;
     line-height: 1.5em;
@@ -42,16 +42,16 @@ ul.source-list li.source-item label {
     margin-bottom: 1em;
 }
 
-ul.source-list li.source-item div {
+#novelListBase ul.source-list li.source-item div {
     width: calc(100% - 3em);
 }
 
-ul.novel-list li.novel-item span.loading {
+#novelListBase ul.novel-list li.novel-item span.loading {
     display: inline-block;
     width: 100%;
     text-align: center
 }
 
-ul.source-list li.source-item i.download-icon {
+#novelListBase ul.source-list li.source-item i.download-icon {
     margin-right: 1em;
 }

@@ -1,6 +1,7 @@
 import Metadata from '../components/Metadata';
 import logo from '../assets/logo.bmp'
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "../assets/stylesheets/addnovel.css";
 
 function AddNovel() {
@@ -11,8 +12,9 @@ function AddNovel() {
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"
 
+    let navigate = useNavigate();
+
     const [jobId] = useState(Math.random().toString().slice(2))
-    console.log("jobId: " + jobId)
 
     let [showAdvanceOptions, setShowAdvanceOptions] = useState(false)
 
@@ -20,17 +22,17 @@ function AddNovel() {
 
     const [novels, setNovels] = useState([]);
 
+    const [selectedNovel, setSelectedNovel] = useState(null);
 
-    const novelItems = novels.map((novel, index) => {
-        console.log(novel, novel.sourcesList)
+
+    const novelItems = novels.map((novel, novelIndex) => {
 
         let sourceItem = null;
-        if (novel.sourcesList !== undefined) {
-            console.log("source defined")
-            sourceItem = novel.sourcesList.map((source, index) => {
+        if ((novel.sourcesList !== undefined) && (novelIndex === selectedNovel)) {
+            sourceItem = novel.sourcesList.map((source, sourceIndex) => {
                 return (
-                    <li className="source-item" key={index}>
-                        <i className="download-icon icon-check-empty" onClick={() => startDownload(novel.id, source.id)}></i>
+                    <li className="source-item" key={sourceIndex}>
+                        <i className="download-icon icon-check-empty" onClick={() => startDownload(novelIndex, sourceIndex)}></i>
                         <div>
                             <a className="source-url" href={source.url}>{source.url}</a>
                             {source.info ? <label>{source.info}</label> : null}
@@ -42,8 +44,8 @@ function AddNovel() {
         }
 
         return (
-            <li className="novel-item" key={index}>
-                <i className="icon-right-open" onClick={() => getSourcesFounds(index)}></i>
+            <li className="novel-item" key={novelIndex}>
+                <i className="icon-right-open" onClick={() => getSourcesFounds(novelIndex)}></i>
                 <span>{novel.title}</span>
                 {sourceItem ? <ul className="source-list">{sourceItem}</ul> : null}
             </li>
@@ -90,8 +92,10 @@ function AddNovel() {
             response => {
                 if (response.status === "success") {
                     getNovelsFounds()
+                } else if (response.message !== undefined) {
+                    console.log("Error creating session : " + response.message)
                 } else {
-                    console.log(response);
+                    console.log("Unexpected response :" + response);
                 }
             }
         )
@@ -99,32 +103,35 @@ function AddNovel() {
 
 
     async function getNovelsFounds() {
-        // Get the novels founds, set Novels
-        console.log("chooseNovel");
         let response = await queue(`/api/addnovel/get_novels_founds?job_id=${jobId}`)
         if (response.status === "success") {
             setNovels(response.novels.content)
-        } else {
-            console.log(response);
         }
     }
 
     async function getSourcesFounds(novelId) {
-        // Get the sources founds, set Sources for the novel
-        console.log("chooseSource" + novelId);
-        let response = await queue(`/api/addnovel/get_sources_founds?job_id=${jobId}&novel_id=${novelId}`)
-        if (response.status === "success") {
-            novels[novelId].sourcesList = response.sources.content
-            setNovels([...novels])
-        } else {
-            console.log(response);
+        if (novelId.sourcesList === undefined) {
+            let response = await queue(`/api/addnovel/get_sources_founds?job_id=${jobId}&novel_id=${novelId}`)
+            if (response.status === "success") {
+                novels[novelId].sourcesList = response.sources.content
+                setNovels([...novels])
+            }
         }
+
+        if (selectedNovel === novelId) {
+            setSelectedNovel(null)
+        } else {
+            setSelectedNovel(novelId);
+        }
+
     }
 
     async function startDownload(novelId, sourceId) {
-        // Start the download of the novel
-        console.log("startDownload" + novelId + " " + sourceId);
-        // let response = await queue(`/api/addnovel/start_download?job_id=${job_id}&novel_id=${novelId}&source_id=${sourceId}`)
+        setNovels([]);
+        let response = await queue(`/api/addnovel/download?job_id=${jobId}&novel_id=${novelId}&source_id=${sourceId}`)
+        if (response.status === "success") {
+            navigate(`/novel/${response.url}`);
+        }
     }
 
 

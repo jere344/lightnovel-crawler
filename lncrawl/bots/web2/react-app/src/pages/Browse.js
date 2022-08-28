@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Metadata from '../components/Metadata';
 import NovelList from '../components/NovelList';
 import Pagination from '../components/Pagination';
+import { useParams } from 'react-router-dom';
 
 import "../assets/stylesheets/navbar.min.css"
 import "../assets/stylesheets/media-mobile.min.css"
@@ -11,7 +12,6 @@ import "../assets/stylesheets/media-1270.min.css"
 import "../assets/stylesheets/fontello.css"
 import "../assets/stylesheets/pagedlist.css"
 import "../assets/stylesheets/browsepg.min.css"
-import { useParams } from 'react-router-dom';
 
 
 
