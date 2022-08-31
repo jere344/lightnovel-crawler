@@ -13,19 +13,18 @@ function AddNovel() {
     const imageType = "image/bmp"
 
     let navigate = useNavigate();
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    const [jobId] = useState(Math.random().toString().slice(2))
+    let [showAdvanceOptions, setShowAdvanceOptions] = useState(false);
 
-    let [showAdvanceOptions, setShowAdvanceOptions] = useState(false)
-
+    const [jobId] = useState(Math.random().toString().slice(2));
     const [searchQuery, setSearchQuery] = useState("");
 
     const [novels, setNovels] = useState([]);
-
     const [selectedNovel, setSelectedNovel] = useState(null);
-
-
     const novelItems = novels.map((novel, novelIndex) => {
+        // If the source list for the novel is empty, ask it to the server, add it the the list and select it
+        // if not empty, just select it
 
         let sourceItem = null;
         if ((novel.sourcesList !== undefined) && (novelIndex === selectedNovel)) {
@@ -52,13 +51,11 @@ function AddNovel() {
         )
     })
 
-
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-
+    const [sessionCreated, setSessionCreated] = useState(false);
     const [status, setStatus] = useState("");
 
     async function queue(queueTarget) {
+        // polling system => if the job is not finished yet, we wait for 1 second and we poll again
         let response = false;
         let finished = false;
         while (!finished) {
@@ -85,6 +82,7 @@ function AddNovel() {
 
     async function createSession() {
         // Create a session with query
+        setSessionCreated(true);
 
         fetch(`/api/addnovel/create_session?query=${searchQuery}&job_id=${jobId}`).then(
             response => response.json()
@@ -105,7 +103,8 @@ function AddNovel() {
     async function getNovelsFounds() {
         let response = await queue(`/api/addnovel/get_novels_founds?job_id=${jobId}`)
         if (response.status === "success") {
-            setNovels(response.novels.content)
+            setStatus("");
+            setNovels(response.novels.content);
         }
     }
 
@@ -114,7 +113,7 @@ function AddNovel() {
             let response = await queue(`/api/addnovel/get_sources_founds?job_id=${jobId}&novel_id=${novelId}`)
             if (response.status === "success") {
                 novels[novelId].sourcesList = response.sources.content
-                setNovels([...novels])
+                setNovels([...novels]) // [...val] update the state directly
             }
         }
 
@@ -139,7 +138,7 @@ function AddNovel() {
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <article id="search-section" className="container">
-                <div className="search container">
+                <div className="search container" style={{ display: sessionCreated ? "none" : "block" }}>
                     <form id="novelSearchForm" onSubmit={(e) => { e.preventDefault(); createSession() }}>
                         <div className="form-group single">
                             <button type="button" onClick={() => createSession()} className="search_label"
@@ -161,12 +160,13 @@ function AddNovel() {
                         <input type="number" className="form-control" id="job_id" name="job_id" style={{ display: (showAdvanceOptions) ? "block" : "none" }} defaultValue={jobId} />
 
                     </form>
+                    <br />
+                    <br />
+                    <p>Show advanced settings :
+                        <button onClick={() => setShowAdvanceOptions(!showAdvanceOptions)}>o</button>
+                    </p>
                 </div>
-                <br />
-                <br />
-                <p>Show advanced settings :
-                    <button onClick={() => setShowAdvanceOptions(!showAdvanceOptions)}>o</button>
-                </p>
+                {sessionCreated ? <h1>Search results for {searchQuery}</h1> : null}
                 <p>{status}</p>
                 <section id="novelListBase">
                     <ul className="novel-list">

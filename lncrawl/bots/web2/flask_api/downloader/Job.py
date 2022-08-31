@@ -52,11 +52,14 @@ class JobHandler:
                 self.original_query,
             )
             try:
-                database.jobs[self.job_id].url = (
-                    quote_plus(self.app.good_file_name)
-                    + "/"
-                    + quote_plus(slugify(urlparse(self.app.crawler.home_url).netloc))
-                )
+                if self.app.good_file_name and self.app.crawler.home_url:
+                    database.jobs[self.job_id].url = (
+                        quote_plus(self.app.good_file_name)
+                        + "/"
+                        + quote_plus(
+                            slugify(urlparse(self.app.crawler.home_url).netloc)
+                        )
+                    )
             except Exception as e:
                 print(e)
 
