@@ -73,12 +73,35 @@ function NovelInfo() {
 
 
     }
+    const [updating, setUpdating] = useState(false);
+    const [status, setStatus] = useState(null);
 
-    function update_novel(){
-        fetch(`/api/addnovel/update?job_id=${Math.random().toString().slice(2)}&&url=${"url"}`); 
-        className = "isDisabled"
+    async function update_novel() {
+        setUpdating(true);
+        // polling system => if the job is not finished yet, we wait for 1 second and we poll again
+        let response = false;
+        let finished = false;
+        while (!finished) {
+            response = await fetch(`/api/addnovel/update?job_id=${Math.random().toString().slice(2)}&&url=${"url"}`).then(res => res.json());
+
+            if (response.status === "success") {
+                finished = true;
+            } else if (response.status === "pending") {
+                setStatus(response.message)
+                await sleep(3000); // wait 3 seconds and try again
+            } else if (response.status === "error") {
+                finished = true;
+                setStatus(response.message)
+            } else {
+                console.log("Unexpected response :" + response);
+                finished = true;
+            }
+        }
+        setStatus("finished");
+
+        setUpdating(false);
+        return response
     }
-
     return (
 
         <main role="main">
@@ -172,7 +195,11 @@ function NovelInfo() {
                             <i className="icon-right-open"></i>
                         </Link>
                     </nav>
-                    <button onClick={()=> update_novel()}>UPDATE</button>
+                    <div clasName="update">
+                        <button onClick={()=> update_novel()} className={updating? "isDisabled" : null}>UPDATE</button>
+                        {status ? <p class="updateStatus">{status}</p> : null}
+
+                    </div>
                     <section id="info">
                         <div className="summary">
                             <h4 className="lined">Summary</h4>

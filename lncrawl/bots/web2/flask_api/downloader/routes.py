@@ -187,8 +187,12 @@ from threading import Thread
 def update():
     url = request.args.get("url")
     job_id = request.args.get("job_id")
+    job = database.jobs[job_id]
     if job_id in database.jobs:
-        return {"status": database.jobs[job_id].get_status()}
+        if isinstance(job, FinishedJob):
+            return {"status": "finished", "message": job.get_status()}
+        else :
+            return {"status": "pending", "message" : job.get_status()}
     else :
         Thread(target = (_update, url, job_id)).start()
 
