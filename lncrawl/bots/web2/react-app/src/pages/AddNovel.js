@@ -84,6 +84,17 @@ function AddNovel() {
         // Create a session with query
         setSessionCreated(true);
 
+        if (searchQuery.length < 3) {
+            setStatus("Search query must be at least 3 characters long");
+            return;
+        }
+
+        if (searchQuery.startsWith("http")) {
+            console.log("Search query is an url");
+            directDownload(searchQuery);
+            return;
+        }
+
         fetch(`/api/addnovel/create_session?query=${searchQuery}&job_id=${jobId}`).then(
             response => response.json()
         ).then(
@@ -127,7 +138,14 @@ function AddNovel() {
 
     async function startDownload(novelId, sourceId) {
         setNovels([]);
-        let response = await queue(`/api/addnovel/download?job_id=${jobId}&novel_id=${novelId}&source_id=${sourceId}`)
+        let response = await queue(`/api/addnovel/download?job_id=${jobId}&novel_id=${novelId}&source_id=${sourceId}`);
+        if (response.status === "success") {
+            navigate(`/novel/${response.url}`);
+        }
+    }
+
+    async function directDownload(url) {
+        let response = await queue(`/api/addnovel/direct_download?job_id=${jobId}&url=${url}`);
         if (response.status === "success") {
             navigate(`/novel/${response.url}`);
         }

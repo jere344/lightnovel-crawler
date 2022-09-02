@@ -88,33 +88,42 @@ class JobHandler:
     downloading_images = False
 
     def get_status(self):
-        if not self.sources_to_search:
-            self.sources_to_search = len(self.app.crawler_links)
-        if not self.chapters_to_download:
-            self.chapters_to_download = len(self.app.chapters)
-        if not self.images_to_download:
-            self.images_to_download = (
-                sum([len(chapter.get("images", {})) for chapter in self.app.chapters])
-                + 1
-            )  # +1 for the cover
+        try:
+            if not self.sources_to_search:
+                self.sources_to_search = len(self.app.crawler_links)
+            if not self.chapters_to_download:
+                self.chapters_to_download = len(self.app.chapters)
+            if not self.images_to_download:
+                self.images_to_download = (
+                    sum(
+                        [
+                            len(chapter.get("images", {}))
+                            for chapter in self.app.chapters
+                        ]
+                    )
+                    + 1
+                )  # +1 for the cover
 
-        if not self.is_busy:
-            return "No current task"
+            if not self.is_busy:
+                return "No current task"
 
-        elif self.last_action == "Downloading":
-            # hacky way to know if we are downloading images : if the progress diminished, we are downloading images
-            if self.app.progress < self.last_progress:
-                self.downloading_images = True
-            if self.downloading_images:
-                return f"Downloading images ({self.app.progress}/{self.images_to_download})"
+            elif self.last_action == "Downloading":
+                # hacky way to know if we are downloading images : if the progress diminished, we are downloading images
+                if self.app.progress < self.last_progress:
+                    self.downloading_images = True
+                if self.downloading_images:
+                    return f"Downloading images ({self.app.progress}/{self.images_to_download})"
+                else:
+                    return f"Downloading chapters ({self.app.progress}/{self.chapters_to_download})"
+
+            elif self.last_action == "Searching":
+                return f"Searching ({self.app.progress}/{self.sources_to_search})"
+
             else:
-                return f"Downloading chapters ({self.app.progress}/{self.chapters_to_download})"
+                return self.last_action
 
-        elif self.last_action == "Searching":
-            return f"Searching ({self.app.progress}/{self.sources_to_search})"
-
-        else:
-            return self.last_action
+        finally:
+            self.last_progress = self.app.progress
 
     # -----------------------------------------------------------------------------
     def get_list_of_novel(self, query: str) -> None:
