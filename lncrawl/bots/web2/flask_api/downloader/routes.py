@@ -1,6 +1,7 @@
 from ..flaskapp import app
 from flask import request
 from .. import database
+from .. import lib
 from .Job import JobHandler, FinishedJob
 
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
@@ -178,3 +179,35 @@ def direct_download():
     else:  # job has downloaded metadata, isn't busy and isn't finished : start download
         job.start_download()
         return {"status": "pending", "html": job.get_status()}, 200
+
+
+import time
+from threading import Thread
+@app.route("/api/addnovel/update")
+def update():
+    url = request.args.get("url")
+    job_id = request.args.get("job_id")
+    if job_id in database.jobs:
+        return {"status": database.jobs[job_id].get_status()}
+    else :
+        Thread(target = (_update, url, job_id)).start()
+
+def _update(url, job_id):
+    job = JobHandler(job_id)
+
+    job.prepare_direct_download(url)
+    time.sleep(1000)
+    while job.is_busy():
+        time.sleep(1000)
+    
+    path = lib.LIGHTNOVEL_FOLDER / job.source_slug / job.novel_slug / "json"
+
+    chapters_to_download = []
+    for chapter in job.app.crawler.chapters:
+        if not (path / chapter["id"]).exists():
+            chapters_to_download.append(chapter)
+    
+    job.app.crawler.chapters = chapters_to_download
+
+    job.start_download()
+        

@@ -1,13 +1,4 @@
-from typing import Union
-
-class A:
-    pass
-
-class B:
-    pass
-
-
-a = A()
-b = B()
-
-print(isinstance(a, Union[A, B]))
+a = [1,2,4,5,8,4,5,6,5]
+start = 0
+stop = None
+print(a[start:stop])

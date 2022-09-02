@@ -214,8 +214,9 @@ class JobHandler:
         except Exception as ex:
             return self.crash(f"Failed to get novel info : {ex}")
 
-        source_name = slugify(urlparse(self.app.crawler.home_url).netloc)  # type: ignore
-        output_path = lib.LIGHTNOVEL_FOLDER / self.app.good_file_name / source_name
+        self.source_slug = slugify(urlparse(self.app.crawler.home_url).netloc)  # type: ignore
+        self.novel_slug = self.app.good_file_name
+        output_path = lib.LIGHTNOVEL_FOLDER / self.novel_slug / self.source_slug
         self.app.output_path = str(output_path)
         if not output_path.exists():
             output_path.mkdir(parents=True)
@@ -228,9 +229,9 @@ class JobHandler:
     #     self.set_last_action("Set download range")
     #     self.app.chapters = self.app.crawler.chapters[start - 1 : finish - 1]
 
-    def _select_range(self):
+    def _select_range(self, start=0, stop=None):
         self.set_last_action("Set download range")
-        self.app.chapters = self.app.crawler.chapters[:]  # type: ignore
+        self.app.chapters = self.app.crawler.chapters[start:stop]  # type: ignore
 
     def start_download(self):
         self.is_busy = True
@@ -239,12 +240,11 @@ class JobHandler:
 
     def _start_download(self):
         self.is_busy = True
-        self.set_last_action("Downloading")
-
         self.app.pack_by_volume = False
 
         try:
             assert isinstance(self.app.crawler, Crawler)
+            self.set_last_action("Downloading")
             self.app.start_download()
             self.set_last_action("Compressing")
             self.app.compress_books()

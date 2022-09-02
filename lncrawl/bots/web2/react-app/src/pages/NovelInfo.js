@@ -74,6 +74,10 @@ function NovelInfo() {
 
     }
 
+    function update_novel(){
+        fetch(`/api/addnovel/update?job_id=${Math.random().toString().slice(2)}&&url=${"url"}`); 
+        className = "isDisabled"
+    }
 
     return (
 
@@ -167,8 +171,8 @@ function NovelInfo() {
                             </div>
                             <i className="icon-right-open"></i>
                         </Link>
-
                     </nav>
+                    <button onClick={()=> update_novel()}>UPDATE</button>
                     <section id="info">
                         <div className="summary">
                             <h4 className="lined">Summary</h4>
