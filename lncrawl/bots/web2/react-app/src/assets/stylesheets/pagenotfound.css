@@ -1,0 +1,30 @@
+#page-not-found p {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+}
+
+#page-not-found .button:not(:last-child) {
+    margin-right: 1rem;
+}
+
+#page-not-found hr {
+    margin: 2rem 0;
+}
+
+#page-not-found .white-boxed {
+    text-align: center;
+    padding: 3rem;
+}
+
+@media screen and (max-width: 767px) {
+    #page-not-found .white-boxed {
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    #page-not-found p {
+        margin: 1rem 0;
+        font-size: 1rem;
+    }
+}
