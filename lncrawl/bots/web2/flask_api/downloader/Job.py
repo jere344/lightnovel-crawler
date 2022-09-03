@@ -263,10 +263,9 @@ class JobHandler:
         novel_info = read_novel_info.get_novel_info(Path(self.app.output_path).parent)
 
         is_in_all_novels = False
-        for i, downloaded_info in enumerate(database.all_downloaded_novels):
-            if downloaded_info == novel_info:
-                novel_info.rank = downloaded_info.rank
-                database.all_downloaded_novels[i] = novel_info
+        for downloaded_info in database.all_downloaded_novels:
+            if self.app.crawler.novel_title == downloaded_info.title:
+                downloaded_info = novel_info
                 is_in_all_novels = True
                 break
 

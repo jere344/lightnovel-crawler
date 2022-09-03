@@ -197,23 +197,71 @@ def update():
         else:
             return {"status": "pending", "message": job.get_status()}
     else:
-        job = database.jobs[job_id] = JobHandler(job_id)
-        Thread(target=_update, args=(url, job)).start()
+        Thread(target=_update, args=(url, job_id)).start()
         return {"status": "pending", "message": "Creating session"}
 
 
-def _update(url: str, job: JobHandler):
+import json
+
+
+def _update(url: str, job_id: str):
+    job = database.jobs[job_id] = JobHandler(job_id)
     job.prepare_direct_download(url)
     time.sleep(1)
     while job.is_busy:
         time.sleep(1)
 
-    path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "json"
+    json_folder_path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "json"
 
     chapters_to_download = []
     for chapter in job.app.crawler.chapters:
-        if not (path / f"{str(chapter['id']).zfill(5)}.json").exists():
+        if not (json_folder_path / f"{str(chapter['id']).zfill(5)}.json").exists():
             chapters_to_download.append(chapter)
     job.app.crawler.chapters = chapters_to_download
+    print(
+        "Downloading chapters : "
+        + ", ".join([str(chapter["id"]) for chapter in chapters_to_download])
+        + " of "
+        + job.novel_slug
+    )
+    # job.start_download() write metadata, so when updating it will only keep the new chapters
+    # and not the aldready downloaded ones.
+    # So we need to write the metadata manually
+
+    # get aldready downloaded chapters
+    with open(json_folder_path.parent / "meta.json", "r", encoding="utf-8") as f:
+        downloaded_chapters = json.load(f)["chapters"]
 
     job.start_download()
+    print("\n\n\n\n\n\n")
+
+    while job.is_busy and not isinstance(database.jobs[job_id], FinishedJob):
+        time.sleep(1)
+
+    # get current metadata and chapters
+    with open(json_folder_path.parent / "meta.json", "r", encoding="utf-8") as f:
+        metadata = json.load(f)
+
+    metadata["chapters"] += downloaded_chapters
+    metadata["chapters"] = sorted(metadata["chapters"], key=lambda x: x["id"])
+
+    # write the new metadata
+    with open(json_folder_path.parent / "meta.json", "w", encoding="utf-8") as f:
+        json.dump(metadata, f)
+
+    # Find the novel
+    for downloaded_info in database.all_downloaded_novels:
+        if downloaded_info.title == job.app.crawler.novel_title:
+
+            # Find the source
+            for source in downloaded_info.sources:
+                if source.slug == job.source_slug:
+                    # Update the source info
+                    source.chapter_count = len(metadata["chapters"])
+                    source.first = metadata["chapters"][0]["title"]
+                    source.latest = metadata["chapters"][-1]["title"]
+                    breaking = True
+                    break
+
+            if breaking:
+                break

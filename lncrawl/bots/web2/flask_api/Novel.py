@@ -119,6 +119,7 @@ class NovelFromSource:
     latest: str = ""
     summary: str = ""
     language: str = "en"
+    url: str = ""
 
     # Auto
 
@@ -145,4 +146,5 @@ class NovelFromSource:
             "summary": self.summary,
             "language": self.language,
             # "str_path": self.str_path,
+            "url": self.url,
         }

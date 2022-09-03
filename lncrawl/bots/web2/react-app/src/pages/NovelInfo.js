@@ -32,6 +32,7 @@ function NovelInfo() {
         "first": "Loading ...",
         "language": "en",
         "latest": "Loading ...",
+        "url": "Loading ...",
         "novel": {
             "chapter_count": 0,
             "clicks": 0,
@@ -76,13 +77,20 @@ function NovelInfo() {
     const [updating, setUpdating] = useState(false);
     const [status, setStatus] = useState(null);
 
+    const sleep = (milliseconds) => {
+        return new Promise(resolve => setTimeout(resolve, milliseconds))
+    }
+
+    const jobId = Math.random().toString().slice(2);
+
+    console.log(source.url)
     async function update_novel() {
         setUpdating(true);
         // polling system => if the job is not finished yet, we wait for 1 second and we poll again
         let response = false;
         let finished = false;
         while (!finished) {
-            response = await fetch(`/api/addnovel/update?job_id=${Math.random().toString().slice(2)}&&url=${"url"}`).then(res => res.json());
+            response = await fetch(`/api/addnovel/update?job_id=${jobId}&&url=${source.url}`).then(res => res.json());
 
             if (response.status === "success") {
                 finished = true;
@@ -195,8 +203,8 @@ function NovelInfo() {
                             <i className="icon-right-open"></i>
                         </Link>
                     </nav>
-                    <div clasName="update">
-                        <button onClick={()=> update_novel()} className={updating? "isDisabled" : null}>UPDATE</button>
+                    <div className="update">
+                        <button onClick={() => update_novel()} className={updating ? "isDisabled" : null}>UPDATE</button>
                         {status ? <p class="updateStatus">{status}</p> : null}
 
                     </div>
