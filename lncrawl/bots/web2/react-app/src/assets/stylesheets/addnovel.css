@@ -1,0 +1,57 @@
+#novelListBase ul.source-list,
+#novelListBase ul.novel-list {
+    display: initial
+}
+
+#novelListBase ul.source-list li.source-item,
+#novelListBase ul.novel-list li.novel-item {
+    line-height: 1.5em;
+    width: auto;
+}
+
+#novelListBase ul.novel-list li.novel-item i {
+    cursor: pointer;
+    font-style: normal;
+    font-weight: bold;
+    margin-right: 3px;
+}
+
+#novelListBase ul.novel-list li.novel-item span {
+    display: contents
+}
+
+#novelListBase ul.source-list li.source-item {
+    margin-left: 40px;
+    display: flex;
+}
+
+#novelListBase ul.source-list li.source-item a,
+#novelListBase ul.source-list li.source-item a {
+    line-height: 1.5em;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+#novelListBase ul.source-list li.source-item label {
+    margin-left: 5%;
+    cursor: auto;
+    line-height: 1.5em;
+    display: block;
+    margin-bottom: 1em;
+}
+
+#novelListBase ul.source-list li.source-item div {
+    width: calc(100% - 3em);
+}
+
+#novelListBase ul.novel-list li.novel-item span.loading {
+    display: inline-block;
+    width: 100%;
+    text-align: center
+}
+
+#novelListBase ul.source-list li.source-item i.download-icon {
+    margin-right: 1em;
+}
