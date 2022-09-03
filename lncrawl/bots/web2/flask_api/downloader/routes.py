@@ -183,35 +183,37 @@ def direct_download():
 
 import time
 from threading import Thread
+
+
 @app.route("/api/addnovel/update")
 def update():
     url = request.args.get("url")
     job_id = request.args.get("job_id")
-    job = database.jobs[job_id]
+
     if job_id in database.jobs:
+        job = database.jobs[job_id]
         if isinstance(job, FinishedJob):
             return {"status": "finished", "message": job.get_status()}
-        else :
-            return {"status": "pending", "message" : job.get_status()}
-    else :
-        Thread(target = (_update, url, job_id)).start()
+        else:
+            return {"status": "pending", "message": job.get_status()}
+    else:
+        job = database.jobs[job_id] = JobHandler(job_id)
+        Thread(target=_update, args=(url, job)).start()
+        return {"status": "pending", "message": "Creating session"}
 
-def _update(url, job_id):
-    job = JobHandler(job_id)
 
+def _update(url: str, job: JobHandler):
     job.prepare_direct_download(url)
-    time.sleep(1000)
-    while job.is_busy():
-        time.sleep(1000)
-    
-    path = lib.LIGHTNOVEL_FOLDER / job.source_slug / job.novel_slug / "json"
+    time.sleep(1)
+    while job.is_busy:
+        time.sleep(1)
+
+    path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "json"
 
     chapters_to_download = []
     for chapter in job.app.crawler.chapters:
-        if not (path / chapter["id"]).exists():
+        if not (path / f"{str(chapter['id']).zfill(5)}.json").exists():
             chapters_to_download.append(chapter)
-    
     job.app.crawler.chapters = chapters_to_download
 
     job.start_download()
-        
