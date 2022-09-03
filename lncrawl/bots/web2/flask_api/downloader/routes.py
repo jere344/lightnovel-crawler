@@ -233,7 +233,6 @@ def _update(url: str, job_id: str):
         downloaded_chapters = json.load(f)["chapters"]
 
     job.start_download()
-    print("\n\n\n\n\n\n")
 
     while job.is_busy and not isinstance(database.jobs[job_id], FinishedJob):
         time.sleep(1)
