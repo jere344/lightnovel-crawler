@@ -23,6 +23,8 @@ def run_bot(bot):
     elif bot == "discord":
         from ..bots.discord import DiscordBot
 
+        DiscordBot().start_bot()
+
     elif bot == "web2":
         from . import web2
 
