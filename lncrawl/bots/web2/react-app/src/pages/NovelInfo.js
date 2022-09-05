@@ -205,7 +205,9 @@ function NovelInfo() {
                         </Link>
                     </nav>
                     <div className="update">
-                        <button onClick={() => update_novel()} className={updating ? "isDisabled" : null}>UPDATE</button>
+                        <button onClick={() => update_novel()} className={"updatebtn" + (updating ? " isDisabled" : "")}>
+                            UPDATE
+                        </button>
                         {status ? <p className="updateStatus">{status}</p> : null}
 
                     </div>
