@@ -17,7 +17,7 @@ import "../assets/stylesheets/select.css"
 
 function NovelInfo() {
     const currentUrlSplitted = window.location.href.split('/');
-
+    const [updateHook, setUpdateHook] = useState(0);
     let _navigate = useNavigate();
     const routeChange = (path) => {
         _navigate(path);
@@ -56,7 +56,7 @@ function NovelInfo() {
                 setSource(data);
             }
         )
-    }, [novelSlug, sourceSlug]);
+    }, [novelSlug, sourceSlug, updateHook]);
 
     const title = `Read ${source.title} in ${languageDict[source.language]} for free | LnCrawler`;
     const description = `Read ${source.title} in ${languageDict[source.language]} and thousands of famous Light Novels and Web Novels in any language from more that 140 different websites`;
@@ -83,7 +83,6 @@ function NovelInfo() {
 
     const jobId = Math.random().toString().slice(2);
 
-    console.log(source.url)
     async function update_novel() {
         setUpdating(true);
         // polling system => if the job is not finished yet, we wait for 1 second and we poll again
@@ -101,11 +100,13 @@ function NovelInfo() {
                 finished = true;
                 setStatus(response.message)
             } else {
-                console.log("Unexpected response :" + response);
+                console.log("Unexpected response :", response);
+                setStatus("Unexpected response", response);
                 finished = true;
             }
         }
-        setStatus("finished");
+
+        setUpdateHook(updateHook + 1);// force a re-fetch and re-render of the page
 
         setUpdating(false);
         return response
@@ -205,7 +206,7 @@ function NovelInfo() {
                     </nav>
                     <div className="update">
                         <button onClick={() => update_novel()} className={updating ? "isDisabled" : null}>UPDATE</button>
-                        {status ? <p class="updateStatus">{status}</p> : null}
+                        {status ? <p className="updateStatus">{status}</p> : null}
 
                     </div>
                     <section id="info">

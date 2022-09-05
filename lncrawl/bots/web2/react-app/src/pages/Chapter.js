@@ -167,7 +167,7 @@ function Chapter() {
             <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
                 <div className="head-stick-offset"></div>
                 <div className="container"></div>
-                (<section className="page-in content-wrap" ref={innerRef}>
+                <section className="page-in content-wrap" ref={innerRef}>
                     <div className="titles">
                         <h1 itemProp="headline">
                             <Link className="booktitle" to={`/novel/${novelSlug}/${sourceSlug}`} title={source.title} rel="up"
@@ -286,7 +286,7 @@ function Chapter() {
                         <span className="desktop">Tip: You can use left and right keyboard keys to browse between
                             chapters.</span>
                     </div>
-                </section>)
+                </section>
             </article>
         </main>
         )

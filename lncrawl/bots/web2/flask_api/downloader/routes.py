@@ -193,12 +193,19 @@ def update():
     if job_id in database.jobs:
         job = database.jobs[job_id]
         if isinstance(job, FinishedJob):
-            return {"status": "finished", "message": job.get_status()}
+            return {"status": "success", "message": job.get_status()}, 200
         else:
-            return {"status": "pending", "message": job.get_status()}
+            return {"status": "pending", "message": job.get_status()}, 200
     else:
+        if url in [job.original_query for job in database.jobs.values()]:
+            # If the url is already in the database, return the job id
+            # It means that a novel can only be updated once every reboot (database.jobs is cleared on reboot)
+            return {
+                "status": "error",
+                "message": "Novel aldready updating or recently updated",
+            }, 200
         Thread(target=_update, args=(url, job_id)).start()
-        return {"status": "pending", "message": "Creating session"}
+        return {"status": "pending", "message": "Creating session"}, 200
 
 
 import json
@@ -206,6 +213,7 @@ import json
 
 def _update(url: str, job_id: str):
     job = database.jobs[job_id] = JobHandler(job_id)
+    job.original_query = url
     job.prepare_direct_download(url)
     time.sleep(1)
     while job.is_busy:
