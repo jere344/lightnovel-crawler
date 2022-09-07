@@ -40,7 +40,7 @@ for i, n in enumerate(database.all_downloaded_novels, start=1):
     n.rank = i
 
 import threading, time
-
+import shutil
 
 def update_novels_stats():
     """Periodic function to update each novels stats"""
@@ -49,7 +49,12 @@ def update_novels_stats():
         for novel in database.all_downloaded_novels:
             if not novel.path:
                 continue
-            with open(novel.path / "stats.json", "w", encoding="utf-8") as f:
+            stat_path = novel.path / "stats.json"
+
+            if not stat_path.exists():
+                shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
+                
+            with open(stat_path, "w", encoding="utf-8") as f:
                 novel_stats = {
                     "clicks": novel.clicks,
                     "ratings": novel.ratings,
@@ -60,4 +65,4 @@ def update_novels_stats():
         print("Updated novels stats")
 
 
-# threading.Thread(target=update_novels_stats, daemon=True).start()
+threading.Thread(target=update_novels_stats, daemon=True).start()

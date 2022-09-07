@@ -64,6 +64,7 @@ def get_novel():
         lib.LIGHTNOVEL_FOLDER / unquote_plus(novel_slug) / unquote_plus(source_slug)
     )
     source = utils.find_source_with_path(source_path)
+    database.all_downloaded_novels[source.novel].clicks += 1
     if not source_path.exists():
         return "", 404
 
@@ -175,3 +176,18 @@ def search():
         "content": search_results,
         "results": number_of_results,
     }
+
+@flaskapp.route("/api/rate")
+def rate():
+    rating = request.args.get("rating")
+    if not isinstance(rating, int):
+        return {"status":"error", "message":"Rating must be whole number"}, 400
+    if not 0 < rating < 6:
+        return {"status":"error", "message":"Rating must be between 1 and 5"}, 400
+    novel_slug = request.args.get("novel")
+
+    novel = utils.find_novel_in_database(novel_slug)
+    
+    novel.ratings[utils.shuffle_ip(request.remote_addr)] = rating
+
+    return {"status" : "success", "message": "Rating added"}
