@@ -35,6 +35,9 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
         source = _get_source_info(source_folder)
 
+        if not source:
+            continue
+
         if not cover and source.cover:
             cover = source.cover
             prefered_source = source
@@ -118,29 +121,31 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
         if (source_folder / "cover.jpg").exists()
         else None
     )
-    if (source_folder / "meta.json").exists():
-        with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
-            meta = json.load(f)
+    if not (source_folder / "meta.json").exists():
+        return None
 
-        try:
-            latest = meta["chapters"][-1]["title"]
-        except KeyError:
-            latest = ""
-        except IndexError:
-            latest = ""
-        try:
-            first = meta["chapters"][0]["title"]
-        except KeyError:
-            first = ""
-        except IndexError:
-            first = ""
-        author = meta["author"] if "author" in meta else ""
-        chapter_count = len(meta["chapters"]) if "chapters" in meta else 0
-        volume_count = len(meta["volumes"]) if "volumes" in meta else 0
-        title = meta["title"] if "title" in meta else source_folder.parent.name
-        language = meta["language"] if "language" in meta else "en"
-        url = meta["url"] if "url" in meta else ""
-        summary = meta["summary"] if "summary" in meta else ""
+    with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
+        meta = json.load(f)
+
+    try:
+        latest = meta["chapters"][-1]["title"]
+    except KeyError:
+        latest = ""
+    except IndexError:
+        latest = ""
+    try:
+        first = meta["chapters"][0]["title"]
+    except KeyError:
+        first = ""
+    except IndexError:
+        first = ""
+    author = meta["author"] if "author" in meta else ""
+    chapter_count = len(meta["chapters"]) if "chapters" in meta else 0
+    volume_count = len(meta["volumes"]) if "volumes" in meta else 0
+    title = meta["title"] if "title" in meta else source_folder.parent.name
+    language = meta["language"] if "language" in meta else "en"
+    url = meta["url"] if "url" in meta else ""
+    summary = meta["summary"] if "summary" in meta else ""
 
     source = NovelFromSource(
         path=path,

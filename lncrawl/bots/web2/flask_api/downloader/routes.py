@@ -13,7 +13,7 @@ def create_session():
     job_id = request.args.get("job_id")
 
     if not query:
-        return {"status": "error", "message": "No query"}
+        return {"status": "error", "message": "No query"}, 400
     if len(query) < 4:
         return {"status": "error", "message": "Query too short"}, 400
 
@@ -36,20 +36,20 @@ def get_novels_founds():
     job_id = request.args.get("job_id")
 
     if not job_id in database.jobs:
-        return {"status": "error", "message": "Job do not exist"}, 400
+        return {"status": "error", "message": "Job do not exist"}, 412
 
     job = database.jobs[job_id]
     if job.is_busy:
-        return {"status": "pending", "message": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 202
 
     if isinstance(job, FinishedJob):
         return {
             "status": "error",
             "message": f"Job aldready finished : {job.get_status()}",
-        }, 400
+        }, 409
 
     if not job.search_results:
-        return {"status": "error", "message": "No search results"}, 400
+        return {"status": "error", "message": "No search results"}, 404
 
     return {"status": "success", "novels": job.search_results}, 200
 
@@ -64,17 +64,17 @@ def get_sources_founds():
     novel_id = int(request.args.get("novel_id"))
 
     if not job_id in database.jobs:
-        return {"status": "error", "message": "Job do not exist"}, 400
+        return {"status": "error", "message": "Job do not exist"}, 412
 
     job = database.jobs[job_id]
     if job.is_busy:
-        return {"status": "pending", "message": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 202
 
     if isinstance(job, FinishedJob):
         return {
             "status": "error",
             "message": f"Job aldready finished : {job.get_status()}",
-        }, 400
+        }, 409
 
     job.select_novel(novel_id)
 
@@ -92,11 +92,11 @@ def download():
     source_id = int(request.args.get("source_id"))
 
     if not job_id in database.jobs:
-        return {"status": "error", "message": "Job do not exist"}, 400
+        return {"status": "error", "message": "Job do not exist"}, 412
 
     job = database.jobs[job_id]
     if job.is_busy:
-        return {"status": "pending", "message": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 202
 
     if isinstance(job, FinishedJob):
         url = ""
@@ -114,11 +114,11 @@ def download():
     if not job.metadata_downloaded:
         job.select_novel(novel_id)
         job.select_source(source_id)
-        return {"status": "pending", "message": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 202
 
     job.start_download()
 
-    return {"status": "pending", "message": job.get_status()}, 200
+    return {"status": "pending", "message": job.get_status()}, 202
 
     # Busy : Downloading metadata or downloading novel
     #    --> send status
@@ -144,7 +144,7 @@ def direct_download():
     if not novel_url:
         return {"status": "error", "message": "Missing url"}, 400
     elif not novel_url.startswith("http"):
-        {"status": "error", "message": "Invalid URL"}
+        return {"status": "error", "message": "Invalid URL"}, 400
 
     if not job_id in database.jobs or (
         isinstance(database.jobs[job_id], FinishedJob)
@@ -157,7 +157,7 @@ def direct_download():
         job = database.jobs[job_id]
 
     if job.is_busy:  # Job is busy
-        return {"status": "pending", "message": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 202
 
     elif isinstance(job, FinishedJob):  # job finished
         url = ""
@@ -174,11 +174,11 @@ def direct_download():
 
     elif not job.metadata_downloaded:  # job hasn't downloaded metadata yet
         job.prepare_direct_download(novel_url)
-        return {"status": "pending", "message": job.get_status()}, 200
+        return {"status": "pending", "message": job.get_status()}, 202
 
     else:  # job has downloaded metadata, isn't busy and isn't finished : start download
         job.start_download()
-        return {"status": "pending", "html": job.get_status()}, 200
+        return {"status": "pending", "html": job.get_status()}, 202
 
 
 import time
@@ -195,7 +195,7 @@ def update():
         if isinstance(job, FinishedJob):
             return {"status": "success", "message": job.get_status()}, 200
         else:
-            return {"status": "pending", "message": job.get_status()}, 200
+            return {"status": "pending", "message": job.get_status()}, 202
     else:
         if url in [job.original_query for job in database.jobs.values()]:
             # If the url is already in the database, return the job id
@@ -203,9 +203,9 @@ def update():
             return {
                 "status": "error",
                 "message": "Novel aldready updating or recently updated",
-            }, 200
+            }, 409
         Thread(target=_update, args=(url, job_id)).start()
-        return {"status": "pending", "message": "Creating session"}, 200
+        return {"status": "pending", "message": "Creating session"}, 202
 
 
 import json

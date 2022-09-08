@@ -17,7 +17,7 @@ from . import sanatize
 def image(file: pathlib.Path):
     path: pathlib.Path = lib.LIGHTNOVEL_FOLDER / file
     if path.exists():
-        return send_from_directory(lib.LIGHTNOVEL_FOLDER, file)
+        return send_from_directory(lib.LIGHTNOVEL_FOLDER, file), 200
     else:
         print(path)
     return "", 404
@@ -28,7 +28,7 @@ def flags(language: str):
     if not len(language) == 2:
         return "", 404
 
-    return send_from_directory("static/flags", language + ".svg")
+    return send_from_directory("static/flags", language + ".svg"), 200
 
 
 # /api/novels?page=${page}
@@ -50,7 +50,7 @@ def get_novels():
             "total_pages": math.ceil(len(database.all_downloaded_novels) / 20),
             "current_page": int(page),
         },
-    }
+    }, 200
 
 
 @flaskapp.app.route("/api/novel")
@@ -68,7 +68,7 @@ def get_novel():
     if not source_path.exists():
         return "", 404
 
-    return source.asdict()
+    return source.asdict(), 200
 
 
 @flaskapp.app.route("/api/chapter/")
@@ -77,7 +77,7 @@ def get_chapter():
     source_slug = request.args.get("source")
     chapter_id = request.args.get("chapter")
     if not novel_slug or not source_slug or not chapter_id:
-        return "novel, source or chapter missing : invalid request", 400
+        return "invalid request : novel, source or chapter missing", 400
     chapter_folder = (
         lib.LIGHTNOVEL_FOLDER
         / unquote_plus(novel_slug)
@@ -104,7 +104,7 @@ def get_chapter():
         "is_next": is_next,
         "is_prev": is_prev,
         "source": source.asdict(),
-    }
+    }, 200
 
 
 @flaskapp.app.route("/api/chapterlist/")
@@ -113,7 +113,7 @@ def get_chapter_list():
     source_slug = request.args.get("source")
     page = request.args.get("page")
     if not novel_slug or not source_slug or not page:
-        return "novel or source missing : invalid request", 400
+        return "invalid request : novel or source missing", 400
     page = int(page) - 1
 
     meta_file = (
@@ -141,7 +141,7 @@ def get_chapter_list():
         "is_next": is_next,
         "is_prev": is_prev,
         "total_pages": total_pages,
-    }
+    }, 200
 
 
 @flaskapp.app.route("/api/search/")
@@ -175,7 +175,7 @@ def search():
     return {
         "content": search_results,
         "results": number_of_results,
-    }
+    }, 200
 
 
 @flaskapp.app.route("/api/rate", methods=["POST"])
@@ -193,4 +193,4 @@ def rate():
 
     novel.ratings[utils.shuffle_ip(request.remote_addr)] = rating
 
-    return {"status": "success", "message": "Rating added"}
+    return {"status": "success", "message": "Rating added"}, 200
