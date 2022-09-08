@@ -1,25 +1,40 @@
-import React from 'react'
+import React, { useState } from "react";
+
 
 function RatingStars(param) {
+    const [ratingHovered, setRatingHovered] = useState(false);
+
     const roundedRating = parseInt(param.rating);
     const rating = param.rating;
     const count = param.count;
     const ratingStars = [];
-    for (let i = 0; i < roundedRating; i++) {
-        ratingStars.push(
-            <span className="star-wrap" key={i}>
-                <i className="icon-star"></i>
-            </span>
-        );
-    }
-    for (let i = 0; i < 5 - roundedRating; i++) {
-        ratingStars.push(
-            <span className="star-wrap" key={roundedRating + i}>
-                <i className="icon-star-empty"></i>
-            </span>
-        );
+
+    function rate(rating) {
+        fetch("/api/rate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                novel: param.novel,
+                rating: rating,
+            }),
+        })
+        // TODO : Show thank you message
     }
 
+    for (let i = 1; i <= 5; i++) {
+        ratingStars.push(
+            <span className="star-wrap" key={i} >
+                <i className={"icon-star" + (i > (ratingHovered ? ratingHovered : roundedRating) ? "-empty" : "")}
+                    onMouseEnter={() => { setRatingHovered(i) }}
+                    onMouseOut={() => { setRatingHovered(false) }}
+                    onClick={() => { rate(i) }}>
+                </i>
+            </span>
+        );
+    }
+    console.log(ratingHovered);
 
     return (
         <p>{ratingStars}

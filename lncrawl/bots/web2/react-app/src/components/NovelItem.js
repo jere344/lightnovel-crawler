@@ -38,7 +38,7 @@ function NovelItem(novel) {
         </h4>
         <div className="novel-stats">
           <div className="rating-star">
-            <RatingStars rating={novel.overall_rating} count={novel.ratings_count} />
+            <RatingStars rating={novel.overall_rating} count={novel.ratings_count} novel={novel.slug} />
           </div>
         </div>
         <div className="novel-stats">

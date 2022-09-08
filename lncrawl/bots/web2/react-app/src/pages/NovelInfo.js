@@ -143,7 +143,7 @@ function NovelInfo() {
                                         <span><i className="icon-trophy"></i> Rank {source.novel.rank}</span>
                                     </div>
                                     <div className="rating-star" itemProp="aggregateRating" itemScope="" itemType="https://schema.org/AggregateRating">
-                                        <RatingStars rating={source.novel.overall_rating} count={source.novel.ratings_count} />
+                                        <RatingStars rating={source.novel.overall_rating} count={source.novel.ratings_count} novel={source.novel.slug} />
                                     </div>
                                 </div>
 
