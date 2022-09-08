@@ -3,8 +3,10 @@ from typing import Optional
 from .Novel import Novel, NovelFromSource
 from . import database
 
+
 def find_novel_in_database(novel_slug) -> Optional[Novel]:
     return next(n for n in database.all_downloaded_novels if n.slug == novel_slug)
+
 
 def find_source_with_path(novel_and_source_path: Path) -> Optional[NovelFromSource]:
     """
@@ -28,6 +30,7 @@ def find_source_with_path(novel_and_source_path: Path) -> Optional[NovelFromSour
 
     return source
 
-def shuffle_ip(ip):
+
+def shuffle_ip(ip) -> str:
     """Just a way to not keep ip in cache"""
-    return hash(ip[:5] + ip[7:])[:16]
+    return str(hash(ip[:5] + ip[7:]))[:16]
