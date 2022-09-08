@@ -63,10 +63,10 @@ def get_novel():
     source_path = (
         lib.LIGHTNOVEL_FOLDER / unquote_plus(novel_slug) / unquote_plus(source_slug)
     )
-    source = utils.find_source_with_path(source_path)
-    source.novel.clicks += 1
     if not source_path.exists():
         return "", 404
+    source = utils.find_source_with_path(source_path)
+    source.novel.clicks += 1
 
     return source.asdict(), 200
 
