@@ -93,6 +93,8 @@ function NovelInfo() {
 
             if (response.status === "success") {
                 finished = true;
+                setStatus("success");
+                sleep(1000).then(() => { setStatus(null); setUpdating(false); setUpdateHook(updateHook + 1); });
             } else if (response.status === "pending") {
                 setStatus(response.message)
                 await sleep(3000); // wait 3 seconds and try again
@@ -120,7 +122,7 @@ function NovelInfo() {
 
                 <header className="novel-header">
                     <div className="glass-background">
-                        {(typeof source.cover === 'undefined') ? (<div>Loading...</div>) : (<img src={`/api/image/${source.cover}`} alt={source.title} itemProp="image" />)}
+                        {(typeof source.cover === 'undefined') ? ("") : (<img src={`/api/image/${source.cover}`} alt={source.title} itemProp="image" />)}
                         <div className="glass-shade"></div>
                     </div>
                     <div className="header-body container">

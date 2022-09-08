@@ -3,7 +3,7 @@ import logo from '../assets/logo.bmp'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../assets/stylesheets/addnovel.css";
-
+import "../assets/stylesheets/switch.css"
 function AddNovel() {
 
     const description = "Add instantly any novel from more than 140 sources to read for free on LnCrawler! Participate in growing the LnCrawler database for all users!";
@@ -175,14 +175,19 @@ function AddNovel() {
                             <input type="submit" hidden />
                         </div>
 
-                        <input type="number" className="form-control" id="job_id" name="job_id" style={{ display: (showAdvanceOptions) ? "block" : "none" }} defaultValue={jobId} />
+                        <input type="number" className="form-control" id="job_id" name="job_id" style={{ visibility: (showAdvanceOptions) ? "visible" : "hidden" }} defaultValue={jobId} />
 
                     </form>
                     <br />
                     <br />
-                    <p>Show advanced settings :
-                        <button onClick={() => setShowAdvanceOptions(!showAdvanceOptions)}>o</button>
-                    </p>
+                    <div className="form-group single" style={{ display: "flex", justifyContent: "flex-start" }}>
+                        <label className="switch">
+                            <input type="checkbox" onClick={() => setShowAdvanceOptions(!showAdvanceOptions)} />
+                            <span className="slider round"></span>
+                        </label>
+                        <p>Show advanced settings</p>
+                    </div>
+
                 </div>
                 {sessionCreated ? <h1>Search results for {searchQuery}</h1> : null}
                 <p>{status}</p>
