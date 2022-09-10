@@ -34,7 +34,6 @@ function RatingStars(param) {
             </span>
         );
     }
-    console.log(ratingHovered);
 
     return (
         <p>{ratingStars}

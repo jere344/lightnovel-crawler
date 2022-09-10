@@ -4,6 +4,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import RatingStars from '../components/RatingStars';
 import { nFormatter, toFlag, languageDict } from '../Utils';
 import logo from '../assets/logo.bmp'
+import CommentComponent from '../components/CommentComponent';
 
 import "../assets/stylesheets/navbar.min.css"
 import "../assets/stylesheets/fontello.css"
@@ -226,8 +227,7 @@ function NovelInfo() {
                                 </div>
                             </div>
                         </div>
-
-
+                        <CommentComponent url={window.location.pathname} />
                     </section>
                 </div>
 

@@ -11,6 +11,7 @@ bundle
 env
 .env
 Lightnovels/
+Comments/
 windows/
 .pyi/
 .telegram_bot_output/

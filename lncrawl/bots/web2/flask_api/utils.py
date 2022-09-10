@@ -32,5 +32,5 @@ def find_source_with_path(novel_and_source_path: Path) -> Optional[NovelFromSour
 
 
 def shuffle_ip(ip) -> str:
-    """Just a way to not keep ip in cache"""
+    """Just a way to not keep ip in clear text"""
     return str(hash(ip[:5] + ip[7:]))[:16]

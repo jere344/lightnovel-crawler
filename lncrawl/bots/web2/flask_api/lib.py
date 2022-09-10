@@ -10,9 +10,13 @@ from . import read_novel_info
 import constants
 
 LIGHTNOVEL_FOLDER = Path(constants.DEFAULT_OUTPUT_PATH)
+COMMENT_FOLDER = LIGHTNOVEL_FOLDER.parent / "Comments"
 
 if not LIGHTNOVEL_FOLDER.exists():
     LIGHTNOVEL_FOLDER.mkdir()
+
+if not COMMENT_FOLDER.exists():
+    COMMENT_FOLDER.mkdir()
 
 config = {"host": "localhost", "port": "5000", "website_url": "localhost:5000"}
 # config_file = Path("lncrawl/bots/web/config.json")
@@ -42,6 +46,7 @@ for i, n in enumerate(database.all_downloaded_novels, start=1):
 import threading, time
 import shutil
 
+
 def update_novels_stats():
     """Periodic function to update each novels stats"""
     while True:
@@ -53,7 +58,7 @@ def update_novels_stats():
 
             if not stat_path.exists():
                 shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
-                
+
             with open(stat_path, "w", encoding="utf-8") as f:
                 novel_stats = {
                     "clicks": novel.clicks,
