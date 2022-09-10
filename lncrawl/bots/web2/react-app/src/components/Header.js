@@ -60,14 +60,14 @@ function Header() {
                                             className="icon-megaphone"></i> DEV</a>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" title="Add Novel" to="/addnovel"><i className="plus"></i>Add
-                                        Novel</Link>
+                                    <Link className="nav-link" title="Add Novel" to="/addnovel"><i
+                                        className="icon-plus-circled"></i> Add Novel</Link>
                                 </li>
                                 <li className="nav-item">
                                     <button className="nightmode_switch" data-tool="nightmode_switch" title="Dark Mode" data-night="0"
                                         data-content="Dark Theme" onClick={switchDarkMode}>
 
-                                        <i className="icon-moon"></i>
+                                        <i className={"icon-" + (darkModeCookie.darkMode === 'true' ? "moon" : "sun")}></i>
                                     </button>
                                 </li>
                             </ul>

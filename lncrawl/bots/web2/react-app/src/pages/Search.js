@@ -6,7 +6,7 @@ import "../assets/stylesheets/media-mobile.min.css";
 import "../assets/stylesheets/media-768.min.css";
 import "../assets/stylesheets/media-1024.min.css";
 import "../assets/stylesheets/media-1270.min.css";
-import "../assets/stylesheets/fontello.css";
+import "../assets/stylesheets/fontello-embedded.css";
 import "../assets/stylesheets/searchpg.min.css";
 import { Link } from 'react-router-dom';
 
@@ -72,7 +72,7 @@ function Search() {
                             <span><i className="icon-crown"></i> {novelList[i].author}</span>
                         </div>
                         <div className="novel-stats">
-                            <span><i className="icon-pencil-2"></i> {novelList[i].latest}</span>
+                            <span><i className="icon-pencil"></i> {novelList[i].latest}</span>
                         </div>
                         <div className="novel-stats">
                             <span><i className="icon-tags"></i> {novelList[i].source_count} Sources</span>

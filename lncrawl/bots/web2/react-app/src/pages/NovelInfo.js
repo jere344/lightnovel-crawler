@@ -7,7 +7,7 @@ import logo from '../assets/logo.bmp'
 import CommentComponent from '../components/CommentComponent';
 
 import "../assets/stylesheets/navbar.min.css"
-import "../assets/stylesheets/fontello.css"
+import "../assets/stylesheets/fontello-embedded.css"
 
 import "../assets/stylesheets/novel.min.css"
 import "../assets/stylesheets/novel.768.min.css"
@@ -143,7 +143,7 @@ function NovelInfo() {
                                 </div>
                                 <div className="rating">
                                     <div className="rank">
-                                        <span><i className="icon-trophy"></i> Rank {source.novel.rank}</span>
+                                        <span><i className="icon-award"></i> Rank {source.novel.rank}</span>
                                     </div>
                                     <div className="rating-star" itemProp="aggregateRating" itemScope="" itemType="https://schema.org/AggregateRating">
                                         <RatingStars rating={source.novel.overall_rating} count={source.novel.ratings_count} novel={source.novel.slug} />

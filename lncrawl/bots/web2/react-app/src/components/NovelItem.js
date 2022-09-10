@@ -42,7 +42,7 @@ function NovelItem(novel) {
           </div>
         </div>
         <div className="novel-stats">
-          <span><i className="icon-trophy"></i> Rank {novel.rank}</span>
+          <span><i className="icon-award"></i> Rank {novel.rank}</span>
           <span><i className="icon-user-circle-o"></i> {novel.author}</span>
         </div>
         <div className="novel-stats">
@@ -50,7 +50,7 @@ function NovelItem(novel) {
           <span><i className="icon-tags"></i> {novel.source_count} Sources</span>
         </div>
         <div className="novel-stats">
-          <span><i className="icon-pencil-2"></i> {novel.latest}</span>
+          <span><i className="icon-pencil"></i> {novel.latest}</span>
         </div>
 
       </div>
