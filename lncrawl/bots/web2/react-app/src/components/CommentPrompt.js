@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-function CommentPrompt(params) {
-    const reply_to = params.reply_to;
+function CommentPrompt({ replyTo, setCommenting }) {
     const [text, setText] = useState("");
     const [name, setName] = useState("");
     const [isSpoiler, setIsSpoiler] = useState(false);
@@ -15,8 +14,9 @@ function CommentPrompt(params) {
             "page": window.location.pathname,
             "spoiler": isSpoiler,
         }
-        if (reply_to) {
-            data.reply_to = reply_to;
+        console.log("replyTo", replyTo)
+        if (replyTo) {
+            data.reply_to = replyTo;
         }
         fetch("/api/add_comment", {
             method: "POST",
@@ -33,13 +33,13 @@ function CommentPrompt(params) {
                     alert(data.message)
                 }
             })
-        params.setCommenting(false);
+        setCommenting(false);
     }
 
     return (
         <div className="lnw-modal _show" id="childcomeditor">
             <div className="modal-section">
-                <button onClick={() => params.setCommenting(false)} className="_close">
+                <button onClick={() => setCommenting(false)} className="_close">
                     <i className="icon-cancel"></i>
                 </button>
                 <div className="modal-header">Reply Comment</div><div className="comment-area">

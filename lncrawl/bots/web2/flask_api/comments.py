@@ -16,7 +16,7 @@ def prepare_comments(comments: dict):
         comment["likes"] = len(comment["likes"])
         comment["dislikes"] = len(comment["dislikes"])
 
-        comment["replies"] = prepare_comments(comment["replies"])
+        prepare_comments(comment["replies"])
 
 
 def find_comment(comments: List[dict], comment_id: str):
@@ -68,10 +68,10 @@ def add_comment():
         "id": str(uuid.uuid4()),
         "rank": "Reader",
         "spoiler": spoiler,
+        "reply_to": None,
         "likes": {},
         "dislikes": {},
         "replies": [],
-        "reply_to": None,
     }
 
     path = (
@@ -83,9 +83,9 @@ def add_comment():
     with open(path, "r") as f:
         comments = json.load(f)
 
-    comment_id_to_reply_to = data.get("reply")
+    comment_id_to_reply_to = data.get("reply_to")
     if comment_id_to_reply_to:
-        reply.reply_to = comment_id_to_reply_to
+        reply["reply_to"] = comment_id_to_reply_to
         comment_to_reply_to = find_comment(comments, comment_id_to_reply_to)
         if comment_to_reply_to:
             comment_to_reply_to["replies"].append(reply)

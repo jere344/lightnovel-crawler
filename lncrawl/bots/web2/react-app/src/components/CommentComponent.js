@@ -41,8 +41,8 @@ import "../assets/stylesheets/comments.min.css"
 
 
 
-function CommentComponent(target) {
-    const url = `/api/get_comments?page=${target.url}`
+function CommentComponent({ currentUrl }) {
+    const url = `/api/get_comments?page=${currentUrl}`
     const [comments, setComments] = useState([])
 
     useEffect(() => {
@@ -51,7 +51,7 @@ function CommentComponent(target) {
             .then(data => setComments(data.content))
     }, [url])
 
-
+    const [replyTo, setReplyTo] = useState(null)
 
     const [commenting, setCommenting] = useState(false)
 
@@ -60,17 +60,20 @@ function CommentComponent(target) {
         <section className="comment-list" data-objectid="1422" data-objtype="1">
             <div className="head">
                 <h4>User Comments</h4>
-                <button className="button" title="You must be logged in to post a comment." onClick={() => setCommenting(true)}>Write Comment</button>
+                <button className="button" title="You must be logged in to post a comment." onClick={() => { setReplyTo(false); setCommenting(true) }}>Write Comment</button>
             </div>
             <div className="comment-policy">
-                <button id="comment-policy-show" onClick={() => setCommenting(true)}>Please read and apply the rules before posting a comment.</button>
+                <button id="comment-policy-show" onClick={() => { setReplyTo(false); setCommenting(true) }}>Please read and apply the rules before posting a comment.</button>
                 <br />
                 By sharing your comment, you agree to all the relevant terms.
             </div>
             <div className="comment-wrapper">
-                <CommentSection comments={comments} />
+                <CommentSection comments={comments} setReplyTo={setReplyTo} setCommenting={setCommenting} />
             </div>
-            {commenting ? <TermsPrompt setCommenting={setCommenting} /> : null}
+            {/* setCommenting is used in TermsPrompt to stop commenting when clickingon the cross */}
+            {/* TermsPrompt will call CommentPromt which will use replyTo to post new comment request */}
+            {/* TermsPrompt will ask to agree rules then open pannel to post a comment */}
+            {commenting ? <TermsPrompt setCommenting={setCommenting} replyTo={replyTo} /> : null}
         </section>
     )
 }

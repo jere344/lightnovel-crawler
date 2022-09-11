@@ -529,11 +529,11 @@
     border-color: var(--border-color-3);
 }
 
-.comment-list ul li .reply-comments ul li:not(:first-child) {
+/* .comment-list ul li .reply-comments ul li:not(:first-child) {
     position: absolute;
     z-index: -1;
     left: -999px;
-}
+} */
 
 .comment-list ul li .reply-comments ul li:not(:first-child):not(.show_replies) {
     counter-increment: number;

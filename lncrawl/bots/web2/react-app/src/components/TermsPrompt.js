@@ -1,11 +1,11 @@
 import CommentPrompt from "./CommentPrompt"
 import { useState } from "react";
 
-function TermsPrompt(params) {
+function TermsPrompt({ setCommenting, replyTo }) {
     const [termAccepted, setTermAccepted] = useState(false);
     const [boxChecked, setBoxChecked] = useState(false);
     if (termAccepted) {
-        return <CommentPrompt reply_to={params.reply_to} setCommenting={params.setCommenting} />
+        return <CommentPrompt replyTo={replyTo} setCommenting={setCommenting} />
 
     } else {
         return (

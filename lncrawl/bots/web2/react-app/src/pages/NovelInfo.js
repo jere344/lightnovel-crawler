@@ -227,7 +227,7 @@ function NovelInfo() {
                                 </div>
                             </div>
                         </div>
-                        <CommentComponent url={window.location.pathname} />
+                        <CommentComponent currentUrl={window.location.pathname} />
                     </section>
                 </div>
 
