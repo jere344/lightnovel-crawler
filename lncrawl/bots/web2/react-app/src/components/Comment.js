@@ -1,4 +1,4 @@
-function Comment(data) {
+function Comment(params) {
 
 
     function formatTimeAgo(timeAgo) {
@@ -24,49 +24,53 @@ function Comment(data) {
     }
 
 
-    const date = new Date(data.date)
-    const timeAgo = date.getTime() - (new Date().getTime());
+    const date = new Date(params.comment.date)
+    console.log(params.comment.date)
+    // console.log(date)
+    const timeAgo = (new Date().getTime()) - date.getTime();
+    // console.log(timeAgo)
     const formatedTimeAgo = formatTimeAgo(timeAgo)
+    // console.log(formatedTimeAgo)
 
 
 
     return (
-        <article className="comment-item  none" id={data.comment.id}>
+        <article className="comment-item  none" id={params.comment.id}>
             <div className="comment-body" itemProp="comment" itemScope="" itemType="http://schema.org/Comment">
                 <meta itemProp="dateCreated" content={date.toString()} />
                 <div className="header">
                     <div className="comment-info" itemProp="creator" itemScope="" itemType="http://schema.org/Person">
                         <div className="username" itemProp="sameAs">
-                            <span itemProp="name">{data.comment.name}</span>
+                            <span itemProp="name">{params.comment.name}</span>
                         </div>
                         <div className="sub-items">
-                            <span className="tier tier0">{data.comment.rank}</span>
+                            <span className="tier tier0">{params.comment.rank}</span>
                         </div>
                     </div>
                 </div>
                 <div className="comment-text" itemProp="text" data-spoiler="0">
-                    <p>{data.comment.text}</p>
+                    <p>{params.comment.text}</p>
                 </div>
                 <div className="toolbar">
                     <span className="_tl">{formatedTimeAgo}</span>
                     <span className="divider"></span>
                     <span className="_tl">
-                        <button className="isDisabled" disabled="" onClick={e => document.getElementById(data.comment.reply_to).scrollIntoView()}><i className="icon-commenting-o"></i>Reply</button>
+                        <button className="isDisabled" disabled="" onClick={e => document.getElementById(params.comment.reply_to).scrollIntoView()}><i className="icon-commenting-o"></i>Reply</button>
                     </span>
                     <span className="spacer"></span>
                     <div className="usrlike" data-uvtype="0" data-lc="0" data-dlc="0">
                         <span className="_grp">
-                            <input id="inputlike" type="radio" name="ulike" value={data.comment.likes} disabled="" />
+                            <input id="inputlike" type="radio" name="ulike" value={params.comment.likes} disabled="" />
                             <label htmlFor="inputlike" className="isDisabled" disabled="">
                                 <i className="icon-thumbs-up"></i>
-                                <span className="lc">{data.comment.likes}</span>
+                                <span className="lc">{params.comment.likes}</span>
                             </label>
                         </span>
                         <span className="divider"></span>
                         <span className="_grp">
-                            <input id="inputdislike" type="radio" name="ulike" value={data.comment.dislikes} disabled="" />
+                            <input id="inputdislike" type="radio" name="ulike" value={params.comment.dislikes} disabled="" />
                             <label htmlFor="inputdislike" className="isDisabled" disabled="">
-                                <span className="dlc">{data.comment.dislikes}</span>
+                                <span className="dlc">{params.comment.dislikes}</span>
                                 <i className="icon-thumbs-down"></i>
                             </label>
                         </span>

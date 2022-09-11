@@ -43,10 +43,10 @@ function CommentPrompt(params) {
                     <i className="icon-cancel"></i>
                 </button>
                 <div className="modal-header">Reply Comment</div><div className="comment-area">
-                    <textarea id="name" className="txt_block" name="comment" minlength="3" maxlength="50"
+                    <textarea id="name" className="txt_block" name="comment" minLength="3" maxLength="50"
                         placeholder="Pseudo" style={{ "height": "47px" }}
                         onChange={e => setName(e.target.value)}></textarea>
-                    <textarea id="comments" className="txt_block" name="comment" minlength="60" maxlength="20000"
+                    <textarea id="comments" className="txt_block" name="comment" minLength="60" maxLength="20000"
                         placeholder="Join the discussion with your comment... Make sure you understand the comment rules before posting..."
                         onChange={e => setText(e.target.value)}></textarea>
                     <div className="comment-actions">
