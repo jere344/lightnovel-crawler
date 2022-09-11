@@ -7,6 +7,7 @@ from . import utils
 import uuid
 import datetime
 from . import sanatize
+import urllib.parse
 
 
 def prepare_comments(comments: dict):
@@ -41,7 +42,7 @@ def get_comments():
     if not path.exists():
         return {"content": []}, 200
 
-    with open(lib.COMMENT_FOLDER / f"{sanatize.pathify(url)}.json", "r") as f:
+    with open(path, "r") as f:
         comments = json.load(f)
 
     prepare_comments(comments)
@@ -73,7 +74,9 @@ def add_comment():
         "reply_to": None,
     }
 
-    path = lib.COMMENT_FOLDER / f"{sanatize.pathify(url)}.json"
+    path = (
+        lib.COMMENT_FOLDER / f"{sanatize.pathify(urllib.parse.unquote_plus(url))}.json"
+    )
     if not path.exists():
         with open(path, "w") as f:
             json.dump([], f)
@@ -109,7 +112,9 @@ def rate_comment():
     if not url or not comment_id or not rating:
         return "Invalid request", 400
 
-    path = lib.COMMENT_FOLDER / f"{sanatize.pathify(url)}.json"
+    path = (
+        lib.COMMENT_FOLDER / f"{sanatize.pathify(urllib.parse.unquote_plus(url))}.json"
+    )
 
     if not path.exists():
         return "Invalid request", 400

@@ -3007,11 +3007,10 @@ svg {
 	z-index: 10;
 	top: 1rem;
 	right: .8rem;
-	width: 24px;
-	height: 24px;
 	cursor: pointer;
 	color: #83848f;
-	border-radius: 50%;
+	background-color: transparent;
+	border: none;
 }
 
 .lnw-modal .modal-section ._close svg,

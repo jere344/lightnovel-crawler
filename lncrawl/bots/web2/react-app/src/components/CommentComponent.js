@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import CommentSection from "./CommentSection"
+import TermsPrompt from "./TermsPrompt"
 
 import "../assets/stylesheets/comments.min.css"
 
@@ -50,24 +51,26 @@ function CommentComponent(target) {
             .then(data => setComments(data.content))
     }, [url])
 
-    function submitComment() {
-        console.log("Not implemented")
-    }
+
+
+    const [commenting, setCommenting] = useState(false)
+
 
     return (
         <section className="comment-list" data-objectid="1422" data-objtype="1">
             <div className="head">
                 <h4>User Comments</h4>
-                <button className="button" title="You must be logged in to post a comment." onClick={() => submitComment()}>Write Comment</button>
+                <button className="button" title="You must be logged in to post a comment." onClick={() => setCommenting(true)}>Write Comment</button>
             </div>
             <div className="comment-policy">
-                <button id="comment-policy-show" onClick={() => submitComment()}>Please read and apply the rules before posting a comment.</button>
+                <button id="comment-policy-show" onClick={() => setCommenting(true)}>Please read and apply the rules before posting a comment.</button>
                 <br />
                 By sharing your comment, you agree to all the relevant terms.
             </div>
             <div className="comment-wrapper">
                 <CommentSection comments={comments} />
             </div>
+            {commenting ? <TermsPrompt setCommenting={setCommenting} /> : null}
         </section>
     )
 }

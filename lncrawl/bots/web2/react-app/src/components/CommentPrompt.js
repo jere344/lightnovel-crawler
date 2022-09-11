@@ -1,13 +1,14 @@
 import { useState } from 'react';
 
-function CommentPrompt(data) {
-    const reply_to = data.reply_to;
+function CommentPrompt(params) {
+    const reply_to = params.reply_to;
     const [text, setText] = useState("");
     const [name, setName] = useState("");
     const [isSpoiler, setIsSpoiler] = useState(false);
-
+    const [submiting, setSubmiting] = useState(false);
 
     function submitComment() {
+        setSubmiting(true);
         const data = {
             "text": text,
             "name": name,
@@ -32,19 +33,18 @@ function CommentPrompt(data) {
                     alert(data.message)
                 }
             })
+        params.setCommenting(false);
     }
 
     return (
         <div className="lnw-modal _show" id="childcomeditor">
             <div className="modal-section">
-                <a href="javascript:;" className="_close">
-                    <svg>
-                        <use xlink:href="#i-times"></use>
-                    </svg>
-                </a>
+                <button onClick={() => params.setCommenting(false)} className="_close">
+                    <i className="icon-cancel"></i>
+                </button>
                 <div className="modal-header">Reply Comment</div><div className="comment-area">
                     <textarea id="name" className="txt_block" name="comment" minlength="3" maxlength="50"
-                        placeholder="Pseudo"
+                        placeholder="Pseudo" style={{ "height": "47px" }}
                         onChange={e => setName(e.target.value)}></textarea>
                     <textarea id="comments" className="txt_block" name="comment" minlength="60" maxlength="20000"
                         placeholder="Join the discussion with your comment... Make sure you understand the comment rules before posting..."
@@ -59,7 +59,7 @@ function CommentPrompt(data) {
                                 Spoiler
                             </strong>
                         </label>
-                        <button id="compostbtn" className="button" onClick={() => submitComment()}>Post Comment</button>
+                        <button id="compostbtn" className="button" disabled={submiting} onClick={() => submitComment()}>Post Comment</button>
                     </div>
                 </div>
             </div>
