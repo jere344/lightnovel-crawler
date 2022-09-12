@@ -34,20 +34,20 @@ def find_comment(comments: List[dict], comment_id: str):
 def get_comments():
     url = request.args.get("page")
     if not url:
-        return "Invalid request", 400
+        return {"status": "error", "message": "No page specified"}, 400
 
     path = lib.COMMENT_FOLDER / f"{sanatize.pathify(url)}.json"
     print(path)
 
     if not path.exists():
-        return {"content": []}, 200
+        return {"status": "success", "content": []}, 200
 
     with open(path, "r") as f:
         comments = json.load(f)
 
     prepare_comments(comments)
 
-    return {"content": comments}, 200
+    return {"status": "success", "content": comments}, 200
 
 
 @flaskapp.app.route("/api/add_comment", methods=["POST"])
@@ -59,7 +59,7 @@ def add_comment():
     text = data.get("text")
     spoiler = data.get("spoiler")
     if not url or not name or not text:
-        return "Invalid request", 400
+        return {"status": "error", "message": "Missing data"}, 400
 
     reply = {
         "name": name,
@@ -69,8 +69,8 @@ def add_comment():
         "rank": "Reader",
         "spoiler": spoiler,
         "reply_to": None,
-        "likes": {},
-        "dislikes": {},
+        "likes": [],
+        "dislikes": [],
         "replies": [],
     }
 
@@ -90,7 +90,7 @@ def add_comment():
         if comment_to_reply_to:
             comment_to_reply_to["replies"].append(reply)
         else:
-            return "Invalid request", 400
+            return {"status": "error", "message": "Comment not found"}, 400
 
     else:
         comments.append(reply)
@@ -98,48 +98,55 @@ def add_comment():
     with open(path, "w") as f:
         json.dump(comments, f)
 
-    return "success", 200
+    return {"status": "success"}, 200
 
 
-@flaskapp.app.route("/api/rate_comment", methods=["POST"])
+@flaskapp.app.route("/api/add_reaction", methods=["POST"])
 def rate_comment():
     """Like or dislike a comment"""
     data = request.get_json()
     url = data.get("page")
     comment_id = data.get("comment_id")
-    rating = data.get("rating")
+    reaction = data.get("reaction")
 
-    if not url or not comment_id or not rating:
-        return "Invalid request", 400
+    if not url or not comment_id:
+        return {"status": "error", "message": "Missing data"}, 400
 
     path = (
         lib.COMMENT_FOLDER / f"{sanatize.pathify(urllib.parse.unquote_plus(url))}.json"
     )
 
     if not path.exists():
-        return "Invalid request", 400
+        return {"status": "error", "message": "Comment not found"}, 400
 
     with open(path, "r") as f:
         comments = json.load(f)
 
     comment = find_comment(comments, comment_id)
     if not comment:
-        return "Invalid request", 400
+        return {"status": "error", "message": "Comment not found"}, 400
 
     ip = utils.shuffle_ip(request.remote_addr)
-    if rating == "like":
+    print("ip ", request.remote_addr, " -> ", ip)
+    if reaction == "like":
         if ip in comment["dislikes"]:
             comment["dislikes"].remove(ip)
         if ip not in comment["likes"]:
             comment["likes"].append(ip)
 
-    elif rating == "dislike":
+    elif reaction == "dislike":
         if ip in comment["likes"]:
             comment["likes"].remove(ip)
         if ip not in comment["dislikes"]:
             comment["dislikes"].append(ip)
 
+    elif reaction == "none":
+        if ip in comment["likes"]:
+            comment["likes"].remove(ip)
+        if ip in comment["dislikes"]:
+            comment["dislikes"].remove(ip)
+
     with open(path, "w") as f:
         json.dump(comments, f)
 
-    return "Success", 200
+    return {"status": "success"}, 200

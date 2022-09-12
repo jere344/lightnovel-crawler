@@ -37,9 +37,7 @@ function CommentSection({ comments, setReplyTo, setCommenting }) {
         sortComments('reactions', comments)
 
     ) {
-        console.log("commentData", commentData)
         const commentItem = <Comment comment={commentData} key={id} setCommenting={setCommenting} setReplyTo={setReplyTo} />
-        console.log("replies", commentData.replies)
         let replies = commentData.replies ? <CommentSection comments={commentData.replies} setReplyTo={setReplyTo} setCommenting={setCommenting} /> : null;
         commentList.push(
             <li key={id}>

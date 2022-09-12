@@ -1,5 +1,9 @@
+import { useState } from 'react';
+
 function Comment({ comment, setReplyTo, setCommenting }) {
 
+    const [liked, setLiked] = useState(false);
+    const [disliked, setDisliked] = useState(false);
 
     function formatTimeAgo(timeAgo) {
         const seconds = Math.floor(timeAgo / 1000);
@@ -23,7 +27,46 @@ function Comment({ comment, setReplyTo, setCommenting }) {
         }
     }
 
+    function addReaction(type, commentId) {
+        if (type === "like") {
+            if (liked) {
+                setLiked(false);
+            } else {
+                setLiked(true);
+                setDisliked(false);
+            }
+        }
+        else if (type === "dislike") {
+            if (disliked) {
+                setDisliked(false);
+            } else {
+                setLiked(false);
+                setDisliked(true);
+            }
+        }
 
+        const data = {
+            "page": window.location.pathname,
+            "comment_id": commentId,
+            "reaction": type
+        }
+
+        fetch('/api/add_reaction', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!(data.status === "success")) {
+                    alert(data.message)
+                }
+            }
+            )
+
+    }
     const date = new Date(comment.date)
     const timeAgo = (new Date().getTime()) - date.getTime();
     const formatedTimeAgo = formatTimeAgo(timeAgo)
@@ -57,17 +100,17 @@ function Comment({ comment, setReplyTo, setCommenting }) {
                     <span className="spacer"></span>
                     <div className="usrlike" data-uvtype="0" data-lc="0" data-dlc="0">
                         <span className="_grp">
-                            <input id="inputlike" type="radio" name="ulike" value={comment.likes} disabled="" />
-                            <label htmlFor="inputlike" className="isDisabled" disabled="">
+                            <input id={"inputlike-" + comment.id} type="radio" name={comment.id} value={comment.likes} disabled="" checked={liked} onClick={() => { addReaction('like', comment.id) }} readOnly={true} />
+                            <label htmlFor={"inputlike-" + comment.id} className="" disabled="">
                                 <i className="icon-thumbs-up"></i>
-                                <span className="lc">{comment.likes}</span>
+                                <span className="lc">{parseInt(comment.likes, 10) + (liked ? 1 : 0)}</span>
                             </label>
                         </span>
                         <span className="divider"></span>
                         <span className="_grp">
-                            <input id="inputdislike" type="radio" name="ulike" value={comment.dislikes} disabled="" />
-                            <label htmlFor="inputdislike" className="isDisabled" disabled="">
-                                <span className="dlc">{comment.dislikes}</span>
+                            <input id={"inputdislike-" + comment.id} type="radio" name={comment.id} value={comment.dislikes} disabled="" checked={disliked} onClick={() => addReaction('dislike', comment.id)} readOnly={true} />
+                            <label htmlFor={"inputdislike-" + comment.id} className="" disabled="">
+                                <span className="dlc">{parseInt(comment.dislikes, 10) + (disliked ? 1 : 0)}</span>
                                 <i className="icon-thumbs-down"></i>
                             </label>
                         </span>
