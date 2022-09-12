@@ -88,7 +88,7 @@ function Comment({ comment, setReplyTo, setCommenting }) {
                         </div>
                     </div>
                 </div>
-                <div className="comment-text" itemProp="text" data-spoiler="0">
+                <div className="comment-text" itemProp="text" data-spoiler={comment.spoiler ? "1" : "0"} onClick={e => e.target.dataset.spoiler = "0"}>
                     <p>{comment.text}</p>
                 </div>
                 <div className="toolbar">
