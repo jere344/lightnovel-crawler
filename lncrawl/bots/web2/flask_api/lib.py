@@ -45,27 +45,44 @@ for i, n in enumerate(database.all_downloaded_novels, start=1):
 
 import threading, time
 import shutil
+import sys
 
 
 def update_novels_stats():
     """Periodic function to update each novels stats"""
+
+    stopping = False
     while True:
         time.sleep(600)  # 10 minutes
+
         for novel in database.all_downloaded_novels:
-            if not novel.path:
-                continue
-            stat_path = novel.path / "stats.json"
+            # Security to avoid stopping the program while updating stats and having corrupted stats file
+            # if KeyboardInterrupt or SystemExit is raised, finish the current loop then stop
+            for attempt in range(4):
+                try:
+                    if not novel.path:
+                        continue
+                    stat_path = novel.path / "stats.json"
 
-            if not stat_path.exists():
-                shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
+                    if not stat_path.exists():
+                        shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
 
-            with open(stat_path, "w", encoding="utf-8") as f:
-                novel_stats = {
-                    "clicks": novel.clicks,
-                    "ratings": novel.ratings,
-                }
+                    with open(stat_path, "w", encoding="utf-8") as f:
+                        novel_stats = {
+                            "clicks": novel.clicks,
+                            "ratings": novel.ratings,
+                        }
 
-                json.dump(novel_stats, f, indent=4)
+                        json.dump(novel_stats, f, indent=4)
+
+                except KeyboardInterrupt or SystemExit:
+                    stopping = True
+                    continue
+
+                break
+
+            if stopping:
+                sys.exit(0)
 
         print("Updated novels stats")
 
