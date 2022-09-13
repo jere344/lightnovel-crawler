@@ -3,8 +3,6 @@ import React, { useState } from "react";
 
 function RatingStars(param) {
     const [ratingHovered, setRatingHovered] = useState(false);
-
-    const roundedRating = parseInt(param.rating);
     const rating = param.rating;
     const count = param.count;
     const ratingStars = [];
@@ -24,16 +22,31 @@ function RatingStars(param) {
     }
 
     for (let i = 1; i <= 5; i++) {
-        ratingStars.push(
-            <span className="star-wrap" key={i} >
-                <i className={"icon-star" + (i > (ratingHovered ? ratingHovered : roundedRating) ? "-empty" : "")}
-                    onMouseEnter={() => { setRatingHovered(i) }}
-                    onMouseOut={() => { setRatingHovered(false) }}
-                    onClick={() => { rate(i) }}>
-                </i>
-            </span>
-        );
+        if (ratingHovered === false) {
+            // If not hovered, show the rating
+            // If rating is 3.5, show 3 stars filled, 1 star half filled, 1 star empty
+            ratingStars.push(
+                <span className="star-wrap" key={i} >
+                    <i className={"icon-star" + ((i > rating) ? ((i < rating + 1) ? "-half-alt" : "-empty") : "")}
+                        onMouseEnter={() => { setRatingHovered(i) }}
+                        onMouseOut={() => { setRatingHovered(false) }}
+                        onClick={() => { rate(i) }}>
+                    </i>
+                </span>
+            );
+        } else {
+            ratingStars.push(
+                <span className="star-wrap" key={i} >
+                    <i className={"icon-star" + ((i > rating) ? "-empty" : "")}
+                        onMouseEnter={() => { setRatingHovered(i) }}
+                        onMouseOut={() => { setRatingHovered(false) }}
+                        onClick={() => { rate(i) }}>
+                    </i>
+                </span>
+            );
+        }
     }
+
 
     return (
         <p>{ratingStars}
