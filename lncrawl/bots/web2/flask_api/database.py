@@ -40,7 +40,6 @@ def add_novel(novel : Novel) :
     sorted_all_downloaded_novels["rating-reverse"].insert(0, novel)
     sorted_all_downloaded_novels["views-reverse"].insert(0, novel)
     sorted_all_downloaded_novels["rank-reverse"].insert(0, novel)
-    sorted_all_downloaded_novels["rank"].insert(0, novel)
 
 
 from typing import TYPE_CHECKING
