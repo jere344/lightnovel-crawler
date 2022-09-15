@@ -109,7 +109,8 @@ class JobHandler:
 
             elif self.last_action == "Downloading":
                 # hacky way to know if we are downloading images : if the progress diminished, we are downloading images
-                if self.app.progress < self.last_progress:
+                # To avoid switching to image when downloading initial data we put a treshold of 10
+                if self.app.progress < self.last_progress - 10:
                     self.downloading_images = True
                 if self.downloading_images:
                     return f"Downloading images ({self.app.progress}/{self.images_to_download})"
