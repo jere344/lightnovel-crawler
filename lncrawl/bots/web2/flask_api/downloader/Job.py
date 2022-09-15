@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 from .. import lib
 from .. import database
 from .. import read_novel_info
+from .. import utils
 
 
 class JobHandler:
@@ -271,7 +272,7 @@ class JobHandler:
                 break
 
         if not is_in_all_novels:
-            database.add_novel(novel_info)
+            utils.add_novel(novel_info)
 
 
 class FinishedJob:
