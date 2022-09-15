@@ -197,3 +197,69 @@
 		font-size: 16px
 	}
 }
+
+.pagefilter {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+}
+
+.pagefilter .sort-button {
+	font-size: 28px;
+	height: 22px;
+	border: none;
+	color: var(--button-bg);
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.pagefilter .sort-button:hover {
+	color: var(--bg-color-secondary-3);
+}
+
+
+.pagefilter .sort-button .dropdown-menu {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	font-size: 0.7em;
+	background-color: var(--bg-color-2);
+	z-index: -1;
+	border: 2px solid var(--border-color-4);
+	border-radius: 4px;
+	opacity: 0;
+	transition: all .1s ease-in-out;
+}
+
+@media screen and (max-width: 768px) {
+	.pagefilter .sort-button .dropdown-menu {
+		left: calc(100% - 75px);
+	}
+
+}
+
+.pagefilter .sort-button .show {
+	z-index: 2;
+	opacity: 1;
+}
+
+.pagefilter .sort-button .dropdown-menu .dropdown-item {
+	color: var(--text-color);
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.pagefilter .sort-button .dropdown-menu .dropdown-item:hover {
+	color: var(--text-color-2);
+	background-color: var(--bg-color-3);
+	padding-left: 15px;
+	padding-right: 5px;
+}
+
+.pagefilter .sort-button .dropdown-menu .dropdown-item:first-child {
+	padding-top: 5px;
+}
+
+.pagefilter .sort-button .dropdown-menu .dropdown-item:last-child {
+	padding-bottom: 5px;
+}

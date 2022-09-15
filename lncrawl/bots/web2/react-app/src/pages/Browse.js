@@ -40,10 +40,10 @@ function Browse() {
     }, [page, sort]);
 
 
-    const pagination = [
-        (typeof novels.metadata === 'undefined') ? <div key={1}>Loading ...</div> : <Pagination page={parseInt(page)} maxPage={novels.metadata.total_pages} key={1} />,
-        <SortButton url={`/browse/page-${page}`} key={2} />
-    ];
+    const pagination = ((typeof novels.metadata === 'undefined') ? <div>Loading ...</div> : <Pagination page={parseInt(page)} maxPage={novels.metadata.total_pages} />
+
+
+    );
 
     return (
 
@@ -54,9 +54,10 @@ function Browse() {
                 <header id="Result">
                     <h1>{title}</h1>
                     <p className="description">{description}</p>
-                    <nav className="paging">
+                    <div className='pagefilter'>
                         {pagination}
-                    </nav>
+                        <SortButton url={`/browse/page-${page}`} key={2} />
+                    </div>
                 </header>
                 <ul className="novel-list horizontal col2">
                     {(typeof novels.content === 'undefined') ? (
@@ -66,9 +67,7 @@ function Browse() {
 
                 </ul>
                 <footer className="pagination" style={{ "height": "auto" }}>
-                    <nav className="paging">
-                        {pagination}
-                    </nav >
+                    {pagination}
                 </footer >
             </article >
         </main >
