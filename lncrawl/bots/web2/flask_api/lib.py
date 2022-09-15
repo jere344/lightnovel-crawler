@@ -43,6 +43,30 @@ database.all_downloaded_novels.sort(key=lambda n: n.clicks, reverse=True)
 for i, n in enumerate(database.all_downloaded_novels, start=1):
     n.rank = i
 
+
+database.sorted_all_downloaded_novels = {
+    "title": sorted(database.all_downloaded_novels, key=lambda x: x.title),
+    "author": sorted(database.all_downloaded_novels, key=lambda x: x.author),
+    "rating": sorted(
+        database.all_downloaded_novels, key=lambda x: x.overall_rating, reverse=True
+    ),
+    "views": sorted(
+        database.all_downloaded_novels, key=lambda x: x.clicks, reverse=True
+    ),
+    "rank": database.all_downloaded_novels,  # Default sort
+    "title-reverse": sorted(
+        database.all_downloaded_novels, key=lambda x: x.title, reverse=True
+    ),
+    "author-reverse": sorted(
+        database.all_downloaded_novels, key=lambda x: x.author, reverse=True
+    ),
+    "rating-reverse": sorted(
+        database.all_downloaded_novels, key=lambda x: x.overall_rating
+    ),
+    "views-reverse": sorted(database.all_downloaded_novels, key=lambda x: x.clicks),
+    "rank-reverse": database.all_downloaded_novels[::-1],
+}
+
 import threading, time
 import shutil
 import sys

@@ -51,7 +51,7 @@ def get_novels():
     stop = (int(page) + 1) * 20
     content = {
         (int(page) * 20 + 1 + i): e.asdict()
-        for i, e in enumerate(database.sorted_all_downloaded_novels[sort]()[start:stop])
+        for i, e in enumerate(database.sorted_all_downloaded_novels[sort][start:stop])
     }
     return {
         "content": content,
