@@ -67,7 +67,7 @@ def add_comment():
         "date": datetime.datetime.now().isoformat(),
         "id": str(uuid.uuid4()),
         "rank": "Reader",
-        "spoiler": spoiler,
+        "spoiler": True if spoiler else False,
         "reply_to": None,
         "likes": [],
         "dislikes": [],

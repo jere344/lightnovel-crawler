@@ -396,13 +396,13 @@
 
 .rating-star p span.star-wrap .icon-star,
 .rating-star p span.star-wrap .icon-star-empty,
-.rating-star p span.star-wrap .icon-star-half {
+.rating-star p span.star-wrap .icon-star-half-alt {
   color: var(--star-color-on);
   font-size: 1.1em;
 
 }
 
 .rating-star p span.star-wrap {
-  margin-right: 1px;
+  margin-right: -1px;
   margin-bottom: 0px;
 }

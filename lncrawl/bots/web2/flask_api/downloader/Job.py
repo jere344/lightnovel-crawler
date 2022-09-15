@@ -271,8 +271,7 @@ class JobHandler:
                 break
 
         if not is_in_all_novels:
-            novel_info.rank = len(database.all_downloaded_novels) + 1
-            database.all_downloaded_novels.append(novel_info)
+            database.add_novel(novel_info)
 
 
 class FinishedJob:

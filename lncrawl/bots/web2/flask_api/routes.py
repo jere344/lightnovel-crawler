@@ -34,15 +34,24 @@ def flags(language: str):
 # /api/novels?page=${page}
 @flaskapp.app.route("/api/novels")
 def get_novels():
+    """
+    :page: Page number
+    :sort: Sort by [rank, views, title, author, rating] (default: rank)
+
+    """
     page = request.args.get("page")
     if not page:
         page = 0
+
+    sort = request.args.get("sort")
+    if not sort:
+        sort = "rank"
 
     start = int(page) * 20
     stop = (int(page) + 1) * 20
     content = {
         (int(page) * 20 + 1 + i): e.asdict()
-        for i, e in enumerate(database.all_downloaded_novels[start:stop])
+        for i, e in enumerate(database.sorted_all_downloaded_novels[sort]()[start:stop])
     }
     return {
         "content": content,

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Metadata from '../components/Metadata';
 import NovelList from '../components/NovelList';
 import Pagination from '../components/Pagination';
-import { useParams } from 'react-router-dom';
+import SortButton from '../components/SortButton';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import "../assets/stylesheets/navbar.min.css"
 import "../assets/stylesheets/media-mobile.min.css"
@@ -25,19 +26,24 @@ function Browse() {
 
     const [novels, setNovels] = useState({});
     const { page } = useParams();
+    const [searchParams] = useSearchParams();
+    const sort = searchParams.get('sort') || 'rank';
 
     useEffect(() => {
-        fetch(`/api/novels?page=${parseInt(page) - 1}`).then(
+        fetch(`/api/novels?page=${parseInt(page) - 1}&sort=${sort}`).then(
             response => response.json()
         ).then(
             data => {
                 setNovels(data);
             }
         )
-    }, [page]);
+    }, [page, sort]);
 
 
-    const pagination = (typeof novels.metadata === 'undefined') ? <div>Loading ...</div> : <Pagination page={parseInt(page)} maxPage={novels.metadata.total_pages} />;
+    const pagination = [
+        (typeof novels.metadata === 'undefined') ? <div key={1}>Loading ...</div> : <Pagination page={parseInt(page)} maxPage={novels.metadata.total_pages} key={1} />,
+        <SortButton url={`/browse/page-${page}`} key={2} />
+    ];
 
     return (
 
@@ -49,11 +55,7 @@ function Browse() {
                     <h1>{title}</h1>
                     <p className="description">{description}</p>
                     <nav className="paging">
-                        <div className="pagination-container">
-                            <ul className="pagination">
-                                {pagination}
-                            </ul>
-                        </div>
+                        {pagination}
                     </nav>
                 </header>
                 <ul className="novel-list horizontal col2">
@@ -65,11 +67,7 @@ function Browse() {
                 </ul>
                 <footer className="pagination" style={{ "height": "auto" }}>
                     <nav className="paging">
-                        <div className="pagination-container">
-                            <ul className="pagination">
-                                {pagination}
-                            </ul>
-                        </div>
+                        {pagination}
                     </nav >
                 </footer >
             </article >
