@@ -116,6 +116,7 @@ def get_chapter():
     is_prev = (chapter_folder / f"{str(int(chapter_id) - 1).zfill(5)}.json").exists()
 
     source = utils.find_source_with_path(chapter_folder.parent)
+    source.novel.clicks[datetools.current_week()] += 1
 
     return {
         "content": chapter,
@@ -142,6 +143,7 @@ def get_chapter_list():
     )
 
     source = utils.find_source_with_path(meta_file.parent)
+    source.novel.clicks[datetools.current_week()] += 1
 
     with open(meta_file, "r") as f:
         chapter_list = json.load(f)["chapters"]
