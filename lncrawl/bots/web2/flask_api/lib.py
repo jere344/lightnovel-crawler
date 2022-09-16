@@ -8,6 +8,7 @@ from .Novel import Novel
 from . import database
 from . import read_novel_info
 import constants
+from . import datetools
 
 LIGHTNOVEL_FOLDER = Path(constants.DEFAULT_OUTPUT_PATH)
 COMMENT_FOLDER = LIGHTNOVEL_FOLDER.parent / "Comments"
@@ -51,21 +52,21 @@ database.sorted_all_downloaded_novels = {
         database.all_downloaded_novels, key=lambda x: x.overall_rating, reverse=True
     ),
     "views": sorted(
-        database.all_downloaded_novels, key=lambda x: x.clicks, reverse=True
+        database.all_downloaded_novels, key=lambda x: sum(x.clicks.values()), reverse=True
     ),
+    "weekly_views": sorted(
+        database.all_downloaded_novels, 
+        key=lambda x: x.clicks[datetools.current_week()] if datetools.current_week() in x.clicks else 0,
+        reverse=True
+        ),
     "rank": database.all_downloaded_novels,  # Default sort
-    "title-reverse": sorted(
-        database.all_downloaded_novels, key=lambda x: x.title, reverse=True
-    ),
-    "author-reverse": sorted(
-        database.all_downloaded_novels, key=lambda x: x.author, reverse=True
-    ),
-    "rating-reverse": sorted(
-        database.all_downloaded_novels, key=lambda x: x.overall_rating
-    ),
-    "views-reverse": sorted(database.all_downloaded_novels, key=lambda x: x.clicks),
-    "rank-reverse": database.all_downloaded_novels[::-1],
 }
+database.sorted_all_downloaded_novels["title-reverse"] = database.sorted_all_downloaded_novels["title"][::-1]
+database.sorted_all_downloaded_novels["author-reverse"] = database.sorted_all_downloaded_novels["author"][::-1]
+database.sorted_all_downloaded_novels["rating-reverse"] = database.sorted_all_downloaded_novels["rating"][::-1]
+database.sorted_all_downloaded_novels["views-reverse"] = database.sorted_all_downloaded_novels["views"][::-1]
+database.sorted_all_downloaded_novels["weekly_views-reverse"] = database.sorted_all_downloaded_novels["weekly_views"][::-1]
+database.sorted_all_downloaded_novels["rank-reverse"] = database.sorted_all_downloaded_novels["rank"][::-1]
 
 import threading, time
 import shutil

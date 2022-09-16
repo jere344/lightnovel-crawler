@@ -4,6 +4,7 @@ from pathlib import Path
 from urllib.parse import quote_plus
 from typing import Any, List, Optional, Union
 
+from . import datetools
 from . import sanatize
 
 
@@ -24,16 +25,20 @@ class Novel:
     latest: str = ""
     summary: str = ""
     language: str = "en"
-    clicks: int = 0
     rank: Optional[int] = None
 
     prefered_source: Optional[NovelFromSource] = field(
         default=None,
     )
+    clicks: dict = field(default_factory=dict)
     sources: list[NovelFromSource] = field(default_factory=list, repr=False)
     ratings: dict[str, int] = field(default_factory=dict, repr=False)
 
     # Auto
+    current_week_clicks: int = field(
+        init=False,
+        default=property(lambda self: self.clicks[datetools.current_week()] if datetools.current_week() in self.clicks else 0),
+    )
 
     search_words: List[str] = field(
         init=False,
@@ -85,7 +90,7 @@ class Novel:
             "latest": self.latest,
             # "summary": self.summary,
             "language": self.language,
-            "clicks": self.clicks,
+            "clicks": sum(self.clicks.values()),
             "rank": self.rank,
             "prefered_source": self.prefered_source.slug,
             "sources": {source.slug: source.language for source in self.sources},

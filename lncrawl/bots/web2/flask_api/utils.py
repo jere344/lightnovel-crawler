@@ -77,6 +77,7 @@ def add_novel(novel: Novel):
     )
     database.sorted_all_downloaded_novels["rating"].append(novel)
     database.sorted_all_downloaded_novels["views"].append(novel)
+    database.sorted_all_downloaded_novels["weekly_views"].append(novel)
 
     reverse_insort(
         database.sorted_all_downloaded_novels["title-reverse"],
@@ -90,4 +91,5 @@ def add_novel(novel: Novel):
     )
     database.sorted_all_downloaded_novels["rating-reverse"].insert(0, novel)
     database.sorted_all_downloaded_novels["views-reverse"].insert(0, novel)
+    database.sorted_all_downloaded_novels["weekly_views-reverse"].insert(0, novel)
     database.sorted_all_downloaded_novels["rank-reverse"].insert(0, novel)

@@ -69,6 +69,7 @@ def get_novels():
         },
     }, 200
 
+from . import datetools
 
 @flaskapp.app.route("/api/novel")
 def get_novel():
@@ -83,7 +84,7 @@ def get_novel():
     if not source_path.exists():
         return "", 404
     source = utils.find_source_with_path(source_path)
-    source.novel.clicks += 1
+    source.novel.clicks[datetools.current_week()] += 1
 
     return source.asdict(), 200
 
