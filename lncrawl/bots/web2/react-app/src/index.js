@@ -15,6 +15,7 @@ import PageNotFound from './pages/PageNotFound';
 import ChapterList from './pages/ChapterList';
 import Search from './pages/Search';
 import AddNovel from './pages/AddNovel';
+import Home from './pages/Home';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,6 +24,7 @@ root.render(
       <ScrollToTop />
       <Header />
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/browse/" element={<Navigate to="/browse/page-1" />} />
         <Route path="/browse/page-:page" element={<Browse />} />
         <Route path="/novel/:novelSlug/:sourceSlug" element={<NovelInfo />} />

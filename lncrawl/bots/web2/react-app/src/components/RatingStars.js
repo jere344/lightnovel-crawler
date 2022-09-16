@@ -49,6 +49,7 @@ function RatingStars(param) {
 
 
     return (
+
         <p>{ratingStars}
             <strong>{rating} ({count})</strong>
         </p>

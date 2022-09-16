@@ -6,7 +6,6 @@ function SortButton() {
     const [searchParams] = useSearchParams();
 
     const [sort, setSort] = useState(searchParams.get('sort') || 'rank');
-    console.log(dropdownOpen)
 
     return (
         <div className="sort-button">

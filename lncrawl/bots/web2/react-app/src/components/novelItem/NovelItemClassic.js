@@ -1,8 +1,8 @@
 import React from 'react'
-import RatingStars from './RatingStars';
+import RatingStars from '../RatingStars';
 import { Link } from 'react-router-dom'
 
-function NovelItem(novel) {
+function NovelItemClassic(novel) {
   novel = novel.novel
 
   const languages = novel.language.split(', ')
@@ -58,4 +58,4 @@ function NovelItem(novel) {
   )
 }
 
-export default NovelItem
+export default NovelItemClassic

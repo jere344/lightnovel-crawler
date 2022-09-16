@@ -59,13 +59,10 @@ function Browse() {
                         <SortButton url={`/browse/page-${page}`} key={2} />
                     </div>
                 </header>
-                <ul className="novel-list horizontal col2">
-                    {(typeof novels.content === 'undefined') ? (
-                        <div>Loading...</div>
-                    ) : (<NovelList novels={novels.content} />)
-                    }
-
-                </ul>
+                {(typeof novels.content === 'undefined') ? (
+                    <div>Loading...</div>
+                ) : (<NovelList novels={novels.content} className="novel-list horizontal col2" />)
+                }
                 <footer className="pagination" style={{ "height": "auto" }}>
                     {pagination}
                 </footer >

@@ -38,7 +38,6 @@ function Search() {
     );
 
     const [searchQuery, setSearchQuery] = useState("");
-    console.log(searchQuery);
 
     function searchNovel(e) {
         fetch(`/api/search/?query=${e}`).then(
