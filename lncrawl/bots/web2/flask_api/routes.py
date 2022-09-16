@@ -35,6 +35,7 @@ def flags(language: str):
 @flaskapp.app.route("/api/novels")
 def get_novels():
     """
+    :number: The number of novels to return / the number of novel per page
     :page: Page number
     :sort: Sort by [rank, views, title, author, rating] (default: rank)
 
@@ -43,21 +44,28 @@ def get_novels():
     if not page:
         page = 0
 
+    number = request.args.get("number")
+    if not number:
+        number = 20
+
     sort = request.args.get("sort")
     if not sort:
         sort = "rank"
 
-    start = int(page) * 20
-    stop = (int(page) + 1) * 20
+    page = int(page)
+    number = int(number)
+
+    start = page * number
+    stop = (page + 1) * number
     content = {
-        (int(page) * 20 + 1 + i): e.asdict()
+        (page * number + 1 + i): e.asdict()
         for i, e in enumerate(database.sorted_all_downloaded_novels[sort][start:stop])
     }
     return {
         "content": content,
         "metadata": {
-            "total_pages": math.ceil(len(database.all_downloaded_novels) / 20),
-            "current_page": int(page),
+            "total_pages": math.ceil(len(database.all_downloaded_novels) / number),
+            "current_page": page,
         },
     }, 200
 
