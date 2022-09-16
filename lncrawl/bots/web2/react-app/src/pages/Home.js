@@ -70,7 +70,7 @@ function Home() {
                     </div>
                     <div className="section-body" id="popular-novel-section">
                         <div className="index-rank">
-                            <input type="radio" name="ranktabs" checked="" id="tab_most_read" onChange={() => console.log("click")} />
+                            <input type="radio" name="ranktabs" defaultChecked="" id="tab_most_read" />
                             <label htmlFor="tab_most_read">Most Read</label>
                             <input type="radio" name="ranktabs" id="tab_new_trends" />
                             <label htmlFor="tab_new_trends">New Trends</label>
