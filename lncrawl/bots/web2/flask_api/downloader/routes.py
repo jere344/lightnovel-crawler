@@ -226,6 +226,10 @@ def _update(url: str, job_id: str):
     for chapter in job.app.crawler.chapters:
         if not (json_folder_path / f"{str(chapter['id']).zfill(5)}.json").exists():
             chapters_to_download.append(chapter)
+
+    if not chapters_to_download:
+        job.set_last_action("No new chapters")
+        job.destroy()
     job.app.crawler.chapters = chapters_to_download
     print(
         "Downloading chapters : "
