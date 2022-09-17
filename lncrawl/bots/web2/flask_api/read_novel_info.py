@@ -82,7 +82,11 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
     with open(novel_stats_file, "r", encoding="utf-8") as f:
         novel_stats = json.load(f)
-        clicks = novel_stats["clicks"] if isinstance(novel_stats["clicks"], dict) else {0 : int(novel_stats["clicks"])} # TODO remove this check in a few days
+        clicks = (
+            novel_stats["clicks"]
+            if isinstance(novel_stats["clicks"], dict)
+            else {0: int(novel_stats["clicks"])}
+        )  # TODO remove this check in a few days
         ratings = novel_stats["ratings"]
 
     novel = Novel(
@@ -146,6 +150,7 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
     language = meta["language"] if "language" in meta else "en"
     url = meta["url"] if "url" in meta else ""
     summary = meta["summary"] if "summary" in meta else ""
+    last_update_date = meta["last_update_time"] if "last_update_time" in meta else ""
 
     source = NovelFromSource(
         path=path,
@@ -159,6 +164,7 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
         summary=summary,
         language=language,
         url=url,
+        last_update_date=last_update_date,
     )
 
     return source

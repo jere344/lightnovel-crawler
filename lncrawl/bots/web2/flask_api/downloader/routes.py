@@ -209,6 +209,7 @@ def update():
 
 
 import json
+import datetime
 
 
 def _update(url: str, job_id: str):
@@ -251,6 +252,7 @@ def _update(url: str, job_id: str):
 
     metadata["chapters"] += downloaded_chapters
     metadata["chapters"] = sorted(metadata["chapters"], key=lambda x: x["id"])
+    metadata["last_update_date"] = datetime.datetime.now().isoformat()
 
     # write the new metadata
     with open(json_folder_path.parent / "meta.json", "w", encoding="utf-8") as f:

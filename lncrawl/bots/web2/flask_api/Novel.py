@@ -37,7 +37,11 @@ class Novel:
     # Auto
     current_week_clicks: int = field(
         init=False,
-        default=property(lambda self: self.clicks[datetools.current_week()] if datetools.current_week() in self.clicks else 0),
+        default=property(
+            lambda self: self.clicks[datetools.current_week()]
+            if datetools.current_week() in self.clicks
+            else 0
+        ),
     )
 
     search_words: List[str] = field(
@@ -91,6 +95,7 @@ class Novel:
             # "summary": self.summary,
             "language": self.language,
             "clicks": sum(self.clicks.values()),
+            "current_week_clicks": self.current_week_clicks,
             "rank": self.rank,
             "prefered_source": self.prefered_source.slug,
             "sources": {source.slug: source.language for source in self.sources},
@@ -125,6 +130,7 @@ class NovelFromSource:
     summary: str = ""
     language: str = "en"
     url: str = ""
+    last_update_date: str = ""  # isoformat : ex : "2022-09-10T20:59:35.166239"
 
     # Auto
 
@@ -152,4 +158,5 @@ class NovelFromSource:
             "language": self.language,
             # "str_path": self.str_path,
             "url": self.url,
+            "last_update_date": self.last_update_date,
         }

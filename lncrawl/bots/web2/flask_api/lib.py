@@ -40,7 +40,7 @@ for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
             read_novel_info.get_novel_info(novel_folder)
         )
 
-database.all_downloaded_novels.sort(key=lambda n: n.clicks, reverse=True)
+database.all_downloaded_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
 for i, n in enumerate(database.all_downloaded_novels, start=1):
     n.rank = i
 
@@ -51,22 +51,34 @@ database.sorted_all_downloaded_novels = {
     "rating": sorted(
         database.all_downloaded_novels, key=lambda x: x.overall_rating, reverse=True
     ),
-    "views": sorted(
-        database.all_downloaded_novels, key=lambda x: sum(x.clicks.values()), reverse=True
-    ),
+    "views": database.all_downloaded_novels,  # Default sort
     "weekly_views": sorted(
-        database.all_downloaded_novels, 
-        key=lambda x: x.clicks[datetools.current_week()] if datetools.current_week() in x.clicks else 0,
-        reverse=True
-        ),
+        database.all_downloaded_novels,
+        key=lambda x: x.clicks[datetools.current_week()]
+        if datetools.current_week() in x.clicks
+        else 0,
+        reverse=True,
+    ),
     "rank": database.all_downloaded_novels,  # Default sort
 }
-database.sorted_all_downloaded_novels["title-reverse"] = database.sorted_all_downloaded_novels["title"][::-1]
-database.sorted_all_downloaded_novels["author-reverse"] = database.sorted_all_downloaded_novels["author"][::-1]
-database.sorted_all_downloaded_novels["rating-reverse"] = database.sorted_all_downloaded_novels["rating"][::-1]
-database.sorted_all_downloaded_novels["views-reverse"] = database.sorted_all_downloaded_novels["views"][::-1]
-database.sorted_all_downloaded_novels["weekly_views-reverse"] = database.sorted_all_downloaded_novels["weekly_views"][::-1]
-database.sorted_all_downloaded_novels["rank-reverse"] = database.sorted_all_downloaded_novels["rank"][::-1]
+database.sorted_all_downloaded_novels[
+    "title-reverse"
+] = database.sorted_all_downloaded_novels["title"][::-1]
+database.sorted_all_downloaded_novels[
+    "author-reverse"
+] = database.sorted_all_downloaded_novels["author"][::-1]
+database.sorted_all_downloaded_novels[
+    "rating-reverse"
+] = database.sorted_all_downloaded_novels["rating"][::-1]
+database.sorted_all_downloaded_novels[
+    "views-reverse"
+] = database.sorted_all_downloaded_novels["views"][::-1]
+database.sorted_all_downloaded_novels[
+    "weekly_views-reverse"
+] = database.sorted_all_downloaded_novels["weekly_views"][::-1]
+database.sorted_all_downloaded_novels[
+    "rank-reverse"
+] = database.sorted_all_downloaded_novels["rank"][::-1]
 
 import threading, time
 import shutil
