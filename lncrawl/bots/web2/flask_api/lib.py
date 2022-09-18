@@ -42,44 +42,6 @@ database.all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
 for i, n in enumerate(database.all_novels, start=1):
     n.rank = i
 
-import datetime
-
-
-database.sorted_all_novels = {
-    "title": lambda: sorted(database.all_novels, key=lambda x: x.title),
-    "author": lambda: sorted(database.all_novels, key=lambda x: x.author),
-    "rating": lambda: sorted(
-        database.all_novels, key=lambda x: x.overall_rating, reverse=True
-    ),
-    "views": lambda: sorted(
-        database.all_novels, key=lambda x: sum(x.clicks.values()), reverse=True
-    ),
-    "weekly_views": lambda: sorted(
-        database.all_novels,
-        key=lambda x: x.clicks[datetools.current_week()]
-        if datetools.current_week() in x.clicks
-        else 0,
-        reverse=True,
-    ),
-    "rank": lambda: database.all_novels,  # Default sort
-    "last_updated": lambda: sorted(
-        [
-            source
-            for novel in database.all_novels
-            for source in novel.sources
-            if source.last_update_date
-        ],
-        key=lambda x: datetime.datetime.fromisoformat(x.last_update_date),
-        reverse=True,
-    ),
-    "title-reverse": lambda: database.sorted_all_novels["title"]()[::-1],
-    "author-reverse": lambda: database.sorted_all_novels["author"]()[::-1],
-    "rating-reverse": lambda: database.sorted_all_novels["rating"]()[::-1],
-    "views-reverse": lambda: database.sorted_all_novels["views"]()[::-1],
-    "weekly_views-reverse": lambda: database.sorted_all_novels["weekly_views"]()[::-1],
-    "last_updated-reverse": lambda: database.sorted_all_novels["last_updated"]()[::-1],
-}
-
 
 import threading, time
 import shutil

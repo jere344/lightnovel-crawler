@@ -1526,7 +1526,7 @@ article header p {
 }
 
 .novel-list .novel-item .novel-stats .rating-star p {
-	font-size: .725rem;
+	font-size: 0.95rem;
 	line-height: 1.4;
 	margin: 0;
 }
