@@ -67,10 +67,10 @@ class Novel:
 
     def __eq__(self, other: Any) -> bool:
         """
-        Novel and NovelFromSource are equal if they have the same title
+        Novel are equal if they have the same slug
         """
-        if isinstance(type(other), Union[Novel, NovelFromSource]):
-            return self.title == other.title
+        if isinstance(other, Novel):
+            return self.slug == other.slug
         return False
 
     def __hash__(self) -> int:
@@ -160,3 +160,11 @@ class NovelFromSource:
             "url": self.url,
             "last_update_date": self.last_update_date,
         }
+
+    def __eq__(self, other: Any) -> bool:
+        """
+        Novel are equal if they have the same slug
+        """
+        if isinstance(other, NovelFromSource):
+            return self.slug == other.slug
+        return False

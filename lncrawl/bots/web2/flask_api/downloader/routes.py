@@ -39,14 +39,15 @@ def get_novels_founds():
         return {"status": "error", "message": "Job do not exist"}, 412
 
     job = database.jobs[job_id]
-    if job.is_busy:
-        return {"status": "pending", "message": job.get_status()}, 202
 
     if isinstance(job, FinishedJob):
         return {
             "status": "error",
             "message": f"Job aldready finished : {job.get_status()}",
         }, 409
+
+    if job.is_busy:
+        return {"status": "pending", "message": job.get_status()}, 202
 
     if not job.search_results:
         return {"status": "error", "message": "No search results"}, 404
@@ -230,6 +231,8 @@ def _update(url: str, job_id: str):
     if not chapters_to_download:
         job.set_last_action("No new chapters")
         job.destroy()
+        return
+
     job.app.crawler.chapters = chapters_to_download
     print(
         "Downloading chapters : "
@@ -242,10 +245,17 @@ def _update(url: str, job_id: str):
     # So we need to write the metadata manually
 
     # get aldready downloaded chapters
+    if not (json_folder_path / "metadata.json").exists():
+        job.set_last_action(
+            "Error : The source for this novel does not exist or changed name"
+        )
+        job.destroy()
+        return
+
     with open(json_folder_path.parent / "meta.json", "r", encoding="utf-8") as f:
         downloaded_chapters = json.load(f)["chapters"]
 
-    job.start_download()
+    job.start_download(update_website=False, destroy_after=False)
 
     while job.is_busy and not isinstance(database.jobs[job_id], FinishedJob):
         time.sleep(1)
@@ -262,19 +272,5 @@ def _update(url: str, job_id: str):
     with open(json_folder_path.parent / "meta.json", "w", encoding="utf-8") as f:
         json.dump(metadata, f)
 
-    # Find the novel
-    for downloaded_info in database.all_downloaded_novels:
-        if downloaded_info.title == job.app.crawler.novel_title:
-
-            # Find the source
-            for source in downloaded_info.sources:
-                if source.slug == job.source_slug:
-                    # Update the source info
-                    source.chapter_count = len(metadata["chapters"])
-                    source.first = metadata["chapters"][0]["title"]
-                    source.latest = metadata["chapters"][-1]["title"]
-                    breaking = True
-                    break
-
-            if breaking:
-                break
+    job._update_website()
+    job.destroy()

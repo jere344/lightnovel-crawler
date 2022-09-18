@@ -20,20 +20,49 @@ function Home() {
     const imageType = "image/bmp"
 
 
-    const [novels, setNovels] = useState({});
-    const sort = 'rank';
-    const page = 1;
+    const [novelsSortViews, setNovelsSortViews] = useState({});
     useEffect(() => {
-        fetch(`/api/novels?page=${parseInt(page) - 1}&sort=${sort}`).then(
+        fetch('/api/novels?page=0&sort=rank&number=12').then(
             response => response.json()
         ).then(
             data => {
-                setNovels(data);
+                setNovelsSortViews(data);
             }
         )
-    }, [page, sort]);
+    }, []);
 
+    const [novelsSortRating, setNovelsSortRating] = useState({});
+    useEffect(() => {
+        fetch('/api/novels?page=0&sort=rating&number=12').then(
+            response => response.json()
+        ).then(
+            data => {
+                setNovelsSortRating(data);
+            }
+        )
+    }, []);
 
+    const [novelsSortWeeklyViews, setNovelsSortWeeklyViews] = useState({});
+    useEffect(() => {
+        fetch('/api/novels?page=0&sort=weekly_views&number=12').then(
+            response => response.json()
+        ).then(
+            data => {
+                setNovelsSortWeeklyViews(data);
+            }
+        )
+    }, []);
+
+    const [novelsSortLastUpdate, setNovelsSortLastUpdate] = useState({});
+    useEffect(() => {
+        fetch('/api/novels?page=0&sort=last_updated&number=12').then(
+            response => response.json()
+        ).then(
+            data => {
+                setNovelsSortLastUpdate(data);
+            }
+        )
+    }, []);
 
     return (
         <main role="main">
@@ -57,9 +86,9 @@ function Home() {
                         <a className="getmorebtn" title="Most recently added light novels" href="/stories/genre-all/order-new/status-all/p-1">View More</a>
                     </div>
                     <div className="section-body" id="new-novel-section">
-                        {(typeof novels.content === 'undefined') ? (
+                        {(novelsSortViews.content == null) ? (
                             <div>Loading...</div>
-                        ) : (<NovelList novels={novels.content} type="card" className="novel-list" />)
+                        ) : (<NovelList novels={novelsSortViews.content} type="card" className="novel-list" />)
                         }
                     </div>
                 </section>
@@ -78,24 +107,24 @@ function Home() {
                             <label htmlFor="tab_user_rated">User Rated</label>
                             <div className="rank-container">
                                 <h3><span>Most Read</span></h3>
-                                {(typeof novels.content === 'undefined') ? (
+                                {(novelsSortViews.content == null) ? (
                                     <div>Loading...</div>
-                                ) : (<NovelList novels={novels.content} type="compact-clicks" />)
+                                ) : (<NovelList novels={novelsSortViews.content} type="compact-clicks" />)
                                 }
                             </div>
                             <div className="rank-container">
                                 <h3><span>New Trends</span></h3>
-                                {(typeof novels.content === 'undefined') ? (
+                                {(novelsSortWeeklyViews.content == null) ? (
                                     <div>Loading...</div>
-                                ) : (<NovelList novels={novels.content} type="compact-trends" />)
+                                ) : (<NovelList novels={novelsSortWeeklyViews.content} type="compact-trends" />)
                                 }
 
                             </div>
                             <div className="rank-container">
                                 <h3><span>User Rated</span></h3>
-                                {(typeof novels.content === 'undefined') ? (
+                                {(novelsSortRating.content == null) ? (
                                     <div>Loading...</div>
-                                ) : (<NovelList novels={novels.content} type="compact-rating" />)
+                                ) : (<NovelList novels={novelsSortRating.content} type="compact-rating" />)
                                 }
 
                             </div>
@@ -107,9 +136,9 @@ function Home() {
                         <h3>Weekly Most Active</h3>
                     </div>
                     <div className="section-body">
-                        {(typeof novels.content === 'undefined') ? (
+                        {(novelsSortWeeklyViews.content == null) ? (
                             <div>Loading...</div>
-                        ) : (<NovelList novels={novels.content} type="card" className="novel-list" />)
+                        ) : (<NovelList novels={novelsSortWeeklyViews.content} type="card" className="novel-list" />)
                         }
                     </div>
                 </section>
@@ -119,9 +148,9 @@ function Home() {
                         <a className="getmorebtn mr" title="Recently Added Chapters Novels Chapters" href="/latest-updates">View More</a>
                     </header>
                     <div className="section-body">
-                        {(typeof novels.content === 'undefined') ? (
+                        {(novelsSortLastUpdate.content == null) ? (
                             <div>Loading...</div>
-                        ) : (<NovelList novels={novels.content} type="chapter" className="novel-list horizontal col3" />)
+                        ) : (<NovelList novels={novelsSortLastUpdate.content} type="chapter" className="novel-list horizontal col3" />)
                         }
                     </div>
                 </section>

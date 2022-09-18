@@ -33,52 +33,53 @@ PORT = config["port"]
 WEBSITE_URL = WEBSITE_URL.strip("/")
 
 
-database.all_downloaded_novels: List[Novel] = []
+database.all_novels: List[Novel] = []
 for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
     if novel_folder.is_dir():
-        database.all_downloaded_novels.append(
-            read_novel_info.get_novel_info(novel_folder)
-        )
+        database.all_novels.append(read_novel_info.get_novel_info(novel_folder))
 
-database.all_downloaded_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
-for i, n in enumerate(database.all_downloaded_novels, start=1):
+database.all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
+for i, n in enumerate(database.all_novels, start=1):
     n.rank = i
 
+import datetime
 
-database.sorted_all_downloaded_novels = {
-    "title": sorted(database.all_downloaded_novels, key=lambda x: x.title),
-    "author": sorted(database.all_downloaded_novels, key=lambda x: x.author),
-    "rating": sorted(
-        database.all_downloaded_novels, key=lambda x: x.overall_rating, reverse=True
+
+database.sorted_all_novels = {
+    "title": lambda: sorted(database.all_novels, key=lambda x: x.title),
+    "author": lambda: sorted(database.all_novels, key=lambda x: x.author),
+    "rating": lambda: sorted(
+        database.all_novels, key=lambda x: x.overall_rating, reverse=True
     ),
-    "views": database.all_downloaded_novels,  # Default sort
-    "weekly_views": sorted(
-        database.all_downloaded_novels,
+    "views": lambda: sorted(
+        database.all_novels, key=lambda x: sum(x.clicks.values()), reverse=True
+    ),
+    "weekly_views": lambda: sorted(
+        database.all_novels,
         key=lambda x: x.clicks[datetools.current_week()]
         if datetools.current_week() in x.clicks
         else 0,
         reverse=True,
     ),
-    "rank": database.all_downloaded_novels,  # Default sort
+    "rank": lambda: database.all_novels,  # Default sort
+    "last_updated": lambda: sorted(
+        [
+            source
+            for novel in database.all_novels
+            for source in novel.sources
+            if source.last_update_date
+        ],
+        key=lambda x: datetime.datetime.fromisoformat(x.last_update_date),
+        reverse=True,
+    ),
+    "title-reverse": lambda: database.sorted_all_novels["title"]()[::-1],
+    "author-reverse": lambda: database.sorted_all_novels["author"]()[::-1],
+    "rating-reverse": lambda: database.sorted_all_novels["rating"]()[::-1],
+    "views-reverse": lambda: database.sorted_all_novels["views"]()[::-1],
+    "weekly_views-reverse": lambda: database.sorted_all_novels["weekly_views"]()[::-1],
+    "last_updated-reverse": lambda: database.sorted_all_novels["last_updated"]()[::-1],
 }
-database.sorted_all_downloaded_novels[
-    "title-reverse"
-] = database.sorted_all_downloaded_novels["title"][::-1]
-database.sorted_all_downloaded_novels[
-    "author-reverse"
-] = database.sorted_all_downloaded_novels["author"][::-1]
-database.sorted_all_downloaded_novels[
-    "rating-reverse"
-] = database.sorted_all_downloaded_novels["rating"][::-1]
-database.sorted_all_downloaded_novels[
-    "views-reverse"
-] = database.sorted_all_downloaded_novels["views"][::-1]
-database.sorted_all_downloaded_novels[
-    "weekly_views-reverse"
-] = database.sorted_all_downloaded_novels["weekly_views"][::-1]
-database.sorted_all_downloaded_novels[
-    "rank-reverse"
-] = database.sorted_all_downloaded_novels["rank"][::-1]
+
 
 import threading, time
 import shutil
@@ -92,7 +93,7 @@ def update_novels_stats():
     while True:
         time.sleep(600)  # 10 minutes
 
-        for novel in database.all_downloaded_novels:
+        for novel in database.all_novels:
             # Security to avoid stopping the program while updating stats and having corrupted stats file
             # if KeyboardInterrupt or SystemExit is raised, finish the current loop then stop
             for attempt in range(4):
@@ -105,12 +106,16 @@ def update_novels_stats():
                         shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
 
                     with open(stat_path, "w", encoding="utf-8") as f:
+
                         novel_stats = {
                             "clicks": novel.clicks,
                             "ratings": novel.ratings,
+                            "current_week_clicks": novel.current_week_clicks,
                         }
 
                         json.dump(novel_stats, f, indent=4)
+
+                    print(f"Stats of {novel.title} updated")
 
                 except KeyboardInterrupt or SystemExit:
                     stopping = True

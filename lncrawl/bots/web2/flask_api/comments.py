@@ -37,7 +37,6 @@ def get_comments():
         return {"status": "error", "message": "No page specified"}, 400
 
     path = lib.COMMENT_FOLDER / f"{sanatize.pathify(url)}.json"
-    print(path)
 
     if not path.exists():
         return {"status": "success", "content": []}, 200
@@ -127,7 +126,6 @@ def rate_comment():
         return {"status": "error", "message": "Comment not found"}, 400
 
     ip = utils.shuffle_ip(request.remote_addr)
-    print("ip ", request.remote_addr, " -> ", ip)
     if reaction == "like":
         if ip in comment["dislikes"]:
             comment["dislikes"].remove(ip)

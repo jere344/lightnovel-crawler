@@ -1842,7 +1842,6 @@ article header p {
 	flex-wrap: wrap;
 	-ms-flex-wrap: wrap;
 	position: relative;
-	width: 150%;
 	padding-right: 13px;
 }
 
@@ -1888,7 +1887,7 @@ article header p {
 }
 
 .index-rank .rank-container ul .novel-item .item-body .rating-star p strong {
-	font-size: .685rem;
+	font-size: .75rem;
 }
 
 .index-rank .rank-container ul .novel-item .item-body .rating-star .star-wrap {
@@ -1896,10 +1895,21 @@ article header p {
 	margin-bottom: 2px;
 }
 
-.index-rank .rank-container ul .novel-item .item-body .rating-star .star-wrap .star {
-	width: .685rem;
-	height: .685rem;
+.index-rank .rank-container ul .novel-item.compact .item-body .rating-star .star-wrap {
+	margin-right: 0px;
+	margin-bottom: 0px;
 }
+
+.index-rank .rank-container ul .novel-item .item-body .rating-star .star-wrap .icon-star,
+.index-rank .rank-container ul .novel-item .item-body .rating-star .star-wrap .icon-star-empty {
+	font-size: .825rem;
+}
+
+.index-rank .rank-container ul .novel-item.compact .item-body .rating-star .star-wrap .icon-star,
+.index-rank .rank-container ul .novel-item.compact .item-body .rating-star .star-wrap .icon-star-empty {
+	font-size: 0.75rem;
+}
+
 
 .index-rank .rank-container ul .novel-item .item-body span {
 	font-size: .685rem;

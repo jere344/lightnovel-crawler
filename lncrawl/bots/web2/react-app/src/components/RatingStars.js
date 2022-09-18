@@ -37,7 +37,7 @@ function RatingStars(param) {
         } else {
             ratingStars.push(
                 <span className="star-wrap" key={i} >
-                    <i className={"icon-star" + ((i > rating) ? "-empty" : "")}
+                    <i className={"icon-star" + ((i > ratingHovered) ? "-empty" : "")}
                         onMouseEnter={() => { setRatingHovered(i) }}
                         onMouseOut={() => { setRatingHovered(false) }}
                         onClick={() => { rate(i) }}>

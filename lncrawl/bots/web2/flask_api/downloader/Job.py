@@ -8,6 +8,7 @@ import logging
 from urllib.parse import urlparse, quote_plus
 from slugify import slugify
 from pathlib import Path
+import json
 
 logger = logging.getLogger(__name__)
 from .. import lib
@@ -235,12 +236,12 @@ class JobHandler:
         self.set_last_action("Set download range")
         self.app.chapters = self.app.crawler.chapters[start:stop]  # type: ignore
 
-    def start_download(self):
+    def start_download(self, update_website=True, destroy_after=True):
         self.is_busy = True
         self._select_range()
-        self.executor.submit(self._start_download)
+        self.executor.submit(self._start_download, update_website, destroy_after)
 
-    def _start_download(self):
+    def _start_download(self, update_website=True, destroy_after=True):
         self.is_busy = True
         self.app.pack_by_volume = False
 
@@ -251,28 +252,35 @@ class JobHandler:
             self.set_last_action("Compressing")
             self.app.compress_books()
             self.set_last_action("Finished downloading")
-            self.set_last_action("Updating website")
-            self._update_website()
-            self.set_last_action("Success, destroying session")
+            if update_website:
+                self.set_last_action("Updating website")
+                self._update_website()
 
         except Exception as ex:
             self.crash(f"Download failed : {ex}")
 
-        self.destroy()
+        if destroy_after:
+            self.set_last_action("Success, destroying session")
+            self.destroy()
+
+        self.is_busy = False
 
     def _update_website(self):
-
+        self.set_last_action("reading metadata")
         novel_info = read_novel_info.get_novel_info(Path(self.app.output_path).parent)
+        for source in novel_info.sources:
+            if source.slug == self.source_slug:
+                source.last_update_date = datetime.now().isoformat()
+                meta_path = source.path / "meta.json"
+                with open(str(meta_path), "r") as f:
+                    metadata = json.load(f)
 
-        is_in_all_novels = False
-        for downloaded_info in database.all_downloaded_novels:
-            if self.app.crawler.novel_title == downloaded_info.title:
-                downloaded_info = novel_info
-                is_in_all_novels = True
-                break
+                metadata["last_update_date"] = source.last_update_date
+                with open(str(meta_path), "w") as f:
+                    json.dump(metadata, f, indent=4)
 
-        if not is_in_all_novels:
-            utils.add_novel(novel_info)
+        self.set_last_action("Adding novel to database")
+        utils.add_novel_to_database(novel_info)
 
 
 class FinishedJob:

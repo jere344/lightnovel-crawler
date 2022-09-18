@@ -150,7 +150,7 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
     language = meta["language"] if "language" in meta else "en"
     url = meta["url"] if "url" in meta else ""
     summary = meta["summary"] if "summary" in meta else ""
-    last_update_date = meta["last_update_time"] if "last_update_time" in meta else ""
+    last_update_date = meta["last_update_date"] if "last_update_date" in meta else ""
 
     source = NovelFromSource(
         path=path,

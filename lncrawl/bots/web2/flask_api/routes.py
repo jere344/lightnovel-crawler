@@ -59,17 +59,19 @@ def get_novels():
     stop = (page + 1) * number
     content = {
         (page * number + 1 + i): e.asdict()
-        for i, e in enumerate(database.sorted_all_downloaded_novels[sort][start:stop])
+        for i, e in enumerate(database.sorted_all_novels[sort]()[start:stop])
     }
     return {
         "content": content,
         "metadata": {
-            "total_pages": math.ceil(len(database.all_downloaded_novels) / number),
+            "total_pages": math.ceil(len(database.all_novels) / number),
             "current_page": page,
         },
     }, 200
 
+
 from . import datetools
+
 
 @flaskapp.app.route("/api/novel")
 def get_novel():
@@ -84,7 +86,14 @@ def get_novel():
     if not source_path.exists():
         return "", 404
     source = utils.find_source_with_path(source_path)
-    source.novel.clicks[datetools.current_week()] += 1
+    if not source:
+        return "", 404
+
+    current_week = datetools.current_week()
+    if current_week not in source.novel.clicks:
+        source.novel.clicks[current_week] = 0
+
+    source.novel.clicks[current_week] += 1
 
     return source.asdict(), 200
 
@@ -116,7 +125,12 @@ def get_chapter():
     is_prev = (chapter_folder / f"{str(int(chapter_id) - 1).zfill(5)}.json").exists()
 
     source = utils.find_source_with_path(chapter_folder.parent)
-    source.novel.clicks[datetools.current_week()] += 1
+
+    current_week = datetools.current_week()
+    if current_week not in source.novel.clicks:
+        source.novel.clicks[current_week] = 0
+
+    source.novel.clicks[current_week] += 1
 
     return {
         "content": chapter,
@@ -143,7 +157,11 @@ def get_chapter_list():
     )
 
     source = utils.find_source_with_path(meta_file.parent)
-    source.novel.clicks[datetools.current_week()] += 1
+    current_week = datetools.current_week()
+    if current_week not in source.novel.clicks:
+        source.novel.clicks[current_week] = 0
+
+    source.novel.clicks[current_week] += 1
 
     with open(meta_file, "r") as f:
         chapter_list = json.load(f)["chapters"]
@@ -176,7 +194,7 @@ def search():
 
     query = sanatize.sanitize(query).split(" ")
     ratio: List[tuple[Novel, int]] = []
-    for downloaded in database.all_downloaded_novels:
+    for downloaded in database.all_novels:
         count = 0
         for search_word in query:
             count += len(
@@ -186,7 +204,7 @@ def search():
 
     ratio.sort(key=lambda x: x[1], reverse=True)
 
-    number_of_results = min(20, len(database.all_downloaded_novels))
+    number_of_results = min(20, len(database.all_novels))
 
     search_results = [
         novel.asdict() for novel, ratio in ratio[:number_of_results] if ratio != 0

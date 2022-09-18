@@ -489,10 +489,21 @@
 		margin-bottom: 2px;
 	}
 
-	.index-rank .rank-container ul .novel-item .item-body .rating-star .star-wrap .star {
-		width: .825rem;
-		height: .825rem;
+	index-rank .rank-container ul .novel-item.compact .item-body .rating-star .star-wrap {
+		margin-right: 0px;
+		margin-bottom: 0px;
 	}
+
+	ul .novel-item .item-body .rating-star .star-wrap .icon-star,
+	ul .novel-item .item-body .rating-star .star-wrap .icon-star-empty {
+		font-size: 1rem;
+	}
+
+	ul .novel-item.compact .item-body .rating-star .star-wrap .icon-star,
+	ul .novel-item.compact .item-body .rating-star .star-wrap .icon-star-empty {
+		font-size: 0.825rem;
+	}
+
 
 	.index-rank .rank-container ul .novel-item .item-body span {
 		font-size: 12px;

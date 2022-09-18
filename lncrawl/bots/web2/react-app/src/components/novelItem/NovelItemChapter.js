@@ -5,11 +5,37 @@ import { Link } from 'react-router-dom'
 function NovelItemChapter({ novel }) {
   const source = novel
 
-  const novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+  const novelUrl = `/novel/${source.novel.slug}/${source.slug}`
 
   const re = new RegExp('(Chapter|Chapitre|Ch) ?[0-9]*.? ?(:|;|-|.)?')
-  let chapterName = novel.latest.replace(novel.title, '').replace(re, '').trim()
+  let chapterName = source.latest.replace(source.title, '').replace(re, '').trim()
   // chapterName = novel.latest
+
+  function formatTimeAgo(timeAgo) {
+    const seconds = Math.floor(timeAgo / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+    if (seconds < 60) {
+      return `${seconds} seconds ago`;
+    } else if (minutes < 60) {
+      return `${minutes} minutes ago`;
+    } else if (hours < 24) {
+      return `${hours} hours ago`;
+    } else if (days < 30) {
+      return `${days} days ago`;
+    } else if (months < 12) {
+      return `${months} months ago`;
+    } else {
+      return `${years} years ago`;
+    }
+  }
+
+  const date = new Date(source.last_update_date)
+  const timeAgo = (new Date().getTime()) - date.getTime();
+  const formatedTimeAgo = formatTimeAgo(timeAgo)
 
 
   return (
@@ -27,7 +53,7 @@ function NovelItemChapter({ novel }) {
           <h5 className="chapter-title text1row">Chapter {source.chapter_count} : {chapterName}</h5>
         </Link>
         <div className="novel-stats">
-          <span><i className="icon-pencil-2"></i> <time dateTime="2022-09-16 10:09">4 hours ago</time></span>
+          <span><i className="icon-pencil-2"></i> <time dateTime={date}>{formatedTimeAgo}</time></span>
         </div>
       </div>
     </li>
