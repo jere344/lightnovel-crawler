@@ -20,6 +20,7 @@ function NovelItemCompactClicks({ novel }) {
                     </Link>
                 </h4>
                 <span><i className="icon-eye"></i> {formatter.format(novel.clicks)} (All times)</span>
+                <span><i className="icon-commenting-o"></i> {formatter.format(novel.comment_count)} comments</span>
             </div>
         </li>)
 }

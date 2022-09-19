@@ -74,7 +74,6 @@ function AddNovel() {
                 finished = true;
             }
         }
-        setStatus("finished");
 
         return response
     }

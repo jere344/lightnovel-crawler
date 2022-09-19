@@ -6,6 +6,7 @@ import "../assets/stylesheets/chapterpg.min.css"
 
 import SettingsWheel from '../components/SettingsWheel';
 import Metadata from '../components/Metadata';
+import CommentComponent from '../components/CommentComponent';
 
 
 
@@ -203,6 +204,9 @@ function Chapter() {
                             <i className="icon-right-open"></i>
                         </Link>
                     </div>
+                    <section id="info">
+                        <CommentComponent currentUrl={window.location.pathname} />
+                    </section>
                     <dialog className="mobile-title-bar" style={{ "display": (window.innerWidth > 768 ? "none" : "block"), "transformOrigin": "top", "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
                         <div className="bar-body">
                             <i className="bar-nav-back"><svg viewBox="0 0 24 24" fill="none" width="30" height="30">
@@ -277,9 +281,9 @@ function Chapter() {
                                 </div>
                             </div>
 
-
                         </nav>
                     </dialog>
+
 
                     <div className="guide-message">
                         <span className="mobile">Tap the screen to use reading tools</span>

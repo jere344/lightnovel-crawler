@@ -135,7 +135,7 @@ function NovelInfo() {
                         <div className="novel-info">
                             <div className="main-head">
                                 <h1 itemProp="name" className="novel-title text2row">
-                                    {source.title}
+                                    <a href={source.url}>{source.title}</a>
                                 </h1>
                                 <div className="author">
                                     <span>Author: </span>

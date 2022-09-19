@@ -19,6 +19,7 @@ function NovelItemCompactTrends({ novel }) {
                     </Link>
                 </h4>
                 <span><i className="icon-eye"></i> {formatter.format(novel.current_week_clicks)} (Weekly)</span>
+                <span><i className="icon-commenting-o"></i> {formatter.format(novel.comment_count)} comments</span>
             </div>
         </li>)
 }
