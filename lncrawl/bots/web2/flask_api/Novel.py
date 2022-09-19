@@ -26,6 +26,7 @@ class Novel:
     summary: str = ""
     language: str = "en"
     rank: Optional[int] = None
+    comment_count: int = 0
 
     prefered_source: Optional[NovelFromSource] = field(
         default=None,
@@ -106,6 +107,7 @@ class Novel:
             "source_count": self.source_count,
             "slug": self.slug,
             # "str_path": self.str_path,
+            "comment_count": self.comment_count,
         }
 
 

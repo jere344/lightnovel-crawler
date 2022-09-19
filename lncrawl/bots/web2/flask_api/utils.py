@@ -4,8 +4,24 @@ from .Novel import Novel, NovelFromSource
 from . import database
 
 
-def find_novel_in_database(novel_slug) -> Optional[Novel]:
+def get_novel_with_slug(novel_slug) -> Optional[Novel]:
+    """
+    Returns the novel with the given slug
+    """
     return next(n for n in database.all_novels if n.slug == novel_slug)
+
+
+def get_novel_with_url(url: str) -> Optional[Novel]:
+    """
+    Returns the novel with the url
+    """
+    url = url.replace("http://", "").replace("https://", "")
+    if url.startswith("/"):
+        url = url[1:]
+    print(url)
+    novel_slug = url.split("/")[1]
+    print(novel_slug)
+    return get_novel_with_slug(novel_slug)
 
 
 def find_source_with_path(novel_and_source_path: Path) -> Optional[NovelFromSource]:

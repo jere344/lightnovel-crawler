@@ -227,7 +227,7 @@ def rate():
     if not 0 < rating < 6:
         return {"status": "error", "message": "Rating must be between 1 and 5"}, 400
 
-    novel = utils.find_novel_in_database(novel_slug)
+    novel = utils.get_novel_with_slug(novel_slug)
 
     novel.ratings[utils.shuffle_ip(request.remote_addr)] = rating
 

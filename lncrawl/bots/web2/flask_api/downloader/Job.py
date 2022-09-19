@@ -35,7 +35,7 @@ class JobHandler:
 
     # -----------------------------------------------------------------------------
     def crash(self, reason: str):
-        print(reason)
+        print(f"{'-'*26}\n{reason}\n{'-'*26}")
         self.crashed = True
         self.set_last_action(reason)
         logger.exception(reason)
@@ -63,12 +63,12 @@ class JobHandler:
                         )
                     )
             except Exception as e:
-                print(e)
+                print(f"{'-'*26}\n{e}\n{'-'*26}")
 
             self.app.destroy()
             self.executor.shutdown(wait=False)
         except Exception as e:
-            print(f"Error while destroying: {e}")
+            print(f"{'-'*26}\nError while destroying: {e}\n{'-'*26}")
             logger.exception(f"While destroying JobHandler : {e}")
         finally:
             logger.info("Session destroyed: %s", self.job_id)
@@ -85,17 +85,19 @@ class JobHandler:
 
     sources_to_search = None
     chapters_to_download = None
-    images_to_download = None
+    images_to_download = 0
     last_progress = 0
     downloading_images = False
+    _status_count = 0
 
     def get_status(self):
         try:
+            self._status_count += 1
             if not self.sources_to_search:
                 self.sources_to_search = len(self.app.crawler_links)
             if not self.chapters_to_download:
                 self.chapters_to_download = len(self.app.chapters)
-            if not self.images_to_download:
+            if not self.images_to_download and self.app.chapters:
                 self.images_to_download = (
                     sum(
                         [
@@ -111,8 +113,10 @@ class JobHandler:
 
             elif self.last_action == "Downloading":
                 # hacky way to know if we are downloading images : if the progress diminished, we are downloading images
-                # To avoid switching to image when downloading initial data we put a treshold of 10
-                if self.app.progress < self.last_progress - 10:
+                # To avoid switching to image we download initial data we wait for the 6th call
+                # This is really bad but work in most cases for the web UI
+
+                if self.app.progress < self.last_progress and self._status_count > 5:
                     self.downloading_images = True
                 if self.downloading_images:
                     return f"Downloading images ({self.app.progress}/{self.images_to_download})"
@@ -144,7 +148,7 @@ class JobHandler:
             self.set_last_action("Preparing crawler")
             self.app.prepare_search()
         except Exception as e:
-            return self.crash(f"Fail to init crawler : {e}")
+            return self.crash(f"{'-'*26}\nError while preparing crawler: {e}\n{'-'*26}")
 
         try:
             self.set_last_action("Searching")
@@ -194,7 +198,10 @@ class JobHandler:
         assert self.selected_novel, "No novel selected"
 
         self.set_last_action(f"Selected {self.selected_novel['novels'][source_id]}")
-        self.app.prepare_crawler(self.selected_novel["novels"][source_id]["url"])  # type: ignore
+        try:
+            self.app.prepare_crawler(self.selected_novel["novels"][source_id]["url"])  # type: ignore
+        except Exception as e:
+            return self.crash(f"Fail to init crawler : {e}")
 
         self.set_last_action("Getting information about your novel...")
         self.executor.submit(self.download_novel_info)
@@ -204,7 +211,10 @@ class JobHandler:
     def prepare_direct_download(self, url: str):
         self.original_query = url
         self.is_busy = True
-        self.app.prepare_crawler(url)  # type: ignore
+        try:
+            self.app.prepare_crawler(url)  # type: ignore
+        except Exception as e:
+            return self.crash(f"Fail to init crawler : {e}")
         self.executor.submit(self.download_novel_info)
 
     # -----------------------------------------------------------------------------
@@ -266,21 +276,26 @@ class JobHandler:
         self.is_busy = False
 
     def _update_website(self):
-        self.set_last_action("reading metadata")
-        novel_info = read_novel_info.get_novel_info(Path(self.app.output_path).parent)
-        for source in novel_info.sources:
-            if source.slug == self.source_slug:
-                source.last_update_date = datetime.now().isoformat()
-                meta_path = source.path / "meta.json"
-                with open(str(meta_path), "r") as f:
-                    metadata = json.load(f)
+        try:
+            self.set_last_action("reading metadata")
+            novel_info = read_novel_info.get_novel_info(
+                Path(self.app.output_path).parent
+            )
+            for source in novel_info.sources:
+                if source.slug == self.source_slug:
+                    source.last_update_date = datetime.now().isoformat()
+                    meta_path = source.path / "meta.json"
+                    with open(str(meta_path), "r") as f:
+                        metadata = json.load(f)
 
-                metadata["last_update_date"] = source.last_update_date
-                with open(str(meta_path), "w") as f:
-                    json.dump(metadata, f, indent=4)
+                    metadata["last_update_date"] = source.last_update_date
+                    with open(str(meta_path), "w") as f:
+                        json.dump(metadata, f, indent=4)
 
-        self.set_last_action("Adding novel to database")
-        utils.add_novel_to_database(novel_info)
+            self.set_last_action("Adding novel to database")
+            utils.add_novel_to_database(novel_info)
+        except Exception as ex:
+            self.crash(f"Failed to update website : {ex}")
 
 
 class FinishedJob:

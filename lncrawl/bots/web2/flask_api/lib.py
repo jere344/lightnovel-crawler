@@ -47,6 +47,8 @@ import threading, time
 import shutil
 import sys
 
+print(datetools.current_week())
+
 
 def update_novels_stats():
     """Periodic function to update each novels stats"""
@@ -72,12 +74,10 @@ def update_novels_stats():
                         novel_stats = {
                             "clicks": novel.clicks,
                             "ratings": novel.ratings,
-                            "current_week_clicks": novel.current_week_clicks,
+                            "comment_count": novel.comment_count,
                         }
 
                         json.dump(novel_stats, f, indent=4)
-
-                    print(f"Stats of {novel.title} updated")
 
                 except KeyboardInterrupt or SystemExit:
                     stopping = True

@@ -104,13 +104,20 @@ def download():
         try:
             url = job.url
         except Exception as e:
-            print(e)
+            print("failed to get url : ", e)
 
-        return {
-            "status": "success",
-            "message": job.get_status(),
-            "url": url,
-        }, 200
+        if job.success:
+            return {
+                "status": "success",
+                "message": job.get_status(),
+                "url": url,
+            }, 200
+        else:
+            return {
+                "status": "error",
+                "message": job.get_status(),
+                "url": url,
+            }, 500
 
     if not job.metadata_downloaded:
         job.select_novel(novel_id)
@@ -184,6 +191,7 @@ def direct_download():
 
 import time
 from threading import Thread
+import datetime
 
 
 @app.route("/api/addnovel/update")
@@ -198,13 +206,17 @@ def update():
         else:
             return {"status": "pending", "message": job.get_status()}, 202
     else:
-        if url in [job.original_query for job in database.jobs.values()]:
-            # If the url is already in the database, return the job id
-            # It means that a novel can only be updated once every reboot (database.jobs is cleared on reboot)
-            return {
-                "status": "error",
-                "message": "Novel aldready updating or recently updated",
-            }, 409
+        # We check if it has aldreay been updated in the last hour
+        job = [job for job in database.jobs.values() if job.original_query == url]
+        if job:
+            job = job[0]
+            if isinstance(job, FinishedJob):
+                if job.end_date + datetime.timedelta(hours=1) > datetime.datetime.now():
+                    return {
+                        "status": "error",
+                        "message": "Novel aldready updating or recently updated",
+                    }, 409
+
         Thread(target=_update, args=(url, job_id)).start()
         return {"status": "pending", "message": "Creating session"}, 202
 
@@ -225,8 +237,16 @@ def _update(url: str, job_id: str):
 
     chapters_to_download = []
     for chapter in job.app.crawler.chapters:
-        if not (json_folder_path / f"{str(chapter['id']).zfill(5)}.json").exists():
-            chapters_to_download.append(chapter)
+        chapter_path = json_folder_path / f"{str(chapter['id']).zfill(5)}.json"
+
+        if chapter_path.exists():
+            # We assume that if the body lenght is < 100 it was not downloaded correctly
+            with open(str(chapter_path), "r") as f:
+                json_data = json.load(f)
+                if len((json_data["body"])) > 100:
+                    continue
+
+        chapters_to_download.append(chapter)
 
     if not chapters_to_download:
         job.set_last_action("No new chapters")
@@ -245,14 +265,16 @@ def _update(url: str, job_id: str):
     # So we need to write the metadata manually
 
     # get aldready downloaded chapters
-    if not (json_folder_path / "metadata.json").exists():
+    meta_folder = json_folder_path.parent / "meta.json"
+    if not meta_folder.exists():
+        print(json_folder_path / "meta.json")
         job.set_last_action(
             "Error : The source for this novel does not exist or changed name"
         )
         job.destroy()
         return
 
-    with open(json_folder_path.parent / "meta.json", "r", encoding="utf-8") as f:
+    with open(str(meta_folder), "r", encoding="utf-8") as f:
         downloaded_chapters = json.load(f)["chapters"]
 
     job.start_download(update_website=False, destroy_after=False)

@@ -82,12 +82,9 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
     with open(novel_stats_file, "r", encoding="utf-8") as f:
         novel_stats = json.load(f)
-        clicks = (
-            novel_stats["clicks"]
-            if isinstance(novel_stats["clicks"], dict)
-            else {0: int(novel_stats["clicks"])}
-        )  # TODO remove this check in a few days
+        clicks = novel_stats["clicks"]
         ratings = novel_stats["ratings"]
+        comment_count = novel_stats["comment_count"]
 
     novel = Novel(
         path=path,
@@ -105,6 +102,7 @@ def get_novel_info(novel_folder: Path) -> Novel:
         prefered_source=prefered_source,
         sources=sources,
         ratings=ratings,
+        comment_count=comment_count,
     )
 
     for source in novel.sources:

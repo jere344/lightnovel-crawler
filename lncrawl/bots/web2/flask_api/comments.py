@@ -1,4 +1,6 @@
 from typing import List
+
+from .Novel import Novel
 from . import flaskapp
 from flask import request
 import json
@@ -96,6 +98,9 @@ def add_comment():
 
     with open(path, "w") as f:
         json.dump(comments, f)
+
+    novel: Novel = utils.get_novel_with_url(url)
+    novel.comment_count += 1
 
     return {"status": "success"}, 200
 
