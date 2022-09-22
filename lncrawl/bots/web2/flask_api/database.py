@@ -49,3 +49,4 @@ if TYPE_CHECKING:
     jobs: dict[str, Union[FinishedJob, JobHandler]]
 
 jobs = {}
+jobs_snapshots = {}

@@ -115,8 +115,7 @@ def download():
         else:
             return {
                 "status": "error",
-                "message": job.get_status(),
-                "url": url,
+                "message": job.get_status()
             }, 500
 
     if not job.metadata_downloaded:
@@ -189,6 +188,7 @@ def direct_download():
         return {"status": "pending", "html": job.get_status()}, 202
 
 
+# ----------------------------------------------- Update ----------------------------------------------- #
 import time
 from threading import Thread
 import datetime
@@ -277,6 +277,7 @@ def _update(url: str, job_id: str):
     with open(str(meta_folder), "r", encoding="utf-8") as f:
         downloaded_chapters = json.load(f)["chapters"]
 
+    # We do not destroy session now as we want to update the website after writing metadata
     job.start_download(update_website=False, destroy_after=False)
 
     while job.is_busy and not isinstance(database.jobs[job_id], FinishedJob):
@@ -296,3 +297,29 @@ def _update(url: str, job_id: str):
 
     job._update_website()
     job.destroy()
+
+
+# ----------------------------------------------- Load snapshot ----------------------------------------------- #
+
+@app.route("/api/addnovel/load_snapshot")
+def load_snapshot():
+    job_id = request.args.get("job_id")
+    if job_id in database.jobs:
+        job = database.jobs[job_id]
+    else :
+        print("Job not found")
+        return {"status": "error", "message": "Invalid job_id"}, 400
+        
+    if not isinstance(job, FinishedJob):
+        print("Job not finished")
+        return {"status": "error", "message": "Job is not finished"}, 400
+    
+    if not job.snapshot_exists():
+        print("Snapshot not found")
+        return {"status": "error", "message": "No snapshot for this job"}, 400
+
+    job.restore_snapshot()
+
+    return {"status": "success", "message": "Snapshot loaded"}, 200
+        
+           

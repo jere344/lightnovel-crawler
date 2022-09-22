@@ -47,11 +47,13 @@ class JobHandler:
 
     def destroy_sync(self):
         try:
+            success = not self.crashed
             database.jobs[self.job_id] = FinishedJob(
-                (not self.crashed),
+                success,
                 self.last_action,
                 self.last_activity,
                 self.original_query,
+                self.job_id,
             )
             try:
                 if self.app.good_file_name and self.app.crawler.home_url:
@@ -67,6 +69,8 @@ class JobHandler:
 
             self.app.destroy()
             self.executor.shutdown(wait=False)
+            if success:
+                self._delete_snapshot()
         except Exception as e:
             print(f"{'-'*26}\nError while destroying: {e}\n{'-'*26}")
             logger.exception(f"While destroying JobHandler : {e}")
@@ -74,9 +78,6 @@ class JobHandler:
             logger.info("Session destroyed: %s", self.job_id)
 
     # -----------------------------------------------------------------------------
-
-    def busy(self):
-        return {"Error": f"Busy, {self.last_action} started at {self.last_activity}"}
 
     def set_last_action(self, action: str):
         print("starting action : ", action)
@@ -92,31 +93,34 @@ class JobHandler:
 
     def get_status(self):
         try:
-            self._status_count += 1
-            if not self.sources_to_search:
-                self.sources_to_search = len(self.app.crawler_links)
-            if not self.chapters_to_download:
-                self.chapters_to_download = len(self.app.chapters)
-            if not self.images_to_download and self.app.chapters:
-                self.images_to_download = (
-                    sum(
-                        [
-                            len(chapter.get("images", {}))
-                            for chapter in self.app.chapters
-                        ]
-                    )
-                    + 1
-                )  # +1 for the cover
-
             if not self.is_busy:
                 return "No current task"
 
+            if not self.sources_to_search:
+                self.sources_to_search = len(self.app.crawler_links)
+
             elif self.last_action == "Downloading":
+
+                self._status_count += 1
+                
+                if not self.chapters_to_download:
+                    self.chapters_to_download = len(self.app.chapters)
+                if not self.images_to_download and self.app.chapters:
+                    self.images_to_download = (
+                        sum(
+                            [
+                                len(chapter.get("images", {}))
+                                for chapter in self.app.chapters
+                            ]
+                        )
+                        + 1
+                    )  # +1 for the cover
+
                 # hacky way to know if we are downloading images : if the progress diminished, we are downloading images
-                # To avoid switching to image we download initial data we wait for the 6th call
+                # To avoid switching to image we download initial data we wait for the 8th call
                 # This is really bad but work in most cases for the web UI
 
-                if self.app.progress < self.last_progress and self._status_count > 5:
+                if self.app.progress < self.last_progress and self._status_count > 7:
                     self.downloading_images = True
                 if self.downloading_images:
                     return f"Downloading images ({self.app.progress}/{self.images_to_download})"
@@ -156,7 +160,6 @@ class JobHandler:
         except Exception as e:
             return self.crash(f"Fail to search novel : {e}")
 
-        self.is_busy = False
 
         self.search_results = {
             "found": len(self.app.search_results),
@@ -170,11 +173,15 @@ class JobHandler:
             ],
             "query": query,
         }
-
-    def select_novel(self, novel_id: int) -> None:
-        self.selected_novel = self.app.search_results[novel_id]
+        self.set_last_action("Creating snapshot")
+        print("Creating snapshot")
+        self._create_snapshot()
+        print("_create_snapshot called outside")
+        self.is_busy = False
 
     # -----------------------------------------------------------------------------
+    def select_novel(self, novel_id: int) -> None:
+        self.selected_novel = self.app.search_results[novel_id]
 
     def get_list_of_sources(self):
         self.set_last_action("Source selection")
@@ -237,18 +244,8 @@ class JobHandler:
         self.is_busy = False
         self.metadata_downloaded = True
 
-    # def select_range(self, start: int, finish: int):
-    #     print(f"Selected range: {start -1} - {finish-1}")
-    #     self.set_last_action("Set download range")
-    #     self.app.chapters = self.app.crawler.chapters[start - 1 : finish - 1]
-
-    def _select_range(self, start=0, stop=None):
-        self.set_last_action("Set download range")
-        self.app.chapters = self.app.crawler.chapters[start:stop]  # type: ignore
-
     def start_download(self, update_website=True, destroy_after=True):
         self.is_busy = True
-        self._select_range()
         self.executor.submit(self._start_download, update_website, destroy_after)
 
     def _start_download(self, update_website=True, destroy_after=True):
@@ -267,10 +264,10 @@ class JobHandler:
                 self._update_website()
 
         except Exception as ex:
-            self.crash(f"Download failed : {ex}")
+            return self.crash(f"Download failed : {ex}")
 
         if destroy_after:
-            self.set_last_action("Success, destroying session")
+            self.set_last_action("Successfully downloaded, destroying session")
             self.destroy()
 
         self.is_busy = False
@@ -285,17 +282,43 @@ class JobHandler:
                 if source.slug == self.source_slug:
                     source.last_update_date = datetime.now().isoformat()
                     meta_path = source.path / "meta.json"
-                    with open(str(meta_path), "r") as f:
+                    with open(str(meta_path), "r", encoding='utf-8') as f:
                         metadata = json.load(f)
 
                     metadata["last_update_date"] = source.last_update_date
-                    with open(str(meta_path), "w") as f:
+                    with open(str(meta_path), "w", encoding='utf-8') as f:
                         json.dump(metadata, f, indent=4)
 
             self.set_last_action("Adding novel to database")
             utils.add_novel_to_database(novel_info)
         except Exception as ex:
-            self.crash(f"Failed to update website : {ex}")
+            return self.crash(f"Failed to update website : {ex}")
+
+    # -----------------------------------------------------------------------------
+    def _create_snapshot(self):
+        """
+        Create a JobSnapshot with its search result in jobs_snapshots to be able to restore it if the download fail to quickly 
+        allow a retry with another source without having to search the same query again
+        """
+        print("Create snapshot inside")
+        try : 
+            database.jobs_snapshots[self.job_id] = job = JobHandler(self.job_id)
+            job.search_results = self.search_results
+            job.original_query = self.original_query
+            job.app.search_results = self.app.search_results
+        except Exception as e:
+            print("Failed to create snapshot : ", e)
+        
+        print("database.jobs_snapshots : ", database.jobs_snapshots)
+
+
+
+    def _delete_snapshot(self):
+        """
+        Delete the snapshot
+        """
+        if self.job_id in database.jobs_snapshots:
+            del database.jobs_snapshots[self.job_id]
 
 
 class FinishedJob:
@@ -314,15 +337,31 @@ class FinishedJob:
         message: str,
         end_date: datetime,
         original_query: str,
+        job_id: str,
     ):
         print(f"FinishedJob: {success}, {message}, {end_date}")
         self.original_query = original_query
         self.success = success
         self.message = message
         self.end_date = end_date
+        self.job_id = job_id
 
     def get_status(self):
         return self.message
 
     def destroy(self):
         pass
+
+    def restore_snapshot(self):
+        """
+        Restore the job from the snapshot
+        """
+        if self.job_id in database.jobs_snapshots:
+            database.jobs[self.job_id] = database.jobs_snapshots[self.job_id]
+        
+        return database.jobs_snapshots[self.job_id]
+
+    def snapshot_exists(self):
+        print("database.jobs_snapshots : ", database.jobs_snapshots)
+        return self.job_id in database.jobs_snapshots
+

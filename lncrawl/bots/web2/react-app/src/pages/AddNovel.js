@@ -16,9 +16,11 @@ function AddNovel() {
     const sleep = ms => new Promise(r => setTimeout(r, ms));
 
     let [showAdvanceOptions, setShowAdvanceOptions] = useState(false);
+    const [showRetryButton, setShowRetryButton] = useState(false);
 
     const [jobId] = useState(Math.random().toString().slice(2));
     const [searchQuery, setSearchQuery] = useState("");
+
 
     const [novels, setNovels] = useState([]);
     const [selectedNovel, setSelectedNovel] = useState(null);
@@ -70,7 +72,7 @@ function AddNovel() {
                 finished = true;
                 setStatus(response.message)
             } else {
-                console.log("Unexpected response :" + response);
+                console.log("Unexpected response :", response);
                 finished = true;
             }
         }
@@ -103,7 +105,7 @@ function AddNovel() {
                 } else if (response.message !== undefined) {
                     console.log("Error creating session : " + response.message)
                 } else {
-                    console.log("Unexpected response :" + response);
+                    console.log("Unexpected response :", response);
                 }
             }
         )
@@ -140,13 +142,33 @@ function AddNovel() {
         let response = await queue(`/api/addnovel/download?job_id=${jobId}&novel_id=${novelId}&source_id=${sourceId}`);
         if (response.status === "success") {
             navigate(`/novel/${response.url}`);
+        } else if (response.status === "error") {
+            setStatus(response.message)
+            setShowRetryButton(true);
         }
+
     }
 
     async function directDownload(url) {
         let response = await queue(`/api/addnovel/direct_download?job_id=${jobId}&url=${url}`);
         if (response.status === "success") {
             navigate(`/novel/${response.url}`);
+        }
+    }
+
+    async function retry(){
+        setShowRetryButton(false)
+        setNovels([]);
+        
+
+        let response = await fetch("/api/addnovel/load_snapshot?job_id=" + jobId).then(res => res.json());
+
+        if (response.status === "success") {
+            getNovelsFounds()
+        } else if (response.message !== undefined) {
+            console.log("Error retrying : " + response.message)
+        } else {
+            console.log("Unexpected response :",  response);
         }
     }
 
@@ -190,6 +212,7 @@ function AddNovel() {
                 </div>
                 {sessionCreated ? <h1>Search results for {searchQuery}</h1> : null}
                 <p>{status}</p>
+                {showRetryButton ? <button className="btn btn-primary" onClick={() => retry()}>Retry</button> : null}
                 <section id="novelListBase">
                     <ul className="novel-list">
                         {novelItems}
