@@ -72,7 +72,7 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
     if not title:
         title = novel_folder.name
-
+    
     # --------------------------------------------------------------------------
 
     novel_stats_file = Path(novel_folder / "stats.json")
@@ -82,9 +82,9 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
     with open(novel_stats_file, "r", encoding="utf-8") as f:
         novel_stats = json.load(f)
-        clicks = novel_stats["clicks"]
+        clicks = novel_stats["clicks"] if "clicks" in novel_stats and isinstance(novel_stats["clicks"], dict) else {}
         ratings = novel_stats["ratings"]
-        comment_count = novel_stats["comment_count"]
+        comment_count = novel_stats["comment_count"] if "comment_count" in novel_stats else 0
 
     novel = Novel(
         path=path,
