@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
-
 import logging
 from lncrawl.core.crawler import Crawler
 
 logger = logging.getLogger(__name__)
 
-class MangaRosieCrawler(Crawler):
+class MangaTx(Crawler):
     has_manga = True
     base_url = [
-        'https://mangarosie.me/',
-        'https://mangarosie.love/',
+        'https://mangatx.com/'
     ]
     
     search_url = (
@@ -21,26 +19,27 @@ class MangaRosieCrawler(Crawler):
         self.cleaner.bad_css.update(['.code-block', '.adsbygoogle'])
     # end def
 
-    def search_novel(self, query):
-        query = query.lower().replace(" ", "+")
-        soup = self.get_soup(self.search_url % (self.home_url, query))
+    # NOTE: Search not working, tried multiple ways just isn't showing novel.
+    # def search_novel(self, query):
+    #     query = query.lower().replace(" ", "+")
+    #     soup = self.get_soup(self.search_url % (self.home_url, query))
         
-        results = []
-        for tab in soup.select(".c-tabs-item__content"):
-            a = tab.select_one(".post-title h3 a")
-            latest = tab.select_one(".latest-chap .chapter a").text
-            votes = tab.select_one(".rating .total_votes").text
-            results.append(
-                {
-                    "title": a.text.strip(),
-                    "url": self.absolute_url(a["href"]),
-                    "info": "%s | Rating: %s" % (latest, votes),
-                }
-            )
-        # end for
+    #     results = []
+    #     for tab in soup.select(".c-tabs-item__content"):
+    #         a = tab.select_one(".post-title h3 a")
+    #         latest = tab.select_one(".latest-chap .chapter a").text
+    #         votes = tab.select_one(".rating .total_votes").text
+    #         results.append(
+    #             {
+    #                 "title": a.text.strip(),
+    #                 "url": self.absolute_url(a["href"]),
+    #                 "info": "%s | Rating: %s" % (latest, votes),
+    #             }
+    #         )
+    #     # end for
 
-        return results
-    # end def
+    #     return results
+    # # end def
 
     def read_novel_info(self):
         logger.debug("Visiting %s", self.novel_url)
@@ -56,7 +55,7 @@ class MangaRosieCrawler(Crawler):
         img_src = soup.select_one(".summary_image a img")
         
         if img_src:
-            self.novel_cover = self.absolute_url(img_src["src"])
+            self.novel_cover = self.absolute_url(img_src["data-src"])
         # end if
         
         logger.info("Novel cover: %s", self.novel_cover)
