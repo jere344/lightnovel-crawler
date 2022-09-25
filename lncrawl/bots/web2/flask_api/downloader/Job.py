@@ -231,7 +231,6 @@ class JobHandler:
     
     def download_novel_info(self):
         self.is_busy = True
-        self._select_range()
         self.set_last_action("Getting novel information...")
 
         try:
@@ -251,6 +250,7 @@ class JobHandler:
 
     def start_download(self, update_website=True, destroy_after=True):
         self.is_busy = True
+        self._select_range()
         self.executor.submit(self._start_download, update_website, destroy_after)
 
     def _start_download(self, update_website=True, destroy_after=True):
