@@ -43,7 +43,7 @@ def get_comments():
     if not path.exists():
         return {"status": "success", "content": []}, 200
 
-    with open(path, "r") as f:
+    with open(path, "r", encoding='utf-8') as f:
         comments = json.load(f)
 
     prepare_comments(comments)
@@ -79,9 +79,9 @@ def add_comment():
         lib.COMMENT_FOLDER / f"{sanatize.pathify(urllib.parse.unquote_plus(url))}.json"
     )
     if not path.exists():
-        with open(path, "w") as f:
+        with open(path, "w", encoding='utf-8') as f:
             json.dump([], f)
-    with open(path, "r") as f:
+    with open(path, "r", encoding='utf-8') as f:
         comments = json.load(f)
 
     comment_id_to_reply_to = data.get("reply_to")
@@ -96,7 +96,7 @@ def add_comment():
     else:
         comments.append(reply)
 
-    with open(path, "w") as f:
+    with open(path, "w", encoding='utf-8') as f:
         json.dump(comments, f)
 
     novel: Novel = utils.get_novel_with_url(url)
@@ -123,7 +123,7 @@ def rate_comment():
     if not path.exists():
         return {"status": "error", "message": "Comment not found"}, 400
 
-    with open(path, "r") as f:
+    with open(path, "r", encoding='utf-8') as f:
         comments = json.load(f)
 
     comment = find_comment(comments, comment_id)
@@ -149,7 +149,7 @@ def rate_comment():
         if ip in comment["dislikes"]:
             comment["dislikes"].remove(ip)
 
-    with open(path, "w") as f:
+    with open(path, "w", encoding='utf-8') as f:
         json.dump(comments, f)
 
     return {"status": "success"}, 200

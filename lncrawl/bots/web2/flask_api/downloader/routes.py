@@ -241,7 +241,7 @@ def _update(url: str, job_id: str):
 
         if chapter_path.exists():
             # We assume that if the body lenght is < 100 it was not downloaded correctly
-            with open(str(chapter_path), "r") as f:
+            with open(str(chapter_path), "r", encoding='utf-8') as f:
                 json_data = json.load(f)
                 if len((json_data["body"])) > 100:
                     continue

@@ -115,7 +115,7 @@ def get_chapter():
     if not chapter_path.exists():
         return "", 404
 
-    with open(chapter_path, "r") as f:
+    with open(chapter_path, "r", encoding='utf-8') as f:
         chapter = json.load(f)
 
     if not chapter_path.exists():
@@ -163,7 +163,7 @@ def get_chapter_list():
 
     source.novel.clicks[current_week] += 1
 
-    with open(meta_file, "r") as f:
+    with open(meta_file, "r", encoding='utf-8') as f:
         chapter_list = json.load(f)["chapters"]
 
     start = page * 100
