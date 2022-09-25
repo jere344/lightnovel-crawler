@@ -225,8 +225,13 @@ class JobHandler:
         self.executor.submit(self.download_novel_info)
 
     # -----------------------------------------------------------------------------
+    def _select_range(self, start=0, stop=None):
+        self.set_last_action("Set download range")
+        self.app.chapters = self.app.crawler.chapters[start:stop]  # type: ignore
+    
     def download_novel_info(self):
         self.is_busy = True
+        self._select_range()
         self.set_last_action("Getting novel information...")
 
         try:
