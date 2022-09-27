@@ -38,6 +38,7 @@ class App:
         self.archived_outputs = None
         self.good_file_name: str = ''
         self.no_append_after_filename = False
+        self.downloading_images : bool = False # A way to tell if the current download is for images or chapters
         atexit.register(self.destroy)
     # end def
 
@@ -185,7 +186,9 @@ class App:
         save_metadata(self)
         download_chapters(self)
         save_metadata(self)
+        self.downloading_images = True
         download_chapter_images(self)
+        self.downloading_images = False
         save_metadata(self, True)
 
         if not self.output_formats.get('json', False):

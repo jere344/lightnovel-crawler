@@ -118,4 +118,8 @@
 	.translate-panel {
 		display: block;
 	}
+
+	.thanks-panel {
+		font-size: 0.7em;
+	}
 }

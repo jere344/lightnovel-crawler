@@ -3643,6 +3643,25 @@ svg {
 	list-style-type: inherit;
 }
 
-.grecaptcha-badge {
-	visibility: hidden;
+
+.thanks-panel {
+	position: absolute;
+	background-color: var(--bg-color-2);
+	z-index: -1;
+	border: 2px solid var(--hg-yellow);
+	color: var(--hg-yellow);
+	border-radius: 4px;
+	transition: all .1s ease-in-out;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-left: 30px;
+	font-size: 0;
+	opacity: 0;
+	z-index: 0;
+}
+
+.thanks-panel.active {
+	z-index: 2;
+	opacity: 1;
+	font-size: 1rem;
 }

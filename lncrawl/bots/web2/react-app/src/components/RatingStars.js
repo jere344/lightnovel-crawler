@@ -7,6 +7,10 @@ function RatingStars(param) {
     const count = param.count;
     const ratingStars = [];
 
+    const [thanksPanelActive, setThanksPanelActive] = useState(false);
+
+
+
     function rate(rating) {
         fetch("/api/rate", {
             method: "POST",
@@ -17,9 +21,15 @@ function RatingStars(param) {
                 novel: param.novel,
                 rating: rating,
             }),
-        })
-        // TODO : Show thank you message
+        });
+
+
+        setThanksPanelActive(true);
+        console.log("thanks panel active");
+        setTimeout(function () { console.log("thanks panel inactive"); setThanksPanelActive(false); }, 3000);
     }
+
+
 
     for (let i = 1; i <= 5; i++) {
         if (ratingHovered === false) {
@@ -37,7 +47,7 @@ function RatingStars(param) {
         } else {
             ratingStars.push(
                 <span className="star-wrap" key={i} >
-                    <i className={"icon-star" + ((i > ratingHovered) ? "-empty" : "")}
+                    <i className={"icon-star" + ((i > ratingHovered) ? "-empty" : "") + " hovered"}
                         onMouseEnter={() => { setRatingHovered(i) }}
                         onMouseOut={() => { setRatingHovered(false) }}
                         onClick={() => { rate(i) }}>
@@ -49,10 +59,16 @@ function RatingStars(param) {
 
 
     return (
-
-        <p>{ratingStars}
-            <strong>{rating} ({count})</strong>
-        </p>
+        <div className="rating-stars-container">
+            <p>{ratingStars}
+                <strong>{rating} ({count})</strong>
+            </p>
+            <div className={"thanks-panel" + (thanksPanelActive ? " active" : "")}>
+                <div className="thanks-panel-rating-text">
+                    Thank you!
+                </div>
+            </div>
+        </div>
     )
 }
 

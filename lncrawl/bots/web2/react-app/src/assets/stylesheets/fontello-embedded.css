@@ -399,7 +399,13 @@
 .rating-star p span.star-wrap .icon-star-half-alt {
   color: var(--star-color-on);
   font-size: 1.1em;
+}
 
+.rating-star p span.star-wrap .icon-star.hovered,
+.rating-star p span.star-wrap .icon-star-empty.hovered,
+.rating-star p span.star-wrap .icon-star-half.hovered {
+  color: var(--hg-yellow);
+  font-size: 1.1em;
 }
 
 .rating-star p span.star-wrap {

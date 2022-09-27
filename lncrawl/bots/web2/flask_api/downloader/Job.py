@@ -84,28 +84,17 @@ class JobHandler:
         self.last_action = action
         self.last_activity = datetime.now()
 
-    sources_to_search = None
-    chapters_to_download = None
+    sources_to_search = 0
+    chapters_to_download = 0
     images_to_download = 0
-    last_progress = 0
-    downloading_images = False
-    _status_count = 0
 
     def get_status(self):
-        try:
-            if not self.is_busy:
-                return "No current task"
+        if not self.is_busy:
+            return "No current task"
 
-            if not self.sources_to_search:
-                self.sources_to_search = len(self.app.crawler_links)
-
-            elif self.last_action == "Downloading":
-
-                self._status_count += 1
-                
-                if not self.chapters_to_download:
-                    self.chapters_to_download = len(self.app.chapters)
-                if not self.images_to_download and self.app.chapters:
+        elif self.last_action == "Downloading":
+            if self.app.downloading_images:
+                if not self.images_to_download:
                     self.images_to_download = (
                         sum(
                             [
@@ -115,26 +104,20 @@ class JobHandler:
                         )
                         + 1
                     )  # +1 for the cover
-
-                # hacky way to know if we are downloading images : if the progress diminished, we are downloading images
-                # To avoid switching to image we download initial data we wait for the 8th call
-                # This is really bad but work in most cases for the web UI
-
-                if self.app.progress < self.last_progress and self._status_count > 7:
-                    self.downloading_images = True
-                if self.downloading_images:
-                    return f"Downloading images ({self.app.progress}/{self.images_to_download})"
-                else:
-                    return f"Downloading chapters ({self.app.progress}/{self.chapters_to_download})"
-
-            elif self.last_action == "Searching":
-                return f"Searching ({self.app.progress}/{self.sources_to_search})"
+                return f"Downloading images ({self.app.progress}/{self.images_to_download})"
 
             else:
-                return self.last_action
+                if not self.chapters_to_download:
+                    self.chapters_to_download = len(self.app.chapters)
+                return f"Downloading chapters ({self.app.progress}/{self.chapters_to_download})"
 
-        finally:
-            self.last_progress = self.app.progress
+        elif self.last_action == "Searching":
+            if not self.sources_to_search:
+                self.sources_to_search = len(self.app.crawler_links)
+            return f"Searching ({self.app.progress}/{self.sources_to_search})"
+
+        else:
+            return self.last_action
 
     # -----------------------------------------------------------------------------
     def get_list_of_novel(self, query: str) -> None:
@@ -159,7 +142,6 @@ class JobHandler:
             self.app.search_novel()
         except Exception as e:
             return self.crash(f"Fail to search novel : {e}")
-
 
         self.search_results = {
             "found": len(self.app.search_results),
@@ -228,7 +210,7 @@ class JobHandler:
     def _select_range(self, start=0, stop=None):
         self.set_last_action("Set download range")
         self.app.chapters = self.app.crawler.chapters[start:stop]  # type: ignore
-    
+
     def download_novel_info(self):
         self.is_busy = True
         self.set_last_action("Getting novel information...")
@@ -287,11 +269,11 @@ class JobHandler:
                 if source.slug == self.source_slug:
                     source.last_update_date = datetime.now().isoformat()
                     meta_path = source.path / "meta.json"
-                    with open(str(meta_path), "r", encoding='utf-8') as f:
+                    with open(str(meta_path), "r", encoding="utf-8") as f:
                         metadata = json.load(f)
 
                     metadata["last_update_date"] = source.last_update_date
-                    with open(str(meta_path), "w", encoding='utf-8') as f:
+                    with open(str(meta_path), "w", encoding="utf-8") as f:
                         json.dump(metadata, f, indent=4)
 
             self.set_last_action("Adding novel to database")
@@ -302,21 +284,20 @@ class JobHandler:
     # -----------------------------------------------------------------------------
     def _create_snapshot(self):
         """
-        Create a JobSnapshot with its search result in jobs_snapshots to be able to restore it if the download fail to quickly 
+        Create a JobSnapshot with its search result in jobs_snapshots to be able to restore it if the download fail to quickly
         allow a retry with another source without having to search the same query again
         """
         print("Create snapshot inside")
-        try : 
+        try:
             database.jobs_snapshots[self.job_id] = job = JobHandler(self.job_id)
             job.search_results = self.search_results
             job.original_query = self.original_query
             job.app.search_results = self.app.search_results
+            job.last_action = self.last_action
         except Exception as e:
             print("Failed to create snapshot : ", e)
-        
+
         print("database.jobs_snapshots : ", database.jobs_snapshots)
-
-
 
     def _delete_snapshot(self):
         """
@@ -363,10 +344,9 @@ class FinishedJob:
         """
         if self.job_id in database.jobs_snapshots:
             database.jobs[self.job_id] = database.jobs_snapshots[self.job_id]
-        
+
         return database.jobs_snapshots[self.job_id]
 
     def snapshot_exists(self):
         print("database.jobs_snapshots : ", database.jobs_snapshots)
         return self.job_id in database.jobs_snapshots
-
