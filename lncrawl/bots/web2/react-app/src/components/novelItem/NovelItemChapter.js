@@ -34,8 +34,7 @@ function NovelItemChapter({ novel }) {
   }
 
   const date = new Date(source.last_update_date)
-  const timeAgo = (new Date().getTime()) - date.getTime();
-  const formatedTimeAgo = formatTimeAgo(timeAgo)
+  const formatedTimeAgo = formatTimeAgo((new Date().getTime()) - date.getTime())
 
 
   return (

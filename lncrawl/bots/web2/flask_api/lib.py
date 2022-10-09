@@ -50,7 +50,6 @@ import threading, time
 import shutil
 import sys
 
-print(datetools.current_week())
 
 
 def update_novels_stats():

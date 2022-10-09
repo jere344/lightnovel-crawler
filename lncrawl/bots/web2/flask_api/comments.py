@@ -7,7 +7,7 @@ import json
 from . import lib
 from . import utils
 import uuid
-import datetime
+from . import datetools
 from . import sanatize
 import urllib.parse
 
@@ -65,7 +65,7 @@ def add_comment():
     reply = {
         "name": name,
         "text": text,
-        "date": datetime.datetime.now().isoformat(),
+        "date": datetools.utc_str_date(),
         "id": str(uuid.uuid4()),
         "rank": "Reader",
         "spoiler": True if spoiler else False,

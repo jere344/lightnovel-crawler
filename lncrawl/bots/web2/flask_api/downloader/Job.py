@@ -2,6 +2,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import List, Optional, Union
+from lncrawl.bots.web2.flask_api import datetools
 from lncrawl.core.app import App
 from lncrawl.core.crawler import Crawler
 import logging
@@ -267,7 +268,7 @@ class JobHandler:
             )
             for source in novel_info.sources:
                 if source.slug == self.source_slug:
-                    source.last_update_date = datetime.now().isoformat()
+                    source.last_update_date = datetools.utc_str_date()
                     meta_path = source.path / "meta.json"
                     with open(str(meta_path), "r", encoding="utf-8") as f:
                         metadata = json.load(f)
