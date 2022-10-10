@@ -242,6 +242,8 @@ $ python3 lncrawl --bot telegram
 
 _There is a `start.sh` script to run a bot in ubuntu servers. It will basically execute the `python3 lncrawl` and send the task to run in background. I use it to run my discord bot in the server._
 
+To run the website, follow [theses instructions](lncrawl/bots/web2/README.md)
+
 ## General Usage
 
 ### Available options
