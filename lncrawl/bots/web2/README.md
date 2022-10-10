@@ -14,6 +14,7 @@ The aim is to create a light novel and web novel aggregator website with an user
     - [Run the production server](#run-the-production-server)
   - [Build with](#build-with)
   - [Authors](#authors)
+- [More informations](#more-informations)
   
   
 ## to get started
@@ -120,5 +121,6 @@ And all the contributors of [lightnovel-crawler](https://github.com/dipu-bd/ligh
 
 ___
 
+# More informations
 
 More general informations can be found in the [lightnovel-crawler](https://github.com/dipu-bd/lightnovel-crawler) repository.
