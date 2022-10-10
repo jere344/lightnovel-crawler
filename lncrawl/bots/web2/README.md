@@ -3,6 +3,19 @@
 LNCrawler Website is a react web frontend for [lightnovel-crawler](https://github.com/dipu-bd/lightnovel-crawler).
 The aim is to create a light novel and web novel aggregator website with an user-generated database from more than 200+ sources.
 
+
+
+- [LNCrawler Website](#lncrawler-website)
+  - [to get started](#to-get-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Start the website](#start-the-website)
+    - [Run the developpement server](#run-the-developpement-server)
+    - [Run the production server](#run-the-production-server)
+  - [Build with](#build-with)
+  - [Authors](#authors)
+  
+  
 ## to get started
 
 ### Prerequisites
@@ -30,7 +43,7 @@ $ pip install -r requierements-bot.txt
 ```
 
 - Move into lncrawl/bots/web2/react-app/ and install requirements :
-- 
+
 ```bash
 $ npm install
 ```
@@ -58,8 +71,10 @@ cd lncrawl/bots/web2/react-app
 $ npm install -g serve
 ```
 
-- First put the backend bot in production mode
+- First put the backend bot in production mode :
+```
 edit lncrawl\bots\web2\__init__.py and follow the commented instructions
+```
 
 - Start the backend bot
 ```bash
@@ -89,19 +104,21 @@ For https you will need
 
 ## Build with
 
-* [lightnovel-crawler](https://github.com/dipu-bd/lightnovel-crawler) - LNCrawler is based on lightnovel-crawler
+* [lightnovel-crawler](https://github.com/dipu-bd/lightnovel-crawler) - LNCrawler Website is based on lightnovel-crawler
 * [React](https://reactjs.org/) - The web framework used
 * [python](https://www.python.org/) - The backend language
 
 
 
-## Auteurs
+## Authors
 
-* **jere344** _alias_ [@jere344](https://github.com/jere344)
+* [@jere344](https://github.com/jere344)
+
+
 And all the contributors of [lightnovel-crawler](https://github.com/dipu-bd/lightnovel-crawler)
 
 
+___
 
 
-
-More general information can be found in the [lightnovel-crawler](https://github.com/dipu-bd/lightnovel-crawler) repository.
+More general informations can be found in the [lightnovel-crawler](https://github.com/dipu-bd/lightnovel-crawler) repository.
