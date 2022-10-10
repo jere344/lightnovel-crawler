@@ -260,22 +260,29 @@ def _update(url: str, job_id: str):
         + " of "
         + job.novel_slug
     )
-    # job.start_download() write metadata, so when updating it will only keep the new chapters
-    # and not the aldready downloaded ones.
-    # So we need to write the metadata manually
 
     # get aldready downloaded chapters
     meta_folder = json_folder_path.parent / "meta.json"
     if not meta_folder.exists():
-        print(json_folder_path / "meta.json")
+        print(meta_folder + " doesn't exist")
         job.set_last_action(
             "Error : The source for this novel does not exist or changed name"
         )
         job.destroy()
         return
 
+    # job.start_download() write metadata, so when updating it will only keep the new chapters
+    # and not the aldready downloaded ones.
+    # So we need to write the metadata manually
+
     with open(str(meta_folder), "r", encoding="utf-8") as f:
-        downloaded_chapters = json.load(f)["chapters"]
+        data = json.load(f)
+        # For backward compatibility
+        if "novel" in data:
+            downloaded_chapters = data["novel"]["chapters"]
+        else:
+            downloaded_chapters = data["chapters"]
+
 
     # We do not destroy session now as we want to update the website after writing metadata
     job.start_download(update_website=False, destroy_after=False)
@@ -287,8 +294,9 @@ def _update(url: str, job_id: str):
     with open(json_folder_path.parent / "meta.json", "r", encoding="utf-8") as f:
         metadata = json.load(f)
 
-    metadata["chapters"] += downloaded_chapters
-    metadata["chapters"] = sorted(metadata["chapters"], key=lambda x: x["id"])
+    # Add previously downloaded chapters
+    metadata["novel"]["chapters"] += downloaded_chapters
+    metadata["novel"]["chapters"] = sorted(metadata["novel"]["chapters"], key=lambda x: x["id"])
     metadata["last_update_date"] = datetime.datetime.now().isoformat()
 
     # write the new metadata

@@ -10,6 +10,7 @@ from urllib.parse import urlparse, quote_plus
 from slugify import slugify
 from pathlib import Path
 import json
+from lncrawl.core.sources import prepare_crawler
 
 logger = logging.getLogger(__name__)
 from .. import lib
@@ -157,9 +158,7 @@ class JobHandler:
             "query": query,
         }
         self.set_last_action("Creating snapshot")
-        print("Creating snapshot")
         self._create_snapshot()
-        print("_create_snapshot called outside")
         self.is_busy = False
 
     # -----------------------------------------------------------------------------
@@ -189,7 +188,7 @@ class JobHandler:
 
         self.set_last_action(f"Selected {self.selected_novel['novels'][source_id]}")
         try:
-            self.app.prepare_crawler(self.selected_novel["novels"][source_id]["url"])  # type: ignore
+            self.app.crawler = prepare_crawler(self.selected_novel["novels"][source_id]["url"])
         except Exception as e:
             return self.crash(f"Fail to init crawler : {e}")
 
@@ -202,7 +201,7 @@ class JobHandler:
         self.original_query = url
         self.is_busy = True
         try:
-            self.app.prepare_crawler(url)  # type: ignore
+            self.app.crawler = prepare_crawler(url)
         except Exception as e:
             return self.crash(f"Fail to init crawler : {e}")
         self.executor.submit(self.download_novel_info)
@@ -288,7 +287,6 @@ class JobHandler:
         Create a JobSnapshot with its search result in jobs_snapshots to be able to restore it if the download fail to quickly
         allow a retry with another source without having to search the same query again
         """
-        print("Create snapshot inside")
         try:
             database.jobs_snapshots[self.job_id] = job = JobHandler(self.job_id)
             job.search_results = self.search_results

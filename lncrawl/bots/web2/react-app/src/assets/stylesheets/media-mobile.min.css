@@ -1724,7 +1724,7 @@ article header p {
 }
 
 .novel-title a {
-	color: var(--text-color);
+	color: #acacac;
 }
 
 .chapter-title {

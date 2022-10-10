@@ -127,28 +127,34 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
         return None
 
     with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
-        meta = json.load(f)
+        data = json.load(f)
+        # For backward compatibility
+        if "novel" in data :
+            novel_metadata = data["novel"]
+        else :
+            novel_metadata = data
 
     try:
-        latest = meta["chapters"][-1]["title"]
+        latest = novel_metadata["chapters"][-1]["title"]
     except KeyError:
         latest = ""
     except IndexError:
         latest = ""
     try:
-        first = meta["chapters"][0]["title"]
+        first = novel_metadata["chapters"][0]["title"]
     except KeyError:
         first = ""
     except IndexError:
         first = ""
-    author = meta["author"] if "author" in meta else ""
-    chapter_count = len(meta["chapters"]) if "chapters" in meta else 0
-    volume_count = len(meta["volumes"]) if "volumes" in meta else 0
-    title = meta["title"] if "title" in meta else source_folder.parent.name
-    language = meta["language"] if "language" in meta else "en"
-    url = meta["url"] if "url" in meta else ""
-    summary = meta["summary"] if "summary" in meta else ""
-    last_update_date = meta["last_update_date"] if "last_update_date" in meta else ""
+    author = novel_metadata["author"] if "author" in novel_metadata else ""
+    chapter_count = len(novel_metadata["chapters"]) if "chapters" in novel_metadata else 0
+    volume_count = len(novel_metadata["volumes"]) if "volumes" in novel_metadata else 0
+    title = novel_metadata["title"] if "title" in novel_metadata else source_folder.parent.name
+    language = novel_metadata["language"] if "language" in novel_metadata else "en"
+    url = novel_metadata["url"] if "url" in novel_metadata else ""
+    summary = novel_metadata["summary"] if "summary" in novel_metadata else ""
+
+    last_update_date = data["last_update_date"] if "last_update_date" in data else ""
 
     source = NovelFromSource(
         path=path,

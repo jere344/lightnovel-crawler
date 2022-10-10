@@ -9,7 +9,7 @@ all_novels: List[Novel] = []
 sorted_all_novels = {
     "title": lambda: sorted(all_novels, key=lambda x: x.title),
     "author": lambda: sorted(all_novels, key=lambda x: x.author),
-    "rating": lambda: sorted(all_novels, key=lambda x: x.overall_rating, reverse=True),
+    "rating": lambda: sorted(all_novels, key=lambda x: (x.overall_rating, x.ratings_count), reverse=True),
     "views": lambda: sorted(
         all_novels, key=lambda x: sum(x.clicks.values()), reverse=True
     ),

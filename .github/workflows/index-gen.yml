@@ -10,18 +10,23 @@ on:
       - "scripts/index_gen.py"
       - "lncrawl/VERSION"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   index_gen:
+    if: github.repository == 'dipu-bd/lightnovel-crawler'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Set up Python 3.9
+      - name: Set up Python 3.10
         uses: actions/setup-python@v1
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
       - name: Install dependencies
         run: pip install -r requirements-app.txt

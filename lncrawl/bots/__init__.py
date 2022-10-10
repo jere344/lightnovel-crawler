@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
-
 supported_bots = [
     "console",
     "telegram",
     "discord",
     "web2",
+    "lookup",
 ]
 
 
 def run_bot(bot):
     if bot not in supported_bots:
         bot = "console"
-    # end if
     if bot == "console":
         from ..bots.console import ConsoleBot
 
@@ -24,15 +22,14 @@ def run_bot(bot):
         from ..bots.discord import DiscordBot
 
         DiscordBot().start_bot()
+    elif bot == "lookup":
+        from ..bots.lookup import LookupBot
 
+        LookupBot().start()
+        
     elif bot == "web2":
         from . import web2
 
         web2.start()
-        
     else:
         print("Unknown bot: %s" % bot)
-    # end def
-
-
-# end def

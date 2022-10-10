@@ -164,7 +164,12 @@ def get_chapter_list():
     source.novel.clicks[current_week] += 1
 
     with open(meta_file, "r", encoding='utf-8') as f:
-        chapter_list = json.load(f)["chapters"]
+        data = json.load(f)
+        # For backward compatibility
+        if "novel" in data:
+            chapter_list = data["novel"]["chapters"]
+        else:
+            chapter_list = data["chapters"]
 
     start = page * 100
     stop = min((page + 1) * 100, len(chapter_list) + 1)

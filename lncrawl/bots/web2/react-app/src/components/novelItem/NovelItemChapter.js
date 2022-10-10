@@ -49,7 +49,7 @@ function NovelItemChapter({ novel }) {
       <div className="item-body">
         <Link to={`${novelUrl}/chapter-${source.chapter_count}`} title={source.latest}>
           <h4 className="novel-title text1row">{source.title}</h4>
-          <h5 className="chapter-title text1row">Chapter {source.chapter_count} : {chapterName}</h5>
+          <h5 className="chapter-title text1row">Chapter {source.chapter_count}{chapterName ? ` : ${chapterName}` : ""}</h5>
         </Link>
         <div className="novel-stats">
           <span><i className="icon-pencil-2"></i> <time dateTime={date}>{formatedTimeAgo}</time></span>
