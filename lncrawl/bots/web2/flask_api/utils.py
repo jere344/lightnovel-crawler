@@ -18,9 +18,7 @@ def get_novel_with_url(url: str) -> Optional[Novel]:
     url = url.replace("http://", "").replace("https://", "")
     if url.startswith("/"):
         url = url[1:]
-    print(url)
     novel_slug = url.split("/")[1]
-    print(novel_slug)
     return get_novel_with_slug(novel_slug)
 
 
