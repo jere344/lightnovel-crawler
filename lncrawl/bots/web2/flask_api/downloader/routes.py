@@ -7,7 +7,7 @@ from .Job import JobHandler, FinishedJob
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
 
 
-@app.route("/api/addnovel/create_session")
+@app.route("/addnovel/create_session")
 def create_session():
     query = request.args.get("query")
     job_id = request.args.get("job_id")
@@ -30,7 +30,7 @@ def create_session():
 # ----------------------------------------------- Choose Novel ----------------------------------------------- #
 
 
-@app.route("/api/addnovel/get_novels_founds")
+@app.route("/addnovel/get_novels_founds")
 def get_novels_founds():
     """Return search results"""
     job_id = request.args.get("job_id")
@@ -58,7 +58,7 @@ def get_novels_founds():
 # ----------------------------------------------- Choose Source ----------------------------------------------- #
 
 
-@app.route("/api/addnovel/get_sources_founds")
+@app.route("/addnovel/get_sources_founds")
 def get_sources_founds():
     """Return list of sources for selected novel"""
     job_id = request.args.get("job_id")
@@ -85,7 +85,7 @@ def get_sources_founds():
 # ----------------------------------------------- Start Download ----------------------------------------------- #
 
 
-@app.route("/api/addnovel/download")
+@app.route("/addnovel/download")
 def download():
     """Select Source and start download"""
     job_id = request.args.get("job_id")
@@ -141,7 +141,7 @@ def download():
 # ----------------------------------------------- Direct Download ----------------------------------------------- #
 
 
-@app.route("/api/addnovel/direct_download")
+@app.route("/addnovel/direct_download")
 def direct_download():
     """Directly download a novel using the novel url"""
 
@@ -194,7 +194,7 @@ from threading import Thread
 import datetime
 
 
-@app.route("/api/addnovel/update")
+@app.route("/addnovel/update")
 def update():
     url = request.args.get("url")
     job_id = request.args.get("job_id")
@@ -309,7 +309,7 @@ def _update(url: str, job_id: str):
 
 # ----------------------------------------------- Load snapshot ----------------------------------------------- #
 
-@app.route("/api/addnovel/load_snapshot")
+@app.route("/addnovel/load_snapshot")
 def load_snapshot():
     job_id = request.args.get("job_id")
     if job_id in database.jobs:
