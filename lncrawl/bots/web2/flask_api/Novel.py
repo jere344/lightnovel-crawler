@@ -84,6 +84,11 @@ class Novel:
         """
         Returns a dictionary representation of the novel.
         """
+        try :
+            prefered_source_slug = self.prefered_source.slug
+        except AttributeError:
+            prefered_source_slug = None
+
         return {
             # "path": self.path,
             "title": self.title,
@@ -98,7 +103,7 @@ class Novel:
             "clicks": sum(self.clicks.values()),
             "current_week_clicks": self.current_week_clicks,
             "rank": self.rank,
-            "prefered_source": self.prefered_source.slug,
+            "prefered_source": prefered_source_slug,
             "sources": {source.slug: source.language for source in self.sources},
             # "ratings": self.ratings,
             # "search_words": self.search_words,

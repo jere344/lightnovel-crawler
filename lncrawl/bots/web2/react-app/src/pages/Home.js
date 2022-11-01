@@ -75,7 +75,7 @@ function Home() {
                         <h2><i>Your fictional stories hub</i></h2>
                         <div className="description">
                             <p>Looking for a great place to read Light Novels?</p>
-                            <p>Light Novel Crawler is a very special platform where you can read the translated versions of world famous Japanese, Chinese and Korean light novels from more than 170 differents sources in different languages. If you can't find your novel here, you can instantly and automatically add it to our database from the Add Novel page.</p>
+                            <p>Light Novel Crawler is a very special platform where you can read the translated versions of world famous Japanese, Chinese and Korean light novels from more than 200 differents sources in different languages. If you can't find your novel here, you can instantly and automatically add it to our database from the Add Novel page.</p>
                             <p>Start reading now to explore this mysterious fantasy world.</p>
                         </div>
                     </div>
