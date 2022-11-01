@@ -296,7 +296,6 @@ class JobHandler:
         except Exception as e:
             print("Failed to create snapshot : ", e)
 
-        print("database.jobs_snapshots : ", database.jobs_snapshots)
 
     def _delete_snapshot(self):
         """
@@ -347,5 +346,4 @@ class FinishedJob:
         return database.jobs_snapshots[self.job_id]
 
     def snapshot_exists(self):
-        print("database.jobs_snapshots : ", database.jobs_snapshots)
         return self.job_id in database.jobs_snapshots
