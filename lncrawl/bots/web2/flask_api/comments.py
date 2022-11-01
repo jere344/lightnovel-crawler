@@ -31,7 +31,7 @@ def find_comment(comments: List[dict], comment_id: str):
             return found
     return None
 
-
+@flaskapp.app.route("/api/get_comments")
 @flaskapp.app.route("/get_comments")
 def get_comments():
     url = request.args.get("page")
@@ -50,7 +50,7 @@ def get_comments():
 
     return {"status": "success", "content": comments}, 200
 
-
+@flaskapp.app.route("/api/add_comment", methods=["POST"])
 @flaskapp.app.route("/add_comment", methods=["POST"])
 def add_comment():
     data = request.get_json()
@@ -104,7 +104,7 @@ def add_comment():
 
     return {"status": "success"}, 200
 
-
+@flaskapp.app.route("/api/add_reaction", methods=["POST"])
 @flaskapp.app.route("/add_reaction", methods=["POST"])
 def rate_comment():
     """Like or dislike a comment"""

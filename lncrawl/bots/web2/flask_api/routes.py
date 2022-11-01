@@ -12,7 +12,7 @@ from .Novel import Novel, NovelFromSource
 import difflib
 from . import sanatize
 
-
+@flaskapp.app.route("/api/image/<path:file>")
 @flaskapp.app.route("/image/<path:file>")
 def image(file: pathlib.Path):
     path: pathlib.Path = lib.LIGHTNOVEL_FOLDER / file
@@ -22,7 +22,7 @@ def image(file: pathlib.Path):
         print(path)
     return "", 404
 
-
+@flaskapp.app.route("/api/flags/<string:language>")
 @flaskapp.app.route("/flags/<string:language>")
 def flags(language: str):
     if not len(language) == 2:
@@ -31,7 +31,7 @@ def flags(language: str):
     return send_from_directory("static/flags", language + ".svg"), 200
 
 
-# /api/novels?page=${page}
+@flaskapp.app.route("/api/novels")
 @flaskapp.app.route("/novels")
 def get_novels():
     """
@@ -72,7 +72,7 @@ def get_novels():
 
 from . import datetools
 
-
+@flaskapp.app.route("/api/novel")
 @flaskapp.app.route("/novel")
 def get_novel():
     novel_slug = request.args.get("novel")
@@ -97,7 +97,7 @@ def get_novel():
 
     return source.asdict(), 200
 
-
+@flaskapp.app.route("/api/chapter/")
 @flaskapp.app.route("/chapter/")
 def get_chapter():
     novel_slug = request.args.get("novel")
@@ -139,7 +139,7 @@ def get_chapter():
         "source": source.asdict(),
     }, 200
 
-
+@flaskapp.app.route("/api/chapterlist/")
 @flaskapp.app.route("/chapterlist/")
 def get_chapter_list():
     novel_slug = request.args.get("novel")
@@ -186,7 +186,7 @@ def get_chapter_list():
         "total_pages": total_pages,
     }, 200
 
-
+@flaskapp.app.route("/api/search/")
 @flaskapp.app.route("/search/")
 def search():
     """
@@ -220,7 +220,7 @@ def search():
         "results": number_of_results,
     }, 200
 
-
+@flaskapp.app.route("/api/rate", methods=["POST"])
 @flaskapp.app.route("/rate", methods=["POST"])
 def rate():
 
