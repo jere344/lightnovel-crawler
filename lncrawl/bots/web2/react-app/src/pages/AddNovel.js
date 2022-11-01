@@ -85,18 +85,20 @@ function AddNovel() {
         // Create a session with query
         setSessionCreated(true);
 
-        if (searchQuery.length < 3) {
+        query = searchQuery.trim();
+
+        if (query.length < 3) {
             setStatus("Search query must be at least 3 characters long");
             return;
         }
 
-        if (searchQuery.startsWith("http")) {
+        if (query.startsWith("http")) {
             console.log("Search query is an url");
             directDownload(searchQuery);
             return;
         }
 
-        fetch(`/api/addnovel/create_session?query=${searchQuery}&job_id=${jobId}`).then(
+        fetch(`/api/addnovel/create_session?query=${query}&job_id=${jobId}`).then(
             response => response.json()
         ).then(
             response => {
