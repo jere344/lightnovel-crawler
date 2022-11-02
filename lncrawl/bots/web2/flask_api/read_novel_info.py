@@ -146,7 +146,9 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
         first = ""
     except IndexError:
         first = ""
-    author = novel_metadata["author"] if "author" in novel_metadata else ""
+    author = novel_metadata["author"] if "author" in novel_metadata else novel_metadata["authors"] if "authors" in novel_metadata else ""
+    if isinstance(author, list):
+        author = ", ".join(author)
     chapter_count = len(novel_metadata["chapters"]) if "chapters" in novel_metadata else 0
     volume_count = len(novel_metadata["volumes"]) if "volumes" in novel_metadata else 0
     title = novel_metadata["title"] if "title" in novel_metadata else source_folder.parent.name
