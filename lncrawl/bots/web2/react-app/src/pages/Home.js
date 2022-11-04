@@ -56,7 +56,7 @@ function Home() {
 
     const [novelsSortLastUpdate, setNovelsSortLastUpdate] = useState({});
     useEffect(() => {
-        fetch('/api/novels?page=0&sort=last_updated&number=12').then(
+        fetch('/api/novels?page=0&sort=source-last_updated&number=12').then(
             response => response.json()
         ).then(
             data => {
@@ -84,7 +84,7 @@ function Home() {
                 <section className="container vspace">
                     <div className="section-header">
                         <h3>Best of all time</h3>
-                        <a className="getmorebtn" title="Most recently added light novels" href="/stories/genre-all/order-new/status-all/p-1">View More</a>
+                        <Link className="getmorebtn" title="Most recently added light novels" to="/browse/page-1?sort=rank">View More</Link>
                     </div>
                     <div className="section-body" id="new-novel-section">
                         {(novelsSortViews.content == null) ? (
@@ -96,7 +96,7 @@ function Home() {
                 <section className="container vspace">
                     <div className="section-header">
                         <h3>Ranking</h3>
-                        <a className="getmorebtn" title="Top Rated Light Novels" href="/ranking">View More</a>
+                        <Link className="getmorebtn" title="Top Rated Light Novels" to="/browse/page-1">View More</Link>
                     </div>
                     <div className="section-body" id="popular-novel-section">
                         <div className="index-rank">
@@ -134,6 +134,7 @@ function Home() {
                 <section className="container vspace">
                     <div className="section-header">
                         <h3>Weekly Most Active</h3>
+                        <Link className="getmorebtn" title="Top Rated Light Novels" to="/browse/page-1?sort=weekly_views">View More</Link>
                     </div>
                     <div className="section-body">
                         {(novelsSortWeeklyViews.content == null) ? (

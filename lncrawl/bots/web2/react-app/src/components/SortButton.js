@@ -32,6 +32,9 @@ function SortButton() {
                     <Link className="dropdown-item" key="last_updated" to={
                         updateUrlParameter(window.location.pathname, 'sort', ((sort === 'last_updated') ? 'last_updated-reverse' : 'last_updated'))}
                         onClick={() => setSort((sort === 'last_updated') ? 'last_updated-reverse' : 'last_updated')}>Newest</Link>
+                    <Link className="dropdown-item" key="weekly_views" to={
+                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'weekly_views') ? 'weekly_views-reverse' : 'weekly_views'))}
+                        onClick={() => setSort((sort === 'weekly_views') ? 'weekly_views-reverse' : 'weekly_views')}>Active</Link>
                 </div>
             </div>
         </div>

@@ -57,14 +57,33 @@ def get_novels():
 
     start = page * number
     stop = (page + 1) * number
-    content = {
-        (page * number + 1 + i): e.asdict()
-        for i, e in enumerate(database.sorted_all_novels[sort]()[start:stop])
-    }
+
+    
+    
+    if sort in ["last_updated", "last_updated-reverse"]: 
+        # Thoses are sources list and not novels list.
+        # Can have double, it's a feature.
+        novels = database.sorted_all_novels[sort]()[start:stop]
+        content = {
+            (page * number + 1 + i): e.novel.asdict() # .novel to get the novel from each
+            for i, e in enumerate(novels)
+        }
+        total_pages = math.ceil(len(novels) / number)
+
+    else :
+         # If the request actually want sources list it can add this prefix to pass through previous filters
+        sort = sort.removeprefix("source-")
+        content = {
+            (page * number + 1 + i): e.asdict()
+            for i, e in enumerate(database.sorted_all_novels[sort]()[start:stop])
+        }
+
+        total_pages = math.ceil(len(database.all_novels) / number)
+        
     return {
         "content": content,
         "metadata": {
-            "total_pages": math.ceil(len(database.all_novels) / number),
+            "total_pages": total_pages,
             "current_page": page,
         },
     }, 200
