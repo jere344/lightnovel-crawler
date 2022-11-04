@@ -40,10 +40,8 @@ function Browse() {
     }, [page, sort]);
 
 
-    const pagination = ((typeof novels.metadata === 'undefined') ? <div>Loading ...</div> : <Pagination page={parseInt(page)} maxPage={novels.metadata.total_pages} />
+    const pagination = ((typeof novels.metadata === 'undefined') ? <div>Loading ...</div> : <Pagination currentPage={parseInt(page)} maxPage={novels.metadata.total_pages} />);
 
-
-    );
 
     return (
 

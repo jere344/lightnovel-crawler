@@ -29,6 +29,9 @@ function SortButton() {
                     <Link className="dropdown-item" key="author" to={
                         updateUrlParameter(window.location.pathname, 'sort', ((sort === 'author') ? 'author-reverse' : 'author'))}
                         onClick={() => setSort((sort === 'author') ? 'author-reverse' : 'author')}>Author</Link>
+                    <Link className="dropdown-item" key="last_updated" to={
+                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'last_updated') ? 'last_updated-reverse' : 'last_updated'))}
+                        onClick={() => setSort((sort === 'last_updated') ? 'last_updated-reverse' : 'last_updated')}>Newest</Link>
                 </div>
             </div>
         </div>

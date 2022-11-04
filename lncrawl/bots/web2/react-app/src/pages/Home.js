@@ -3,6 +3,7 @@ import logo from '../assets/logo.bmp'
 import banner from '../assets/banner.jpg'
 import { useState, useEffect } from 'react';
 import NovelList from '../components/NovelList';
+import { Link } from 'react-router-dom';
 
 import "../assets/stylesheets/fontello-embedded.css"
 import "../assets/stylesheets/navbar.min.css"
@@ -144,7 +145,7 @@ function Home() {
                 <section className="container vspace">
                     <header className="section-header">
                         <h3>Recently Added Chapters</h3>
-                        <a className="getmorebtn mr" title="Recently Added Chapters Novels Chapters" href="/latest-updates">View More</a>
+                        <Link className="getmorebtn mr" title="Recently Added Chapters Novels Chapters" to="/browse/page-1?sort=last_updated">View More</Link>
                     </header>
                     <div className="section-body">
                         {(novelsSortLastUpdate.content == null) ? (
