@@ -85,7 +85,7 @@ function AddNovel() {
         // Create a session with query
         setSessionCreated(true);
 
-        query = searchQuery.trim();
+        var query = searchQuery.trim();
 
         if (query.length < 3) {
             setStatus("Search query must be at least 3 characters long");
