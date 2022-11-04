@@ -82,7 +82,7 @@ function Home() {
                 </header>
                 <section className="container vspace">
                     <div className="section-header">
-                        <h3>New Ongoing Release</h3>
+                        <h3>Best of all time</h3>
                         <a className="getmorebtn" title="Most recently added light novels" href="/stories/genre-all/order-new/status-all/p-1">View More</a>
                     </div>
                     <div className="section-body" id="new-novel-section">
@@ -99,11 +99,11 @@ function Home() {
                     </div>
                     <div className="section-body" id="popular-novel-section">
                         <div className="index-rank">
-                            <input type="radio" name="ranktabs" defaultChecked="" id="tab_most_read" />
+                            <input type="radio" name="ranktabs" id="tab_most_read" />
                             <label htmlFor="tab_most_read">Most Read</label>
                             <input type="radio" name="ranktabs" id="tab_new_trends" />
                             <label htmlFor="tab_new_trends">New Trends</label>
-                            <input type="radio" name="ranktabs" id="tab_user_rated" />
+                            <input type="radio" name="ranktabs" id="tab_user_rated" defaultChecked={true}/>
                             <label htmlFor="tab_user_rated">User Rated</label>
                             <div className="rank-container">
                                 <h3><span>Most Read</span></h3>
@@ -126,7 +126,6 @@ function Home() {
                                     <div>Loading...</div>
                                 ) : (<NovelList novels={novelsSortRating.content} type="compact-rating" />)
                                 }
-
                             </div>
                         </div>
                     </div>
