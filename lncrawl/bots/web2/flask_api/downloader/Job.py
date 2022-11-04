@@ -104,8 +104,8 @@ class JobHandler:
                                 for chapter in self.app.chapters
                             ]
                         )
-                        + 1
-                    )  # +1 for the cover
+                        + 2
+                    )  # +1 for the cover and +1 idk why
                 return f"Downloading images ({self.app.progress}/{self.images_to_download})"
 
             else:
