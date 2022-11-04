@@ -134,6 +134,7 @@ class TaskManager(ABC):
         desc=None,
         unit=None,
         fail_fast=False,
+        app=None,
     ) -> None:
         """Wait for the futures to be done.
 
@@ -161,6 +162,8 @@ class TaskManager(ABC):
                 if fail_fast:
                     future.result(timeout)
                     bar.update()
+                    if app:
+                        app.progress += 1
                     continue
                 try:
                     future.result(timeout)
@@ -174,6 +177,8 @@ class TaskManager(ABC):
                         logger.warning(f"{type(e).__name__}: {e}")
                 finally:
                     bar.update()
+                    if app:
+                        app.progress += 1
         finally:
             Thread(target=lambda: self.cancel_futures(futures)).start()
             bar.close()

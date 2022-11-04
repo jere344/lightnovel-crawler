@@ -83,9 +83,10 @@ def fetch_chapter_body(app):
 
     # downlaod remaining chapters
     app.progress = 0
-    for progress in app.crawler.download_chapters(app.chapters):
-        app.progress += progress
-
+    for progress in app.crawler.download_chapters(app.chapters, app=app):
+        # app.progress += progress
+        pass
+    
     for chapter in app.chapters:
         _save_chapter(app, chapter)
 

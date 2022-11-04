@@ -143,6 +143,7 @@ class Crawler(Scraper):
         self,
         chapters: List[Chapter],
         fail_fast=False,
+        app=None,
     ) -> Generator[int, None, None]:
         futures = {
             index: self.executor.submit(self.download_chapter_body, chapter)
@@ -156,6 +157,7 @@ class Crawler(Scraper):
             desc="Chapters",
             unit="item",
             fail_fast=fail_fast,
+            app=app,
         )
         for (index, future) in futures.items():
             try:
