@@ -63,10 +63,10 @@ def get_novels():
     if sort in ["last_updated", "last_updated-reverse"]: 
         # Thoses are sources list and not novels list.
         # Can have double, it's a feature.
-        novels = database.sorted_all_novels[sort]()[start:stop]
+        novels = database.sorted_all_novels[sort]()
         content = {
             (page * number + 1 + i): e.novel.asdict() # .novel to get the novel from each
-            for i, e in enumerate(novels)
+            for i, e in enumerate(novels[start:stop])
         }
         total_pages = math.ceil(len(novels) / number)
 
