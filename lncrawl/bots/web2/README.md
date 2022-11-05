@@ -3,6 +3,7 @@
 LNCrawler Website is a react web frontend for [lightnovel-crawler](https://github.com/dipu-bd/lightnovel-crawler).
 The aim is to create a light novel and web novel aggregator website with an user-generated database from more than 200+ sources.
 
+A live demo is availible at http://lncrawler.monster/
 
 
 - [LNCrawler Website](#lncrawler-website)
