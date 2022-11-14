@@ -8,7 +8,6 @@ from .Novel import Novel
 from . import database
 from . import read_novel_info
 import constants
-from . import datetools
 
 LIGHTNOVEL_FOLDER = Path(constants.DEFAULT_OUTPUT_PATH)
 COMMENT_FOLDER = LIGHTNOVEL_FOLDER.parent / "Comments"
@@ -19,17 +18,16 @@ if not LIGHTNOVEL_FOLDER.exists():
 if not COMMENT_FOLDER.exists():
     COMMENT_FOLDER.mkdir()
 
-config = {"host": "localhost", "port": "5000", "website_url": "localhost:5000"}
-# config_file = Path("lncrawl/bots/web/config.json")
-# if not config_file.exists():
-#     with open(config_file, "w", encoding="utf-8") as f:
-#         json.dump({"host": "localhost", "port":"5000", "website_url":"localhost:5000"}, f, indent=4)
-# with open(config_file, "r", encoding="utf-8") as f:
-#     config = json.load(f)
+config_file = Path("lncrawl/bots/web2/config.json")
+if not config_file.exists():
+    with open(config_file, "w", encoding="utf-8") as f:
+        json.dump({"host": "localhost", "port":"5000", "website_url":"localhost:5000"}, f, indent=4)
+with open(config_file, "r", encoding="utf-8") as f:
+    config = json.load(f)
 
-WEBSITE_URL = config["website_url"]
 HOST = config["host"]
-PORT = config["port"]
+PORT = int(config["port"])
+WEBSITE_URL = config["website_url"]
 WEBSITE_URL = WEBSITE_URL.strip("/")
 
 
@@ -45,6 +43,25 @@ database.all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
 for i, n in enumerate(database.all_novels, start=1):
     n.rank = i
 
+sitemap_file = Path("lncrawl/bots/web2/sitemap.txt")
+import math
+all_routes = [
+    f"{WEBSITE_URL}/",
+    f"{WEBSITE_URL}/search/",
+    f"{WEBSITE_URL}/browse/",
+    f"{WEBSITE_URL}/addnovel/"
+]
+for novel in database.all_novels:
+    for source in novel.sources:
+        all_routes.append(f"{WEBSITE_URL}/novel/{novel.slug}/{source.slug}/")
+        for page in range(math.ceil(source.chapter_count / 100)):
+            all_routes.append(f"{WEBSITE_URL}/novel/{novel.slug}/{source.slug}/chapterlist/page-{page + 1}")
+for page in range(math.ceil(len(database.all_novels) / 10)):
+    all_routes.append(f"{WEBSITE_URL}/browse/page-{page + 1}")
+with open(sitemap_file, "w", encoding="utf-8") as f:
+    f.write("\n".join(all_routes))
+
+    
 
 import threading, time
 import shutil

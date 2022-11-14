@@ -1,4 +1,4 @@
-from flask import request, send_from_directory
+from flask import request, send_from_directory, Response
 from . import lib
 from . import flaskapp
 from . import database
@@ -256,3 +256,10 @@ def rate():
     novel.ratings[utils.shuffle_ip(request.remote_addr)] = rating
 
     return {"status": "success", "message": "Rating added"}, 200
+
+
+@flaskapp.app.route("/api/sitemap")
+@flaskapp.app.route("/sitemap")
+def sitemap():
+    with open(lib.sitemap_file, "r", encoding='utf-8') as f:
+        return Response(f.read(), mimetype='text')
