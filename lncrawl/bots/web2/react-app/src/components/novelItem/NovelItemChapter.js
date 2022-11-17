@@ -33,10 +33,6 @@ function NovelItemChapter({ novel }) {
     }
   }
 
-  const date = new Date(source.last_update_date)
-  const formatedTimeAgo = formatTimeAgo((new Date().getTime()) - date.getTime())
-
-  
   const serverOffset = -5 // server timezone is utc-5
   const updateDate = new Date(new Date(source.last_update_date).getTime() - serverOffset * 3600000) // 3600000 = 1 hour in ms //is a Date
   const userDate = new Date().getTime() + (new Date().getTimezoneOffset() * 60 * 1000) // is a ms since epoch
