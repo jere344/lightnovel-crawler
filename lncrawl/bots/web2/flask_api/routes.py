@@ -1,4 +1,4 @@
-from flask import request, send_from_directory, send_file
+from flask import request, send_from_directory, send_file, make_response
 from . import lib
 from . import flaskapp
 from . import database
@@ -8,7 +8,7 @@ import math
 from urllib.parse import unquote_plus
 import json
 from typing import List
-from .Novel import Novel, NovelFromSource
+from .Novel import Novel
 import difflib
 from . import sanatize
 
@@ -261,4 +261,7 @@ def rate():
 @flaskapp.app.route("/api/sitemap.xml")
 @flaskapp.app.route("/sitemap.xml")
 def sitemap():
-    return send_file(lib.sitemap_file.absolute()), 200
+    response = make_response(send_file(lib.sitemap_file.absolute()), 200)
+    response.headers["Content-Type"] = "application/xml"
+    response.charset = "utf-8"
+    return response
