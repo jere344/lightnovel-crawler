@@ -1,5 +1,5 @@
 import Metadata from '../components/Metadata';
-import logo from '../assets/logo.bmp'
+import logo from '../assets/logo.png'
 import { Link } from 'react-router-dom';
 
 

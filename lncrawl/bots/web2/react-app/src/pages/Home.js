@@ -1,5 +1,5 @@
 import Metadata from '../components/Metadata';
-import logo from '../assets/logo.bmp'
+import logo from '../assets/logo.png'
 import banner from '../assets/banner.jpg'
 import { useState, useEffect } from 'react';
 import NovelList from '../components/NovelList';
@@ -15,7 +15,7 @@ import "../assets/stylesheets/media-1270.min.css"
 function Home() {
 
     const title = "Read Light Novels Online For Free | LnCrawler";
-    const description = "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 140 different websites."
+    const description = "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 200 different websites."
     const imageUrl = logo
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"

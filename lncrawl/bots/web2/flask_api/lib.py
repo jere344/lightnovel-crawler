@@ -43,25 +43,9 @@ database.all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
 for i, n in enumerate(database.all_novels, start=1):
     n.rank = i
 
-sitemap_file = Path("lncrawl/bots/web2/sitemap.txt")
-import math
-all_routes = [
-    f"{WEBSITE_URL}/",
-    f"{WEBSITE_URL}/search/",
-    f"{WEBSITE_URL}/browse/",
-    f"{WEBSITE_URL}/addnovel/"
-]
-for novel in database.all_novels:
-    for source in novel.sources:
-        all_routes.append(f"{WEBSITE_URL}/novel/{novel.slug}/{source.slug}/")
-        for page in range(math.ceil(source.chapter_count / 100)):
-            all_routes.append(f"{WEBSITE_URL}/novel/{novel.slug}/{source.slug}/chapterlist/page-{page + 1}")
-for page in range(math.ceil(len(database.all_novels) / 10)):
-    all_routes.append(f"{WEBSITE_URL}/browse/page-{page + 1}")
-with open(sitemap_file, "w", encoding="utf-8") as f:
-    f.write("\n".join(all_routes))
-
-    
+from . import sitemap
+sitemap_file = Path("lncrawl/bots/web2/sitemap.xml")
+sitemap.generate_sitemap(sitemap_file)
 
 import threading, time
 import shutil

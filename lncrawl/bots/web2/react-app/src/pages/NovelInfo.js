@@ -3,7 +3,7 @@ import Metadata from '../components/Metadata';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import RatingStars from '../components/RatingStars';
 import { nFormatter, toFlag, languageDict } from '../Utils';
-import logo from '../assets/logo.bmp'
+import logo from '../assets/logo.png'
 import CommentComponent from '../components/CommentComponent';
 
 import "../assets/stylesheets/navbar.min.css"

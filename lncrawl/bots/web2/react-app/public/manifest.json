@@ -1,25 +1,81 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "LNCrawler",
+  "name": "Light Novel Crawler Website",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "favicon.png",
+      "sizes": "16x16",
+      "type": "image/png"
     },
     {
-      "src": "logo192.png",
+      "src": "logo200x128.png",
       "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "200x128"
     }
   ],
-  "start_url": ".",
+  "start_url": "http://lncrawler.monster/",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "description": "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 140 different websites.",
+  "default_locale": "en",
+  "categories": [
+    "books",
+    "entertainment"
+  ],
+  "shortcuts": [
+    {
+      "name": "Read Light Novels",
+      "short_name": "Read",
+      "description": "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 200 different websites.",
+      "url": "http://lncrawler.monster/",
+      "icons": [
+        {
+          "src": "favicon.png",
+          "sizes": "16x16",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Browse Light Novel",
+      "short_name": "Browse",
+      "description": "Browse All Light Novels",
+      "url": "http://lncrawler.monster/browse/",
+      "icons": [
+        {
+          "src": "favicon.png",
+          "sizes": "16x16",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Light Novel Search",
+      "short_name": "Search",
+      "description": "Search Light Novel",
+      "url": "http://lncrawler.monster/search",
+      "icons": [
+        {
+          "src": "favicon.png",
+          "sizes": "16x16",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Add novel",
+      "short_name": "addnovel",
+      "description": "Add instantly a new novel to LnCrawler database from more than 140 sources",
+      "url": "http://lncrawler.monster/addnovel",
+      "icons": [
+        {
+          "src": "favicon.png",
+          "sizes": "16x16",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+
 }

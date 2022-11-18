@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, quote
 from typing import Any, List, Optional, Union
 
 from . import datetools
@@ -145,6 +145,13 @@ class NovelFromSource:
         init=False, default=property(lambda self: quote_plus(self.path.name))
     )
     str_path: str = field(init=False, default=property(lambda self: str(self.path)))
+
+    xml_url: str = field(
+        init=False,
+        default=property(
+            lambda self: f"{quote(self.novel.path.name)}/{quote(self.path.name)}/"
+        ),
+    )
 
     def asdict(self) -> dict:
         """

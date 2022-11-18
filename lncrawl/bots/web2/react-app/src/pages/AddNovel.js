@@ -1,5 +1,5 @@
 import Metadata from '../components/Metadata';
-import logo from '../assets/logo.bmp'
+import logo from '../assets/logo.png'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../assets/stylesheets/addnovel.css";
@@ -7,7 +7,7 @@ import "../assets/stylesheets/switch.css"
 function AddNovel() {
 
     const description = "Add instantly any novel from more than 140 sources to read for free on LnCrawler! Participate in growing the LnCrawler database for all users!";
-    const title = "Add instantly a new novel to LnCrawler database from more than 140 sources!";
+    const title = "Add instantly a new novel to LnCrawler database from more than 200 sources!";
     const imageUrl = logo
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"

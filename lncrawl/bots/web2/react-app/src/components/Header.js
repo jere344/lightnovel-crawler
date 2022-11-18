@@ -1,4 +1,4 @@
-import logo from '../assets/logo.bmp'
+import logo from '../assets/logo.png'
 import Helmet from 'react-helmet';
 import { useCookies } from 'react-cookie';
 import { useState, useEffect, useRef } from 'react';

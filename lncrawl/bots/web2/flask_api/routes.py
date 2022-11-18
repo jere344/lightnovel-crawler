@@ -1,4 +1,4 @@
-from flask import request, send_from_directory, Response
+from flask import request, send_from_directory, send_file
 from . import lib
 from . import flaskapp
 from . import database
@@ -258,8 +258,7 @@ def rate():
     return {"status": "success", "message": "Rating added"}, 200
 
 
-@flaskapp.app.route("/api/sitemap")
-@flaskapp.app.route("/sitemap")
+@flaskapp.app.route("/api/sitemap.xml")
+@flaskapp.app.route("/sitemap.xml")
 def sitemap():
-    with open(lib.sitemap_file, "r", encoding='utf-8') as f:
-        return Response(f.read(), mimetype='text')
+    return send_file(lib.sitemap_file.absolute()), 200
