@@ -61,7 +61,7 @@ function ChapterList() {
     }, [novelSlug, sourceSlug, page]);
 
 
-    const pagination = <Pagination page={parseInt(page)} maxPage={parseInt(response.total_pages)} />;
+    const pagination = <Pagination currentPage={parseInt(page)} maxPage={parseInt(response.total_pages)} />;
 
 
     const chapterList = [];

@@ -164,8 +164,10 @@ def get_chapter_list():
     novel_slug = request.args.get("novel")
     source_slug = request.args.get("source")
     page = request.args.get("page")
-    if not novel_slug or not source_slug or not page:
+    if not novel_slug or not source_slug:
         return "invalid request : novel or source missing", 400
+    if not page:
+        page = 1
     page = int(page) - 1
 
     meta_file = (
