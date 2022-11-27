@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useLocation } from 'react-router-dom'
 import { useCookies } from 'react-cookie';
 
 import "../assets/stylesheets/chapterpg.min.css"
@@ -13,17 +13,54 @@ import CommentComponent from '../components/CommentComponent';
 
 
 function Chapter() {
+    const location = useLocation();
+    const { currentPreFetchedData } = location.state || {};
+    const { novelSlug, sourceSlug, chapterId } = useParams();
 
-    // -------------  Dark mode -----------------
+    // A placeholder for the chapter data
+    var initialResponseValue = {
+        "content": {
+            "body": "<p>Loading...</p>",
+            "id": chapterId,
+            "title": novelSlug,
+            "url": "Loading...",
+            "volume": 0,
+            "volume_title": "Loading...",
+        },
+        "is_next": false,
+        "is_prev": false,
+        "source": {
+            "cover": undefined,
+            "novel": {
+                "language": "Loading...",
+            },
+            "title": "Loading...",
+        }
+    }
+    const [response, setResponse] = useState(initialResponseValue);
+    const [nextPrefetchedData, setNextPrefetchedData] = useState(undefined);
+    
+    // When changing route but staying in the same component, the component will not unmount
+    // So we need to set the state to the initial value when the route changes
+    // renderedWithId will not be updated when we change chapter, so we can use it to detect route change
+    const [renderedWithId, setRenderedWithId] = useState(chapterId);
+    if (renderedWithId !== chapterId) {
+        setRenderedWithId(chapterId);
+        setResponse(initialResponseValue);
+        setNextPrefetchedData(undefined);
+
+    }
+
+    /* #region Dark mode */
 
     const [darkModeCookie, setDarkModeCookie] = useCookies(['darkMode']);
     function switchDarkMode() {
         setDarkModeCookie('darkMode', (!(darkModeCookie.darkMode === 'true')).toString(), { path: '/', sameSite: 'strict' });
     }
 
-
-
-    // -----------------  Font size -----------------
+    /* #endregion */
+    
+    /* #region Font size */
 
     const fontSizes = ["12", "14", "16", "18", "20", "22", "24", "26", "28"]
 
@@ -79,8 +116,9 @@ function Chapter() {
     }
 
 
+    /* #endregion */
 
-    // -----------------  Setting pannel -----------------
+    /* #region Setting pannel */
 
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -89,8 +127,9 @@ function Chapter() {
         setMenuOpen(false);
     });
 
+    /* #endregion */
 
-    // -----------------  Font -----------------
+    /* #region Font family */
 
     const [fontCookie, setFontCookie] = useCookies(['font']);
     function setFont(font) {
@@ -102,42 +141,47 @@ function Chapter() {
     }
 
 
+    /* #endregion */
+
+    /* #region  Prefetch */
+
+    /* #endregion */
 
     // -----------------  Chapter -----------------
 
-    const { novelSlug, sourceSlug, chapterId } = useParams();
-
-    const [response, setResponse] = useState({
-        "content": {
-            "body": "<p>Loading...</p>",
-            "id": chapterId,
-            "title": novelSlug,
-            "url": "Loading...",
-            "volume": 0,
-            "volume_title": "Loading...",
-        },
-        "is_next": false,
-        "is_prev": false,
-        "source": {
-            "cover": undefined,
-            "novel": {
-                "language": "Loading...",
-            },
-            "title": "Loading...",
+    useEffect(() => {
+        // When the user click next too fast sometimes the prefetched data is not the next chapter but the current chapter
+        // So we need to check if the prefetched data is the next chapter
+        if (currentPreFetchedData !== undefined && currentPreFetchedData.content.id === parseInt(chapterId)) {
+            setResponse(currentPreFetchedData);
+        } 
+        else {
+            setNextPrefetchedData(undefined); // And if not we need to clear the next prefetched data
+            fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
+                (response) => { return ((response.status === 404) ? undefined : response.json()) }
+            ).then(
+                data => {
+                    setResponse(data);
+                }
+            )
         }
-    }
-    );
-
+    }, [novelSlug, sourceSlug, chapterId, currentPreFetchedData]);
 
     useEffect(() => {
-        fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
-            (response) => { return ((response.status === 404) ? undefined : response.json()) }
-        ).then(
-            data => {
-                setResponse(data);
-            }
-        )
-    }, [novelSlug, sourceSlug, chapterId]);
+        if (response.is_next && nextPrefetchedData === undefined) {
+            fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${response.content.id + 1}`).then(
+                (response) => { return ((response.status === 404) ? undefined : response.json()) }
+            ).then(
+                data => {
+                    setNextPrefetchedData(data);
+                }
+            )
+           
+            
+        }
+    }, [response, novelSlug, sourceSlug, nextPrefetchedData]);
+
+
     if (response === undefined) {
 
         return (
@@ -171,7 +215,7 @@ function Chapter() {
                 <section className="page-in content-wrap" ref={innerRef}>
                     <div className="titles">
                         <h1 itemProp="headline">
-                            <Link className="booktitle" to={`/novel/${novelSlug}/${sourceSlug}`} title={source.title} rel="up"
+                            <Link className="booktitle" to={`/novel/${novelSlug}/${sourceSlug}`} title={source.title} rel="up" 
                                 itemProp="sameAs">{source.title}</Link>
                             <span hidden=""></span>
                             <br />
@@ -199,7 +243,8 @@ function Chapter() {
                             <span>Index</span>
                         </Link>
                         <Link rel="next" className={`button nextchap ${response.is_next ? "" : 'isDisabled'}`}
-                            to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}>
+                            to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}
+                            state={{ currentPreFetchedData: nextPrefetchedData}}>
                             <span>Next</span>
                             <i className="icon-right-open"></i>
                         </Link>
@@ -235,7 +280,8 @@ function Chapter() {
                                     <i className="icon-moon"></i>
                                 </button>
                                 <Link rel="next" className={(response.is_next ? "" : 'isDisabled ') + "chnav next"}
-                                    to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}>
+                                    to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}
+                                    state={{ currentPreFetchedData: nextPrefetchedData}}>
                                     <span>Next</span>
                                     <i className="icon-right-open"></i>
                                 </Link>
