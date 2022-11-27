@@ -64,6 +64,15 @@ main {
 	line-height: 1;
 	color: var(--text-color);
 }
+.main-header .wrapper .nav-back-button {
+	display: block;
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	border: none;
+	background-color: transparent;
+}
 
 .main-header .wrapper .navigation-bar {
 	position: fixed;

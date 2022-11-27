@@ -2,9 +2,10 @@ import logo from '../assets/logo.png'
 import Helmet from 'react-helmet';
 import { useCookies } from 'react-cookie';
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Header() {
+    const navigate = useNavigate();
 
     const [darkModeCookie, setDarkModeCookie] = useCookies(['darkMode']);
 
@@ -74,7 +75,10 @@ function Header() {
                         </nav>
                     </div>
                     <div className="nav-back">
-                        <i className="icon-left-open"></i>
+                        <button className="nav-back-button" data-tool="nav-back-button" title="Back" data-content="Back" onClick={() => navigate(-1)}>
+                             <i className="icon-left-open"></i>
+                        </button>
+                        
                     </div>
                     <button id="mobile-menu-btn" onClick={() => setPannelOpen(!pannelOpen)}>
                         <div id="burger-btn"></div>
