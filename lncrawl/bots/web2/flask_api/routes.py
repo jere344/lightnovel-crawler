@@ -220,13 +220,33 @@ def search():
 
     query = sanatize.sanitize(query).split(" ")
     ratio: List[tuple[Novel, int]] = []
-    for downloaded in database.all_novels:
+
+    for novel in database.all_novels:
         count = 0
-        for search_word in query:
-            count += len(
-                difflib.get_close_matches(search_word, downloaded.search_words)
-            )
-        ratio.append((downloaded, count))
+        for query_search_word in query:
+            similarity_found = False
+            # We check if each query word is in the novel keywords or similar to one of them
+            for downloaded_search_word in novel.search_words:
+                if difflib.SequenceMatcher(None, query_search_word, downloaded_search_word).ratio() > 0.75:
+                    # test similarity : slime and lime are similar
+                    similarity_found = True
+                    break
+                elif query_search_word in downloaded_search_word:
+                    # But if a word is long : awak and awakening are not similar
+                    # but awakening should be counted for awak so we check if the word is in the downloaded word
+                    similarity_found = True
+                    break
+
+                # Sadly long words not written completly with a small mistakae will not be counted
+                # like : aawaken and awakening
+            
+            # A word similar to a novel keyword is worth less than a word not in the novel
+            if similarity_found:
+                count += 1
+            else :
+                count -= 2
+        if count > 0:
+            ratio.append((novel, count))
 
     ratio.sort(key=lambda x: x[1], reverse=True)
 

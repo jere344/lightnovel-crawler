@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import quote_plus, quote
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional
 
 from . import datetools
 from . import sanatize
