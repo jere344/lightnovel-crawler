@@ -84,7 +84,7 @@ class TaskManager(ABC):
         it will shutdown the current executor, and cancel all pending tasks.
 
         Args:
-            workers: Number of workers to expect in the new executor.
+        - workers (int): Number of workers to expect in the new executor.
         """
         if hasattr(self, "_executor"):
             if self.workers == workers:
