@@ -11,6 +11,7 @@ from slugify import slugify
 from pathlib import Path
 import json
 from lncrawl.core.sources import prepare_crawler
+import threading
 
 logger = logging.getLogger(__name__)
 from .. import lib
@@ -34,6 +35,10 @@ class JobHandler:
         self.job_id = job_id
         self.last_activity = datetime.now()
         self.executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix=job_id)
+
+        # Self destruct after 1 hour
+        threading.Timer(3600, self.destroy).start()
+
 
     # -----------------------------------------------------------------------------
     def crash(self, reason: str):
@@ -340,10 +345,17 @@ class FinishedJob:
         """
         Restore the job from the snapshot
         """
-        if self.job_id in database.jobs_snapshots:
-            database.jobs[self.job_id] = database.jobs_snapshots[self.job_id]
+        if self.snapshot_exists():
+            snapshot = database.jobs_snapshots[self.job_id]
 
-        return database.jobs_snapshots[self.job_id]
+            database.jobs[self.job_id] = snapshot
+            snapshot._delete_snapshot()
+            snapshot._create_snapshot()
+
+            return database.jobs_snapshots[self.job_id]
+
+        else:
+            return None
 
     def snapshot_exists(self):
         return self.job_id in database.jobs_snapshots

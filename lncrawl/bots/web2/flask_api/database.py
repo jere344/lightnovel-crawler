@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Dict
 from .Novel import Novel, NovelFromSource
 import datetime
 from . import datetools
@@ -47,6 +47,7 @@ if TYPE_CHECKING:
     from .downloader.Job import JobHandler, FinishedJob
 
     jobs: dict[str, Union[FinishedJob, JobHandler]]
+    jobs_snapshots: dict[str, JobHandler]
 
 jobs = {}
 jobs_snapshots = {}
