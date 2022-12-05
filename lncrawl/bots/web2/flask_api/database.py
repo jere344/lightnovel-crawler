@@ -3,9 +3,13 @@ from .Novel import Novel, NovelFromSource
 import datetime
 from . import datetools
 
-all_novels: List[Novel] = []
+class HashableList(list):
+    def __hash__(self):
+        return id(self)
 
 # placeholder, will be filled by lib.py
+all_novels: List[Novel]
+
 sorted_all_novels = {
     "title": lambda: sorted(all_novels, key=lambda x: x.title),
     "author": lambda: sorted(all_novels, key=lambda x: x.author),
@@ -40,6 +44,17 @@ sorted_all_novels = {
     "last_updated-reverse": lambda: sorted_all_novels["last_updated"]()[::-1],
 }
 
+
+from functools import lru_cache
+#Use the lru_cache decorator to memoize the lambdas
+for key, value in sorted_all_novels.items():
+    sorted_all_novels[key] = lru_cache()(value)
+
+# Register a callback that need to be called when the all_novels list is modified
+def refresh_sorted_all_novels():
+    for key, value in sorted_all_novels.items():
+        value.cache_clear()
+        
 
 from typing import TYPE_CHECKING
 

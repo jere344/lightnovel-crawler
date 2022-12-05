@@ -283,6 +283,8 @@ class JobHandler:
 
             self.set_last_action("Adding novel to database")
             utils.add_novel_to_database(novel_info)
+
+            database.refresh_sorted_all_novels()
         except Exception as ex:
             return self.crash(f"Failed to update website : {ex}")
 
