@@ -1,5 +1,5 @@
-from typing import List, Union, Dict
-from .Novel import Novel, NovelFromSource
+from typing import List, Union
+from .Novel import Novel
 import datetime
 from . import datetools
 

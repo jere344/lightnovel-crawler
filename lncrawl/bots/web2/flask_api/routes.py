@@ -3,7 +3,6 @@ from . import lib
 from . import flaskapp
 from . import database
 from . import utils
-import pathlib
 import math
 from urllib.parse import unquote_plus
 import json
