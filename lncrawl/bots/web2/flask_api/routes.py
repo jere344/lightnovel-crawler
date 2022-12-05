@@ -11,12 +11,13 @@ from typing import List
 from .Novel import Novel
 import difflib
 from . import sanatize
+import os
 
 @flaskapp.app.route("/api/image/<path:file>")
 @flaskapp.app.route("/image/<path:file>")
-def image(file: pathlib.Path):
-    path: pathlib.Path = lib.LIGHTNOVEL_FOLDER / file
-    if path.exists():
+def image(file: str):
+    path = os.path.join(lib.LIGHTNOVEL_FOLDER, file)
+    if os.path.exists(path) and os.path.realpath(path).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
         return send_from_directory(lib.LIGHTNOVEL_FOLDER, file), 200
     else:
         print(path)
@@ -41,15 +42,15 @@ def get_novels():
 
     """
     page = request.args.get("page")
-    if not page:
+    if not page or not page.isdigit():
         page = 0
 
     number = request.args.get("number")
-    if not number:
+    if not number or not number.isdigit():
         number = 20
 
     sort = request.args.get("sort")
-    if not sort:
+    if not sort: # will validate later
         sort = "rank"
 
     page = int(page)
@@ -71,12 +72,15 @@ def get_novels():
         total_pages = math.ceil(len(novels) / number)
 
     else :
-         # If the request actually want sources list it can add this prefix to pass through previous filters
+         # If the request actually want novel list it can add this prefix to pass through previous filters
         sort = sort.removeprefix("source-")
-        content = {
-            (page * number + 1 + i): e.asdict()
-            for i, e in enumerate(database.sorted_all_novels[sort]()[start:stop])
-        }
+        try :
+            content = {
+                (page * number + 1 + i): e.asdict()
+                for i, e in enumerate(database.sorted_all_novels[sort]()[start:stop])
+            }
+        except KeyError:
+            return "Invalid sort", 400
 
         total_pages = math.ceil(len(database.all_novels) / number)
         
@@ -121,9 +125,10 @@ def get_novel():
 def get_chapter():
     novel_slug = request.args.get("novel")
     source_slug = request.args.get("source")
-    chapter_id = request.args.get("chapter")
+    chapter_id = int(request.args.get("chapter"))
     if not novel_slug or not source_slug or not chapter_id:
         return "invalid request : novel, source or chapter missing", 400
+    
     chapter_folder = (
         lib.LIGHTNOVEL_FOLDER
         / unquote_plus(novel_slug)
@@ -131,8 +136,9 @@ def get_chapter():
         / "json"
     )
     chapter_path = chapter_folder / f"{str(chapter_id).zfill(5)}.json"
-    if not chapter_path.exists():
-        return "", 404
+    if not os.path.exists(chapter_path) or not os.path.realpath(chapter_path).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
+        return "Unknown or unauthorized file", 404
+
 
     with open(chapter_path, "r", encoding='utf-8') as f:
         chapter = json.load(f)
@@ -176,6 +182,9 @@ def get_chapter_list():
         / unquote_plus(source_slug)
         / "meta.json"
     )
+    
+    if not os.path.exists(meta_file) or not os.path.realpath(meta_file).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
+        return "Unknown or unauthorized file", 404
 
     source = utils.find_source_with_path(meta_file.parent)
     current_week = datetools.current_week()
