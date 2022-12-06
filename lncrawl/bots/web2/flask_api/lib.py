@@ -43,6 +43,8 @@ database.all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
 for i, n in enumerate(database.all_novels, start=1):
     n.rank = i
 
+database.refresh_sorted_all_novels()
+
 from . import sitemap
 sitemap_file = Path("lncrawl/bots/web2/sitemap.xml")
 sitemap.generate_sitemap(sitemap_file)
