@@ -55,7 +55,7 @@ function Chapter() {
 
     const [darkModeCookie, setDarkModeCookie] = useCookies(['darkMode']);
     function switchDarkMode() {
-        setDarkModeCookie('darkMode', (!(darkModeCookie.darkMode === 'true')).toString(), { path: '/', sameSite: 'strict' });
+        setDarkModeCookie('darkMode', (!(darkModeCookie.darkMode === 'true')).toString(), { path: '/', sameSite: 'strict', maxAge: 2592000 });
     }
 
     /* #endregion */
@@ -67,7 +67,7 @@ function Chapter() {
     const [fontSizeCookie, setFontSizeCookie] = useCookies(['fontSize']);
 
     function setFontSize(size) {
-        setFontSizeCookie('fontSize', size.toString(), { path: '/', sameSite: 'strict' });
+        setFontSizeCookie('fontSize', size.toString(), { path: '/', sameSite: 'strict', maxAge: 2592000 });
         document.getElementById("fontsize-slider").value = size
     }
 
@@ -133,7 +133,7 @@ function Chapter() {
 
     const [fontCookie, setFontCookie] = useCookies(['font']);
     function setFont(font) {
-        setFontCookie('font', font, { path: '/', sameSite: 'strict' });
+        setFontCookie('font', font, { path: '/', sameSite: 'strict', maxAge: 2592000 });
     }
 
     if (fontCookie.font === undefined) {

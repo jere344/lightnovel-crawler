@@ -10,7 +10,7 @@ function Header() {
     const [darkModeCookie, setDarkModeCookie] = useCookies(['darkMode']);
 
     function switchDarkMode() {
-        setDarkModeCookie('darkMode', (!(darkModeCookie.darkMode === 'true')).toString(), { path: '/', sameSite: 'strict' });
+        setDarkModeCookie('darkMode', (!(darkModeCookie.darkMode === 'true')).toString(), { path: '/', sameSite: 'strict', maxAge: 2592000 });
     }
 
     const [pannelOpen, setPannelOpen] = useState(false);
