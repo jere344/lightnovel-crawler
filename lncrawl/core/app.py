@@ -6,6 +6,7 @@ from threading import Thread
 from typing import Dict, List, Optional, Tuple
 from urllib.parse import urlparse
 
+from readability import Document
 from slugify import slugify
 
 from .. import constants as C
@@ -13,10 +14,13 @@ from ..binders import available_formats, generate_books
 from ..core.exeptions import LNException
 from ..core.sources import crawler_list, prepare_crawler
 from ..models import Chapter, CombinedSearchResult, OutputFormat
+from .browser import Browser
 from .crawler import Crawler
-from .downloader import fetch_chapter_images, fetch_chapter_body
+from .downloader import fetch_chapter_body, fetch_chapter_images
+from .exeptions import ScraperErrorGroup
 from .novel_info import format_novel, save_metadata
 from .novel_search import search_novels
+from .scraper import Scraper
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +82,20 @@ class App:
                 if crawler.search_novel != Crawler.search_novel
             ]
 
+    def guess_novel_title(self, url: str) -> str:
+        try:
+            scraper = Scraper(url)
+            response = scraper.get_response(url)
+            reader = Document(response.text)
+        except ScraperErrorGroup as e:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.exception("Failed to get response: %s", e)
+            with Browser() as browser:
+                browser.visit(url)
+                browser.wait("body")
+                reader = Document(browser.html)
+        return reader.short_title()
+
     def search_novel(self):
         """Requires: user_input, crawler_links"""
         """Produces: search_results"""
@@ -115,6 +133,7 @@ class App:
 
         print("Retrieving novel info...")
         print(self.crawler.novel_url)
+        previous = self.crawler.novel_url
         self.__background(self.crawler.read_novel_info)
 
         format_novel(self.crawler)
@@ -123,7 +142,9 @@ class App:
         if not len(self.crawler.volumes):
             raise Exception("No volumes found")
 
-        print("NOVEL: %s" % self.crawler.novel_title)
+        if self.crawler.novel_url != previous:
+            print(self.crawler.novel_url)
+        print("TITLE: %s" % self.crawler.novel_title)
         print(
             "%d volumes and %d chapters found"
             % (len(self.crawler.volumes), len(self.crawler.chapters))
