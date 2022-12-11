@@ -44,7 +44,6 @@ class WuxiaComCrawler(BasicBrowserTemplate):
                 "authorization": self.bearer_token,
             },
         )
-        response.raise_for_status()
 
         assert response.single
         novel = response.single["item"]
@@ -71,7 +70,6 @@ class WuxiaComCrawler(BasicBrowserTemplate):
                 {"novelId": novel["id"]},
                 headers={"authorization": self.bearer_token},
             )
-            response.raise_for_status()
 
             subscriptions = response.single["items"]
             logger.debug("User subscriptions: %s", subscriptions)
@@ -88,7 +86,6 @@ class WuxiaComCrawler(BasicBrowserTemplate):
             {"novelId": novel["id"]},
             headers={"authorization": self.bearer_token},
         )
-        response.raise_for_status()
         assert response.single
 
         volumes = response.single["items"]
@@ -136,7 +133,6 @@ class WuxiaComCrawler(BasicBrowserTemplate):
             {"chapterProperty": {"chapterId": chapter["chapterId"]}},
             headers={"authorization": self.bearer_token},
         )
-        response.raise_for_status()
 
         assert response.single, "Invalid response"
         content = response.single["item"]["content"]
@@ -154,7 +150,7 @@ class WuxiaComCrawler(BasicBrowserTemplate):
         self.browser.wait(".items-start h1, img.drop-shadow-ww-novel-cover-image")
 
         # Clear the annoying top menubar
-        self.browser.find("header#header").outer_html = ""
+        self.browser.find("header#header").remove()
 
         # Parse cover image and title
         img = self.browser.find("img.drop-shadow-ww-novel-cover-image")
@@ -189,7 +185,7 @@ class WuxiaComCrawler(BasicBrowserTemplate):
 
         # Expand all volumes
         for index, root in enumerate(reversed(volumes)):
-            root.scroll_to_view()
+            root.scroll_into_view()
             root.click()
 
             nth = len(volumes) - index

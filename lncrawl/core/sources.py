@@ -5,14 +5,13 @@ import logging
 import os
 import re
 import time
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import Future
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Type
 from urllib.parse import urlparse
 
 import requests
 from packaging import version
-from tqdm.std import tqdm
 
 from ..assets.version import get_version
 from ..utils.platforms import Platform
@@ -20,6 +19,7 @@ from .arguments import get_args
 from .crawler import Crawler
 from .display import new_version_news
 from .exeptions import LNException
+from .taskman import TaskManager
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ crawler_list: Dict[str, Type[Crawler]] = {}
 # Utilities
 # --------------------------------------------------------------------------- #
 
-__executor = ThreadPoolExecutor(10)
+__executor = TaskManager()
 
 
 def __download_data(url: str):
@@ -207,37 +207,27 @@ def __download_sources():
         user_file = (__user_data_path / str(latest["file_path"])).is_file()
         local_file = (__local_data_path / str(latest["file_path"])).is_file()
         if has_new_version or not (user_file or local_file):
-            future = __executor.submit(__download_data, latest["url"])
+            future = __executor.submit_task(__download_data, latest["url"])
             futures[sid] = future
 
     if not futures:
         return
 
-    bar = tqdm(
-        desc="Updating sources",
-        total=len(futures),
-        unit="file",
-        disable=os.getenv("debug_mode"),
-    )
-
+    __executor.resolve_futures(futures.values(), desc="Sources", unit="file")
     for sid, future in futures.items():
         try:
             data = future.result()
+        except Exception:
+            continue
+        try:
             __save_source_data(sid, data)
         except Exception as e:
-            bar.clear()
-            logger.warn("Failed to download source file. Error: %s", e)
-        finally:
-            bar.update()
-
-    bar.clear()
-    bar.close()
+            logger.warn("Failed to save source file. Error: %s", e)
 
 
 # --------------------------------------------------------------------------- #
 # Loading sources
 # --------------------------------------------------------------------------- #
-
 
 __cache_crawlers = {}
 __url_regex = re.compile(r"^^(https?|ftp)://[^\s/$.?#].[^\s]*$", re.I)
@@ -323,7 +313,10 @@ sources_path = (__local_data_path / "sources").absolute()
 
 
 def load_sources():
-    __is_dev_mode = (__local_data_path / ".git" / "HEAD").exists()
+    __is_dev_mode = (
+        os.getenv("LNCRAWL_MODE") == "dev"
+        or (__local_data_path / ".git" / "HEAD").exists()
+    )
 
     if not __is_dev_mode:
         __check_updates()
@@ -361,7 +354,6 @@ def prepare_crawler(url: str) -> Optional[Crawler]:
         base_url,
         getattr(CrawlerType, "file_path", "."),
     )
-
     crawler = CrawlerType()
     crawler.home_url = base_url
     crawler.novel_url = url
