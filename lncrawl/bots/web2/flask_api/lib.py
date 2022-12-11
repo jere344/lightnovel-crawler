@@ -62,7 +62,7 @@ def update_novels_stats():
 
     stopping = False
     while True:
-        time.sleep(600)  # 10 minutes
+        time.sleep(3600)  # 1h
 
         for novel in database.all_novels:
             # Security to avoid stopping the program while updating stats and having corrupted stats file
