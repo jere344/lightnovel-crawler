@@ -3,8 +3,6 @@ from .Novel import Novel, NovelFromSource
 from pathlib import Path
 import shutil
 
-from . import sanatize
-
 
 def get_novel_info(novel_folder: Path) -> Novel:
     """
@@ -24,6 +22,7 @@ def get_novel_info(novel_folder: Path) -> Novel:
     volume_count = 0
     title = ""
     summary = ""
+    tags = set()
     sources = []
 
     # --------------------------------------------------------------------------
@@ -63,6 +62,9 @@ def get_novel_info(novel_folder: Path) -> Novel:
         if not summary and source.summary:
             summary = source.summary
 
+        if source.tags:
+            tags.update(source.tags)
+
         if source.language:
             language.add(source.language)
 
@@ -96,6 +98,7 @@ def get_novel_info(novel_folder: Path) -> Novel:
         first=first,
         latest=latest,
         summary=summary,
+        tags=tags,
         language=language,
         clicks=clicks,
         rank=None,
@@ -155,6 +158,7 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
     language = novel_metadata["language"] if "language" in novel_metadata else "en"
     url = novel_metadata["url"] if "url" in novel_metadata else ""
     summary = novel_metadata["summary"] if "summary" in novel_metadata else ""
+    tags = novel_metadata["tags"] if "tags" in novel_metadata else []
 
     last_update_date = data["last_update_date"] if "last_update_date" in data else ""
 
@@ -168,6 +172,7 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
         first=first,
         latest=latest,
         summary=summary,
+        tags=tags,
         language=language,
         url=url,
         last_update_date=last_update_date,

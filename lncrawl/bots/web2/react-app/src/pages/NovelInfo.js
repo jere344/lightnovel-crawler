@@ -5,6 +5,7 @@ import RatingStars from '../components/RatingStars';
 import { nFormatter, toFlag, languageDict } from '../Utils';
 import logo from '../assets/logo.png'
 import CommentComponent from '../components/CommentComponent';
+import TagList from '../components/TagList';
 
 import "../assets/stylesheets/navbar.min.css"
 import "../assets/stylesheets/fontello-embedded.css"
@@ -47,6 +48,7 @@ function NovelInfo() {
         },
         "slug": currentUrlSplitted[currentUrlSplitted.length - 1],
         "summary": "Loading ...",
+        "tags": [],
         "title": currentUrlSplitted[currentUrlSplitted.length - 2],
     });
     useEffect(() => {
@@ -65,7 +67,7 @@ function NovelInfo() {
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"
 
-
+    const tags = <TagList tags={source.tags} />;
 
     const sourceList = [];
     for (const [s, lang] of Object.entries(source.novel.sources)) {
@@ -225,6 +227,14 @@ function NovelInfo() {
                                         <span>Show More</span>
                                     </button>
                                 </div>
+                            </div>
+                        </div>
+                        <div className="tags">
+                            <h4 className="lined">Tags</h4>
+                            <div className="content">
+                                <ul className="tag-list">
+                                    {tags}
+                                </ul>
                             </div>
                         </div>
                         <CommentComponent currentUrl={window.location.pathname} />

@@ -89,6 +89,7 @@ def save_metadata(app, completed=False):
             chapters=[Chapter.without_body(chap) for chap in app.crawler.chapters],
             is_rtl=app.crawler.is_rtl,
             summary=app.crawler.summary,
+            tags=app.crawler.tags,
             language=app.crawler.language,
         ),
         session=Session(

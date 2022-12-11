@@ -33,7 +33,6 @@ class Novel(Box):
         translators: List[str] = [],
         status: Optional[NovelStatus] = NovelStatus.unknown,
         genres: List[str] = [],
-        tags: List[str] = [],
         description: Optional[str] = None,
         synopsis: Optional[str] = None,
         original_publisher: Optional[str] = None,
@@ -41,6 +40,7 @@ class Novel(Box):
         novelupdates_url: Optional[str] = None,
         language: Optional[str] = None,
         summary: Optional[str] = None,
+        tags: Optional[List[str]] = [],
         **kwargs,
     ) -> None:
         self.url = url
@@ -58,7 +58,6 @@ class Novel(Box):
         self.translators = translators
         self.status = status
         self.genres = genres
-        self.tags = tags
         self.description = description
         self.synopsis = synopsis
         self.original_publisher = original_publisher
@@ -66,6 +65,7 @@ class Novel(Box):
         self.novelupdates_url = novelupdates_url
         self.language = language
         self.summary = summary
+        self.tags = tags
         self.update(kwargs)
 
     @property

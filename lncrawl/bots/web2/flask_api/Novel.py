@@ -24,6 +24,7 @@ class Novel:
     first: str = ""
     latest: str = ""
     summary: str = ""
+    tags : set = field(default_factory=set)
     language: str = "en"
     rank: Optional[int] = None
     comment_count: int = 0
@@ -135,6 +136,7 @@ class NovelFromSource:
     first: str = ""
     latest: str = ""
     summary: str = ""
+    tags : List[str] = field(default_factory=list)
     language: str = "en"
     url: str = ""
     last_update_date: str = ""  # isoformat : ex : "2022-09-10T20:59:35.166239"
@@ -169,6 +171,7 @@ class NovelFromSource:
             "first": self.first,
             "latest": self.latest,
             "summary": self.summary,
+            "tags": self.tags,
             "language": self.language,
             # "str_path": self.str_path,
             "url": self.url,

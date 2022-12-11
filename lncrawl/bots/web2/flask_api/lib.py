@@ -35,7 +35,9 @@ database.all_novels: List[Novel] = []
 for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
     try : 
         if novel_folder.is_dir():
-            database.all_novels.append(read_novel_info.get_novel_info(novel_folder))
+            novel = read_novel_info.get_novel_info(novel_folder)
+            database.all_novels.append(novel)
+            database.all_tags.update(novel.tags)
     except Exception as e:
         print(f"Error while reading novel info from {novel_folder.name}: {e}")
 

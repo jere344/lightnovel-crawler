@@ -65,3 +65,5 @@ def add_novel_to_database(novel: Novel):
     database.all_novels.append(novel)
 
     database.refresh_sorted_all_novels()
+
+    database.all_tags.update(novel.tags)

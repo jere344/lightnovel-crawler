@@ -100,6 +100,7 @@ def load_session_from_metadata(meta: MetaInfo) -> App:
     # ternary operator necessary for novels downloaded before language and summary where implemented
     app.crawler.language = meta['language'] if 'language' in meta else 'en'
     app.crawler.summary = meta['summary'] if 'summary' in meta else ''
+    app.crawler.tags = meta['tags'] if 'tags' in meta else []
     app.crawler.novel_cover = meta['cover']
     app.crawler.volumes = meta['volumes']
     app.crawler.chapters = meta['chapters']

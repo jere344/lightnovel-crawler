@@ -7,7 +7,8 @@ class HashableList(list):
     def __hash__(self):
         return id(self)
 
-# placeholder, will be filled by lib.py
+# placeholders, will be filled by lib.py
+all_tags: set[str] = set()
 all_novels: List[Novel]
 
 sorted_all_novels = {

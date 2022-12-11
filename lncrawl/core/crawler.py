@@ -43,6 +43,7 @@ class Crawler(Scraper):
         self.novel_title = ''
         self.novel_author = ''
         self.summary = ''
+        self.tags = []
         self.novel_cover = None
         self.is_rtl = False
 
@@ -50,7 +51,7 @@ class Crawler(Scraper):
         # If the source contains multiple languages it need to be overridden 
             # by crawlers to avoid having language='multi'
         crawler_path = Path(self.file_path)
-        # English source are store inside a second folder
+        # English source are stored inside a second folder
         if crawler_path.parent.parent.name == 'en': 
             self.language = crawler_path.parent.parent.name
         else :

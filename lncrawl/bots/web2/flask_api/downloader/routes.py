@@ -229,9 +229,8 @@ def _update(url: str, job_id: str):
     job = database.jobs[job_id] = JobHandler(job_id)
     job.original_query = url
     job.prepare_direct_download(url)
-    time.sleep(1)
     while job.is_busy:
-        time.sleep(1)
+        time.sleep(0.1)
 
     json_folder_path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "json"
 
@@ -254,12 +253,6 @@ def _update(url: str, job_id: str):
         return
 
     job.app.crawler.chapters = chapters_to_download
-    print(
-        "Downloading chapters : "
-        + ", ".join([str(chapter["id"]) for chapter in chapters_to_download])
-        + " of "
-        + job.novel_slug
-    )
 
     # get aldready downloaded chapters
     meta_folder = json_folder_path.parent / "meta.json"
@@ -288,7 +281,7 @@ def _update(url: str, job_id: str):
     job.start_download(update_website=False, destroy_after=False)
 
     while job.is_busy and not isinstance(database.jobs[job_id], FinishedJob):
-        time.sleep(1)
+        time.sleep(0.1)
 
     # get current metadata and chapters
     with open(json_folder_path.parent / "meta.json", "r", encoding="utf-8") as f:

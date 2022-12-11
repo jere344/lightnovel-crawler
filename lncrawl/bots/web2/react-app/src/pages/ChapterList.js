@@ -42,6 +42,7 @@ function ChapterList() {
             "cover": undefined,
             "latest": "Loading...",
             "summary": "",
+            "tags": [],
             "title": "Loading...",
         }
     }
