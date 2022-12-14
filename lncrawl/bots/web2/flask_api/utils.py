@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional
 from .Novel import Novel, NovelFromSource
 from . import database
+from . import sanatize
 
 
 def get_novel_with_slug(novel_slug) -> Optional[Novel]:
@@ -64,6 +65,31 @@ def add_novel_to_database(novel: Novel):
         database.all_novels.remove(novel)
     database.all_novels.append(novel)
 
-    database.refresh_sorted_all_novels()
+    database.refresh_sorted_all()
 
-    database.all_tags.update(novel.tags)
+    for tag in novel.tags:
+        add_tag(tag)
+    
+    database.refresh_top_tags()
+
+
+def has_tags(novel: Novel, tags: list) -> bool:
+    """
+    Returns True if the novel has all the tags
+    tag starting with - means it must not have it
+    use sanatized tags
+    """
+    return all(
+        (tag.startswith("-") and tag[1:] not in novel.sanatized_tags)
+        or (not tag.startswith("-") and tag in novel.sanatized_tags)
+        for tag in tags
+    )
+    
+
+def add_tag(tag):
+    sanatized_tag = sanatize.sanitize(tag)
+    if sanatized_tag in database.all_tags:
+        database.all_tags[sanatized_tag][1] += 1
+    else:
+        database.all_tags[sanatized_tag] = [tag, 1]
+    

@@ -1,15 +1,13 @@
-from typing import List, Union
-from .Novel import Novel
+from typing import List, Union, Dict
+from .Novel import Novel, NovelFromSource
 import datetime
 from . import datetools
 
-class HashableList(list):
-    def __hash__(self):
-        return id(self)
-
 # placeholders, will be filled by lib.py
-all_tags: set[str] = set()
+all_tags: Dict[str,list] = {} # sanatized : [raw : count]
 all_novels: List[Novel]
+top_tags:list
+all_sources: List[NovelFromSource]
 
 sorted_all_novels = {
     "title": lambda: sorted(all_novels, key=lambda x: x.title),
@@ -26,16 +24,6 @@ sorted_all_novels = {
         reverse=True,
     ),
     "rank": lambda: all_novels,  # Default sort
-    "last_updated": lambda: sorted(
-        [
-            source
-            for novel in all_novels
-            for source in novel.sources
-            if source.last_update_date
-        ],
-        key=lambda x: datetime.datetime.fromisoformat(x.last_update_date),
-        reverse=True,
-    ),
     "title-reverse": lambda: sorted_all_novels["title"]()[::-1],
     "author-reverse": lambda: sorted_all_novels["author"]()[::-1],
     "rating-reverse": lambda: sorted_all_novels["rating"]()[::-1],
@@ -45,15 +33,32 @@ sorted_all_novels = {
     "last_updated-reverse": lambda: sorted_all_novels["last_updated"]()[::-1],
 }
 
+sorted_all_sources = {
+    "last_updated": lambda: sorted(
+            [
+                source
+                for source in all_sources
+                if source.last_update_date
+            ],
+            key=lambda x: datetime.datetime.fromisoformat(x.last_update_date),
+            reverse=True,
+        ),
+    "last_updated-reverse": lambda: sorted_all_sources["last_updated"]()[::-1],
+}
 
 from functools import lru_cache
 #Use the lru_cache decorator to memoize the lambdas
 for key, value in sorted_all_novels.items():
     sorted_all_novels[key] = lru_cache()(value)
 
+for key, value in sorted_all_sources.items():
+    sorted_all_sources[key] = lru_cache()(value)
+
 # Register a callback that need to be called when the all_novels list is modified
-def refresh_sorted_all_novels():
+def refresh_sorted_all():
     for key, value in sorted_all_novels.items():
+        value.cache_clear()
+    for key, value in sorted_all_sources.items():
         value.cache_clear()
         
 

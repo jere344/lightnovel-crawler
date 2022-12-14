@@ -46,6 +46,10 @@ class Novel:
         ),
     )
 
+    sanatized_tags: List[str] = field(
+        init=False, default=property(lambda self: [sanatize.sanitize(t) for t in self.tags])
+    )
+
     search_words: List[str] = field(
         init=False,
         default=property(

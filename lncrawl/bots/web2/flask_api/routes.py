@@ -37,7 +37,8 @@ def get_novels():
     """
     :number: The number of novels to return / the number of novel per page
     :page: Page number
-    :sort: Sort by [rank, views, title, author, rating] (default: rank)
+    :sort: Sort by [rank, views, title, author, rating...] (default: rank)
+    :tags: Tags to filter by (comma separated) (-tag to exclude)
 
     """
     page = request.args.get("page")
@@ -49,8 +50,12 @@ def get_novels():
         number = 20
 
     sort = request.args.get("sort")
-    if not sort: # will validate later
+    if not sort: # will be validated later
         sort = "rank"
+    
+    tags = request.args.get("tags")
+    if tags:
+        tags = [("-" if t.startswith("-") else "") + sanatize.sanitize(t) for t in tags.split(",")]
 
     page = int(page)
     number = int(number)
@@ -58,39 +63,97 @@ def get_novels():
     start = page * number
     stop = (page + 1) * number
 
-    
-    
-    if sort in ["last_updated", "last_updated-reverse"]: 
-        # Thoses are sources list and not novels list.
-        # Can have double, it's a feature.
-        novels = database.sorted_all_novels[sort]()
-        content = {
-            (page * number + 1 + i): e.novel.asdict() # .novel to get the novel from each
-            for i, e in enumerate(novels[start:stop])
-        }
-        total_pages = math.ceil(len(novels) / number)
+    novels = []
+    total_pages = 0
 
-    else :
-         # If the request actually want novel list it can add this prefix to pass through previous filters
-        sort = sort.removeprefix("source-")
-        try :
-            content = {
-                (page * number + 1 + i): e.asdict()
-                for i, e in enumerate(database.sorted_all_novels[sort]()[start:stop])
-            }
-        except KeyError:
-            return "Invalid sort", 400
+    try :
+        if not tags:
+            novels = database.sorted_all_novels[sort]()[start:stop]
+            total_pages = math.ceil(len(database.all_novels) / number)
 
-        total_pages = math.ceil(len(database.all_novels) / number)
-        
+        else:
+            filtered_novels = [novel for novel in database.sorted_all_novels[sort]() if utils.has_tags(novel, tags)]
+            novels = filtered_novels[start:stop]
+            total_pages = math.ceil(len(filtered_novels) / number) 
+
+    except KeyError:
+        return "Invalid sort", 400
+
+    
+
     return {
-        "content": content,
+        "content": {
+                (page * number + 1 + i): e.asdict()
+                for i, e in enumerate(novels)
+        },
         "metadata": {
             "total_pages": total_pages,
             "current_page": page,
         },
     }, 200
 
+
+
+@flaskapp.app.route("/api/sources")
+@flaskapp.app.route("/sources")
+def get_sources():
+    """
+    :number: The number of sources to return / the number of source per page
+    :page: Page number
+    :sort: Sort by [rank, views, title, author, rating...] (default: rank)
+    :tags: Tags to filter by (comma separated) (-tag to exclude)
+
+    """
+    page = request.args.get("page")
+    if not page or not page.isdigit():
+        page = 0
+
+    number = request.args.get("number")
+    if not number or not number.isdigit():
+        number = 20
+
+    sort = request.args.get("sort")
+    if not sort: # will be validated later
+        sort = "last_updated"
+    
+    tags = request.args.get("tags")
+    if tags:
+        tags = [sanatize.sanitize(t) for t in tags.split(",")]
+
+    page = int(page)
+    number = int(number)
+
+    start = page * number
+    stop = (page + 1) * number
+
+    sources = []
+    total_pages = 0
+
+    try :
+        if not tags:
+            sources = database.sorted_all_sources[sort]()[start:stop]
+            total_pages = math.ceil(len(database.all_sources) / number)
+
+        else:
+            filtered_sources = [source for source in database.all_sources if utils.has_tags(source.novel, tags)]
+            sources = filtered_sources[start:stop]
+            total_pages = math.ceil(len(filtered_sources) / number) 
+
+    except KeyError:
+        return "Invalid sort", 400
+
+    
+
+    return {
+        "content": {
+                (page * number + 1 + i): e.asdict()
+                for i, e in enumerate(sources)
+        },
+        "metadata": {
+            "total_pages": total_pages,
+            "current_page": page,
+        },
+    }, 200
 
 from . import datetools
 
@@ -287,6 +350,29 @@ def rate():
 
     return {"status": "success", "message": "Rating added"}, 200
 
+@flaskapp.app.route("/api/toptags")
+@flaskapp.app.route("/toptags")
+def toptags():
+    print(database.top_tags)
+    return {"content": database.top_tags}, 200
+
+@flaskapp.app.route("/api/searchtags")
+@flaskapp.app.route("/searchtags")
+def searchtags():
+    query = request.args.get("query")
+    if not query or len(query) < 3:
+        return "Invalid query", 400
+    
+    query = sanatize.sanitize(query)
+
+    results = []
+    for key, value in database.all_tags.items():
+        if query in key:
+            results.append((key, value[1]))
+    
+    results.sort(key=lambda x: x[1], reverse=True)
+
+    return {"content": results}, 200
 
 @flaskapp.app.route("/api/sitemap.xml")
 @flaskapp.app.route("/sitemap.xml")

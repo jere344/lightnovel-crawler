@@ -15,25 +15,25 @@ function SortButton() {
                 </button>
                 <div className={`dropdown-menu ${dropdownOpen ? 'show' : ''}`} aria-labelledby="dropdownMenuButton">
                     <Link className="dropdown-item" key="rank" to={
-                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'rank') ? 'rank-reverse' : 'rank'))}
+                        updateUrlParameter(window.location.pathname + window.location.search, 'sort', ((sort === 'rank') ? 'rank-reverse' : 'rank'))}
                         onClick={() => setSort((sort === 'rank') ? 'rank-reverse' : 'rank')}>Rank</Link>
                     <Link className="dropdown-item" key="title" to={
-                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'title') ? 'title-reverse' : 'title'))}
+                        updateUrlParameter(window.location.pathname + window.location.search, 'sort', ((sort === 'title') ? 'title-reverse' : 'title'))}
                         onClick={() => setSort((sort === 'title') ? 'title-reverse' : 'title')}>Title</Link>
                     <Link className="dropdown-item" key="rating" to={
-                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'rating') ? 'rating-reverse' : 'rating'))}
+                        updateUrlParameter(window.location.pathname + window.location.search, 'sort', ((sort === 'rating') ? 'rating-reverse' : 'rating'))}
                         onClick={() => setSort((sort === 'rating') ? 'rating-reverse' : 'rating')}>Rating</Link>
                     <Link className="dropdown-item" key="views" to={
-                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'views') ? 'views-reverse' : 'views'))}
+                        updateUrlParameter(window.location.pathname + window.location.search, 'sort', ((sort === 'views') ? 'views-reverse' : 'views'))}
                         onClick={() => setSort((sort === 'views') ? 'views-reverse' : 'views')}>Views</Link>
                     <Link className="dropdown-item" key="author" to={
-                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'author') ? 'author-reverse' : 'author'))}
+                        updateUrlParameter(window.location.pathname + window.location.search, 'sort', ((sort === 'author') ? 'author-reverse' : 'author'))}
                         onClick={() => setSort((sort === 'author') ? 'author-reverse' : 'author')}>Author</Link>
                     <Link className="dropdown-item" key="last_updated" to={
-                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'last_updated') ? 'last_updated-reverse' : 'last_updated'))}
+                        updateUrlParameter(window.location.pathname + window.location.search, 'sort', ((sort === 'last_updated') ? 'last_updated-reverse' : 'last_updated'))}
                         onClick={() => setSort((sort === 'last_updated') ? 'last_updated-reverse' : 'last_updated')}>Newest</Link>
                     <Link className="dropdown-item" key="weekly_views" to={
-                        updateUrlParameter(window.location.pathname, 'sort', ((sort === 'weekly_views') ? 'weekly_views-reverse' : 'weekly_views'))}
+                        updateUrlParameter(window.location.pathname + window.location.search, 'sort', ((sort === 'weekly_views') ? 'weekly_views-reverse' : 'weekly_views'))}
                         onClick={() => setSort((sort === 'weekly_views') ? 'weekly_views-reverse' : 'weekly_views')}>Active</Link>
                 </div>
             </div>

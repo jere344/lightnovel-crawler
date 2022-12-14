@@ -56,7 +56,7 @@ function Home() {
 
     const [novelsSortLastUpdate, setNovelsSortLastUpdate] = useState({});
     useEffect(() => {
-        fetch('/api/novels?page=0&sort=source-last_updated&number=12').then(
+        fetch('/api/sources?page=0&sort=last_updated&number=12').then(
             response => response.json()
         ).then(
             data => {

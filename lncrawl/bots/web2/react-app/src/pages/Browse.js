@@ -13,6 +13,7 @@ import "../assets/stylesheets/media-1270.min.css"
 import "../assets/stylesheets/fontello-embedded.css"
 import "../assets/stylesheets/pagedlist.css"
 import "../assets/stylesheets/browsepg.min.css"
+import SelectTags from '../components/SelectTags';
 
 
 
@@ -28,42 +29,50 @@ function Browse() {
     const { page } = useParams();
     const [searchParams] = useSearchParams();
     const sort = searchParams.get('sort') || 'rank';
+    const tags = searchParams.get('tags') || '';
 
     useEffect(() => {
-        fetch(`/api/novels?page=${parseInt(page) - 1}&sort=${sort}`).then(
+        fetch(`/api/novels?page=${parseInt(page) - 1}&sort=${sort}&tags=${tags}`).then(
             response => response.json()
         ).then(
             data => {
                 setNovels(data);
             }
         )
-    }, [page, sort]);
+    }, [page, sort, tags]);
 
 
     const pagination = ((typeof novels.metadata === 'undefined') ? <div>Loading ...</div> : <Pagination currentPage={parseInt(page)} maxPage={novels.metadata.total_pages} />);
 
+    
 
     return (
 
 
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
-            <article id="explore" className="container">
-                <header id="Result">
-                    <h1>{title}</h1>
-                    <p className="description">{description}</p>
-                    <div className='pagefilter'>
-                        {pagination}
-                        <SortButton url={`/browse/page-${page}`} key={2} />
+            <article id="explore">
+                <div className="container">
+                    <div className="action-panel">
+                        <h4 className="title">Tags</h4>
+                        <SelectTags missingTagsUrl={`/browse/page-${page}?sort=${sort}&`}></SelectTags>
                     </div>
-                </header>
-                {(typeof novels.content === 'undefined') ? (
-                    <div>Loading...</div>
-                ) : (<NovelList novels={novels.content} className="novel-list horizontal col2" />)
-                }
-                <footer className="pagination" style={{ "height": "auto" }}>
-                    {pagination}
-                </footer >
+                    <header id="Result">
+                        <h1>{title}</h1>
+                        <p className="description">{description}</p>
+                        <div className='pagefilter'>
+                            {pagination}
+                            <SortButton url={`/browse/page-${page}`} key={2} />
+                        </div>
+                    </header>
+                    {(typeof novels.content === 'undefined') ? (
+                        <div>Loading...</div>
+                    ) : (<NovelList novels={novels.content} className="novel-list horizontal col2" />)
+                    }
+                    <footer className="pagination" style={{ "height": "auto" }}>
+                        {pagination}
+                    </footer >
+                </div >
             </article >
         </main >
     )
