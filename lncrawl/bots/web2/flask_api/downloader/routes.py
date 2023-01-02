@@ -234,7 +234,7 @@ def _update(url: str, job_id: str):
 
     json_folder_path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "json"
 
-    chapters_to_download = []
+    no_new_chapters = True
     for chapter in job.app.crawler.chapters:
         chapter_path = json_folder_path / f"{str(chapter['id']).zfill(5)}.json"
 
@@ -242,62 +242,21 @@ def _update(url: str, job_id: str):
             # We assume that if the body lenght is < 100 it was not downloaded correctly
             with open(str(chapter_path), "r", encoding='utf-8') as f:
                 json_data = json.load(f)
-                if len((json_data["body"])) > 100:
-                    continue
+            if len(json_data["body"]) < 100:
+                print(f"Chapter {chapter['id']} is corrupted, redownloading it")
+                # we simply delete the file for it to be re downloaded
+                chapter_path.unlink()
+                no_new_chapters = False
 
-        chapters_to_download.append(chapter)
-
-    if not chapters_to_download:
+        else:
+            no_new_chapters = False
+                
+    if no_new_chapters:
         job.set_last_action("No new chapters")
         job.destroy()
         return
 
-    job.app.crawler.chapters = chapters_to_download
-
-    # get aldready downloaded chapters
-    meta_folder = json_folder_path.parent / "meta.json"
-    if not meta_folder.exists():
-        print(meta_folder + " doesn't exist")
-        job.set_last_action(
-            "Error : The source for this novel does not exist or changed name"
-        )
-        job.destroy()
-        return
-
-    # job.start_download() write metadata, so when updating it will only keep the new chapters
-    # and not the aldready downloaded ones.
-    # So we need to write the metadata manually
-
-    with open(str(meta_folder), "r", encoding="utf-8") as f:
-        data = json.load(f)
-        # For backward compatibility
-        if "novel" in data:
-            downloaded_chapters = data["novel"]["chapters"]
-        else:
-            downloaded_chapters = data["chapters"]
-
-
-    # We do not destroy session now as we want to update the website after writing metadata
-    job.start_download(update_website=False, destroy_after=False)
-
-    while job.is_busy and not isinstance(database.jobs[job_id], FinishedJob):
-        time.sleep(0.1)
-
-    # get current metadata and chapters
-    with open(json_folder_path.parent / "meta.json", "r", encoding="utf-8") as f:
-        metadata = json.load(f)
-
-    # Add previously downloaded chapters
-    metadata["novel"]["chapters"] += downloaded_chapters
-    metadata["novel"]["chapters"] = sorted(metadata["novel"]["chapters"], key=lambda x: x["id"])
-    metadata["last_update_date"] = datetime.datetime.now().isoformat()
-
-    # write the new metadata
-    with open(json_folder_path.parent / "meta.json", "w", encoding="utf-8") as f:
-        json.dump(metadata, f)
-
-    job._update_website()
-    job.destroy()
+    job.start_download()
 
 
 # ----------------------------------------------- Load snapshot ----------------------------------------------- #
