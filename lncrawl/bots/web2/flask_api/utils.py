@@ -70,7 +70,6 @@ def add_novel_to_database(novel: Novel):
     for tag in novel.tags:
         add_tag(tag)
     
-    database.refresh_top_tags()
 
 
 def has_tags(novel: Novel, tags: list) -> bool:

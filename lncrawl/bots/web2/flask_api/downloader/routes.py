@@ -3,6 +3,7 @@ from flask import request
 from .. import database
 from .. import lib
 from .Job import JobHandler, FinishedJob
+import shutil
 
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
 
@@ -232,7 +233,9 @@ def _update(url: str, job_id: str):
     while job.is_busy:
         time.sleep(0.1)
 
-    json_folder_path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "json"
+    source_folder_path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug 
+
+    json_folder_path = source_folder_path / "json"
 
     no_new_chapters = True
     for chapter in job.app.crawler.chapters:
@@ -256,7 +259,22 @@ def _update(url: str, job_id: str):
         job.destroy()
         return
 
+
+    # We delete the ebook folders to force the creation of a new one
+    ebook_folders_path = [source_folder_path / "epub", source_folder_path / "pdf"]
+    for ebook_folder_path in ebook_folders_path:
+        if ebook_folder_path.exists():
+            shutil.rmtree(str(ebook_folder_path))
+    
     job.start_download()
+    while job.is_busy:
+        time.sleep(0.1)
+    
+    
+
+
+    
+
 
 
 # ----------------------------------------------- Load snapshot ----------------------------------------------- #

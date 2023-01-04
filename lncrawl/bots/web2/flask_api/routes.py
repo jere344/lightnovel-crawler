@@ -381,3 +381,26 @@ def sitemap():
     response.headers["Content-Type"] = "application/xml"
     response.charset = "utf-8"
     return response
+
+
+@flaskapp.app.route("/api/ebook")
+@flaskapp.app.route("/ebook")
+def ebook():
+    novel_slug = request.args.get("novel")
+    source_slug = request.args.get("source")
+    ebook_format = request.args.get("format")
+
+    if not novel_slug or not source_slug or not ebook_format:
+        return "Missing parameter", 400
+    
+    if ebook_format not in ["epub", "pdf"]:
+        return "Invalid ebook format", 400
+    
+
+    folder_path = lib.LIGHTNOVEL_FOLDER / novel_slug / source_slug / ebook_format
+    if not folder_path.exists() or not os.path.realpath(folder_path).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
+        return "Unknown or unauthorized file", 404
+    
+    # We assume that the file is the only one in the folder
+    for file in folder_path.glob(f"*.{ebook_format}"):
+        return send_file(file.absolute(), as_attachment=True), 200
