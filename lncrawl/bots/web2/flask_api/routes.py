@@ -404,3 +404,27 @@ def ebook():
     # We assume that the file is the only one in the folder
     for file in folder_path.glob(f"*.{ebook_format}"):
         return send_file(file.absolute(), as_attachment=True), 200
+    
+
+@flaskapp.app.route("/api/search_tags")
+@flaskapp.app.route("/search_tags")
+def search_tags():
+    """
+    return a list of tags matching the query
+    :param query: the query to search, must be at least 3 characters long
+    :return: list of tuple (tag, number of novels with this tag)
+    """
+    query = request.args.get("query")
+    if not query or len(query) < 3:
+        return "Invalid query", 400
+    
+    query = sanatize.sanitize(query)
+
+    results = []
+    for key, value in database.all_tags.items():
+        if query in key:
+            results.append(value)
+    
+    results.sort(key=lambda x: x[1], reverse=True)
+
+    return {"content": results}, 200

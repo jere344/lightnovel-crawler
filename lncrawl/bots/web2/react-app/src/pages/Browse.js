@@ -55,7 +55,7 @@ function Browse() {
                 <div className="container">
                     <div className="action-panel">
                         <h4 className="title">Tags</h4>
-                        <SelectTags missingTagsUrl={`/browse/page-${page}?sort=${sort}&`}></SelectTags>
+                        <SelectTags urlWithoutTags={`/browse/page-${page}?sort=${sort}&`}></SelectTags>
                     </div>
                     <header id="Result">
                         <h1>{title}</h1>
