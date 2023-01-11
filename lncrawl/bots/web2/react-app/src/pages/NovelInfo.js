@@ -216,6 +216,11 @@ function NovelInfo() {
                         {status ? <p className="updateStatus">{status}</p> : null}
 
                     </div>
+                    <div className="download">
+                        <button onClick={() => console.log("download")} className={"downloadbtn"}>
+                            DOWNLOAD
+                        </button>
+                    </div>
                     <section id="info">
                         <div className="summary">
                             <h4 className="lined">Summary</h4>

@@ -9,8 +9,8 @@ function TagList({ tags }) {
             
     const tagsLi = []
     tags.forEach(tag => {
-        tagsLi.push(<li>
-            <Link class="tag" to={`/browse/page-1?tags=${tag}`} title={tag} key={tag}>
+        tagsLi.push(<li key={tag}>
+            <Link className="tag" to={`/browse/page-1?tags=${tag}`} title={tag} >
                 {tag}
             </Link>
         </li>)
@@ -19,12 +19,12 @@ function TagList({ tags }) {
 
 
     return (
-        <div class="expand-wrapper">
-            <ul class="content">
+        <div className="expand-wrapper">
+            <ul className="content">
                 {tagsLi}
             </ul>
-            <div class="expand">
-                <button class="expand-btn"><i class="icon-right-open"></i> <span>Show More</span></button>
+            <div className="expand">
+                <button className="expand-btn"><i className="icon-right-open"></i> <span>Show More</span></button>
             </div>
         </div>
     )

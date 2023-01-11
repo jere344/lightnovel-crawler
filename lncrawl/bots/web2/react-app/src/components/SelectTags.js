@@ -54,7 +54,7 @@ function SelectTags({ urlWithoutTags }) {
             }
         )
     }, []);
-    
+
     // tagsSet is used to prevent the useEffect from running multiple times
     // When the page load, we need to add tags in the url to the tag list in the good state (selected or deselected)
     let [tagsSet, setTagsSet] = useState(false);
@@ -125,20 +125,22 @@ function SelectTags({ urlWithoutTags }) {
     const [comboBoxTags, setComboBoxTags] = useState([]);
     const [timeoutId, setTimeoutId] = useState(0);
 
-    function updateComboBox(query){
+    function updateComboBox(query) {
         if (query.length < 3) {
             setComboBoxTags([]);
             return;
         }
         // if match / \(\d+\)/ then it's a tag with occurence number, so we don't need to fetch it
         if (!query.match(/ \(\d+\)/)) {
-        fetch(`/api/search_tags?query=${query}`).then(response => response.json())
-            .then(data => setComboBoxTags(data.content));
+            fetch(`/api/search_tags?query=${query}`).then(response => response.json())
+                .then(data => setComboBoxTags(data.content));
         }
     }
 
     const handleChange = e => {
         setQuery(e.target.value);
+        //clear the previous tags
+        setComboBoxTags([]);
         // clear the previous timeout
         clearTimeout(timeoutId);
         // delay the API call by 1 second to avoid making too many requests
@@ -147,52 +149,67 @@ function SelectTags({ urlWithoutTags }) {
 
     const handleKeyPress = e => {
         if (e.key === 'Enter') {
-            // add the selected tag to the tags list
-            // regex remove the occurence number in the tag
-            const tag = query.replace(/ \(\d+\)/, '');
-            if (!(tags.includes(tag) || tags.includes("-" + tag) || tags.includes("~" + tag))){
-                setTags([...tags, tag]);
+            if (query === comboBoxTags[0][0]) {
+                // add the selected tag to the tags list
+                // regex remove the occurence number in the tag
+                const tag = query.replace(/ \(\d+\)/, '');
+                if (!(tags.includes(tag) || tags.includes("-" + tag) || tags.includes("~" + tag))) {
+                    setTags([...tags, tag]);
+                }
+                else {
+                    // else toggle the tag
+                    let tagIndex = tags.indexOf("~" + tag) !== -1 ? tags.indexOf("~" + tag) : tags.indexOf("-" + tag);
+                    if (tagIndex !== -1) { // false mean it's already selected
+                        tags[tagIndex] = tag;
+                        setTags([...tags]);
+                    }
+
+                }
+                setQuery('');
             }
             else {
-                // else toggle the tag
-                let tagIndex = tags.indexOf("~" + tag) !== -1 ? tags.indexOf("~" + tag) : tags.indexOf("-" + tag);
-                if (tagIndex !== -1) { // false mean it's already selected
-                    tags[tagIndex] = tag;
-                    setTags([...tags]);
-                }
-                
+                setQuery(comboBoxTags[0][0]);
             }
-            setQuery('');
-            
+
+
         }
     }
 
     const comboBoxTagsOptions = [];
     comboBoxTags.forEach((tag) => {
         comboBoxTagsOptions.push(
-            <option key={tag[0]} value={`${tag[0]} (${tag[1]})`}/>
-                
+            <option key={tag[0]} value={`${tag[0]} (${tag[1]})`} />
+
         )
     });
 
 
 
     return (
+        <>
         <div id="category-list" className="scroll-wrapper">
             <ul className="action-list">
                 {tagsLi}
             </ul>
-            <div className="combo-box">
-                <input type="text" value={query} onChange={handleChange} onKeyDown={handleKeyPress} list="combo-box-tags"/>
-                <datalist id="combo-box-tags">
-                    {comboBoxTagsOptions}
-                </datalist>
             </div>
-            
-            <button id="ctg-action" className="active" onClick={() => navigateToSearch()}>
-                Search
-            </button>
-        </div>
+            <div className="action-tags">
+                <div className="combo-box-container">
+                    <input type="text" value={query} onChange={handleChange} onKeyDown={handleKeyPress} list="combo-box-tags" className="combo-box-tags"
+                        placeholder=' search tags' />
+                    <datalist id="combo-box-tags">
+                        {comboBoxTagsOptions}
+                    </datalist>
+                    <button className="combo-box-enter" onClick={() => {handleKeyPress({ key: 'Enter' })}}>
+                        <p className="icon-plus">+</p>
+                    </button>
+                </div>
+                <div className="search-button-container">
+                    <button id="ctg-action" className="search-button" onClick={() => navigateToSearch()}>
+                        <i className="icon-search" />
+                    </button>
+                </div>
+            </div>
+        </>
     )
 }
 
