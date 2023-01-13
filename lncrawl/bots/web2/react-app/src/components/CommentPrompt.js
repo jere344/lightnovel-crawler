@@ -14,7 +14,6 @@ function CommentPrompt({ replyTo, setCommenting }) {
             "page": window.location.pathname,
             "spoiler": isSpoiler,
         }
-        console.log("replyTo", replyTo)
         if (replyTo) {
             data.reply_to = replyTo;
         }

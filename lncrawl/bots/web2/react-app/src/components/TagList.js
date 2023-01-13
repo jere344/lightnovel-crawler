@@ -2,7 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 
 function TagList({ tags }) {
-    console.log(tags)
     if (tags.length === 0) {
         return <></>
     }

@@ -25,7 +25,6 @@ function RatingStars(param) {
 
 
         setThanksPanelActive(true);
-        console.log("thanks panel active");
         setTimeout(function () { console.log("thanks panel inactive"); setThanksPanelActive(false); }, 3000);
     }
 
