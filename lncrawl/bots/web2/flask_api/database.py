@@ -30,7 +30,6 @@ sorted_all_novels = {
     "views-reverse": lambda: sorted_all_novels["views"]()[::-1],
     "weekly_views-reverse": lambda: sorted_all_novels["weekly_views"]()[::-1],
     "rank-reverse": lambda: sorted_all_novels["rank"]()[::-1],
-    "last_updated-reverse": lambda: sorted_all_novels["last_updated"]()[::-1],
 }
 
 sorted_all_sources = {

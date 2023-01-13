@@ -70,7 +70,7 @@ def generate_sitemap(sitemap_file : Path, include_chapterlist : bool = False):
         for source in novel.sources:
             image = f"""
         <image:image>
-            <image:loc>{lib.WEBSITE_URL}/{quote(source.cover)}</image:loc>
+            <image:loc>{lib.WEBSITE_URL}/api/image/{quote(source.cover)}</image:loc>
             <image:caption>{replace_xml_illegal(source.title)}</image:caption>
             <image:title>{replace_xml_illegal(source.title)}</image:title>
         </image:image>""" if source.cover else ""
