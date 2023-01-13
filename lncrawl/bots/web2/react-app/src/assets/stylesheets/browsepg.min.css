@@ -281,6 +281,7 @@
 		border-radius: 5px;
 		width: 100%;
 		height: 22px;
+		color: var(--text-color);
 	}
 
 	#explore .action-panel .action-tags .combo-box-container .combo-box-enter {
