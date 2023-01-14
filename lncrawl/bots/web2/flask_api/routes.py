@@ -432,4 +432,28 @@ def search_tags():
 @flaskapp.app.route("/api/download")
 @flaskapp.app.route("/download")
 def download():
-    return "<p>Soon™</p>"
+    novel_slug = request.args.get("novel")
+    source_slug = request.args.get("source")
+    ebook_format = request.args.get("format") 
+
+    if not novel_slug or not source_slug or not ebook_format:
+        return "Missing parameter, need : novel, source and format", 400
+    
+    
+    ebook_folder = (
+        lib.LIGHTNOVEL_FOLDER
+        / unquote_plus(novel_slug)
+        / unquote_plus(source_slug)
+        / ebook_format
+    )
+    # We assume that the file is the only one in the folder
+    ebook = next(ebook_folder.glob(f"*.{ebook_format}") , None)
+
+
+    if not ebook or not os.path.realpath(ebook).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
+        return "Unknown or unauthorized file", 404
+
+
+    return send_file(ebook.absolute(), as_attachment=True), 200
+
+    

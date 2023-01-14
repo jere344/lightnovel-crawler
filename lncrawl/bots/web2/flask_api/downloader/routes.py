@@ -87,7 +87,7 @@ def get_sources_founds():
 
 @app.route("/api/addnovel/download")
 @app.route("/addnovel/download")
-def download():
+def addnovel_download():
     """Select Source and start download"""
     job_id = request.args.get("job_id")
     novel_id = int(request.args.get("novel_id"))
