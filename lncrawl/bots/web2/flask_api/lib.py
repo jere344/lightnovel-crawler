@@ -113,4 +113,4 @@ def periodic_update_novels_stats():
 
 # In case of an internal error, we want to save the stats every hour as well as on exit
 # This thread will be terminated at the same time as the main thread
-threading.Thread(target=update_novels_stats, daemon=True).start()
+threading.Thread(target=periodic_update_novels_stats, daemon=True).start()
