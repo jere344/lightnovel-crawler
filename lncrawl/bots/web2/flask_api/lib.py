@@ -49,8 +49,8 @@ for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
         print(f"Error while reading novel info from {novel_folder.name}: {e}")
 
 database.all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
-for i, n in enumerate(database.all_novels, start=1):
-    n.rank = i
+database.set_ranks()
+
 
 database.all_sources = [
     source for novel in database.all_novels for source in novel.sources

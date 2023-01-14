@@ -168,7 +168,7 @@ function Chapter() {
     }, [novelSlug, sourceSlug, chapterId, currentPreFetchedData]);
 
     useEffect(() => {
-        if (response.is_next && nextPrefetchedData === undefined) {
+        if (response !== undefined && response.is_next && nextPrefetchedData === undefined) {
             fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${response.content.id + 1}`).then(
                 (response) => { return ((response.status === 404) ? undefined : response.json()) }
             ).then(

@@ -55,6 +55,7 @@ for key, value in sorted_all_sources.items():
 
 # Register a callback that need to be called when the all_novels list is modified
 def refresh_sorted_all():
+    """Clear the cache of the lambdas : refresh the sorted lists"""
     for key, value in sorted_all_novels.items():
         value.cache_clear()
     for key, value in sorted_all_sources.items():
@@ -71,3 +72,7 @@ if TYPE_CHECKING:
 
 jobs = {}
 jobs_snapshots = {}
+
+def set_ranks():
+    for i, n in enumerate(all_novels, start=1):
+        n.rank = i

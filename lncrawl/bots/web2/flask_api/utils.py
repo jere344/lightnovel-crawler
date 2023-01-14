@@ -59,13 +59,12 @@ def add_novel_to_database(novel: Novel):
     To be used when lncrawn is running and we want to add a novel to the database
     """
 
-    novel.rank = len(database.all_novels) + 1
-
     if novel in database.all_novels:
         database.all_novels.remove(novel)
     database.all_novels.append(novel)
 
     database.refresh_sorted_all()
+    database.set_ranks()
 
     for tag in novel.tags:
         add_tag(tag)
