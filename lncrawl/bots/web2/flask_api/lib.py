@@ -76,44 +76,41 @@ import sys
 
 
 def update_novels_stats():
-    """Periodic function to update each novels stats"""
+    """function to update each novels stats"""
 
-    stopping = False
+    for novel in database.all_novels:
+
+        if not novel.path:
+            break
+        stat_path = novel.path / "stats.json"
+
+        if not stat_path.exists():
+            shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
+
+        with open(stat_path, "w", encoding="utf-8") as f:
+
+            novel_stats = {
+                "clicks": novel.clicks,
+                "ratings": novel.ratings,
+                "comment_count": novel.comment_count,
+            }
+
+            json.dump(novel_stats, f, indent=4)
+
+    print("Updated novels stats")
+
+
+import atexit
+# Save novel stats on exit
+atexit.register(update_novels_stats)
+
+
+def periodic_update_novels_stats():
+    """function to update each novels stats every hour"""
     while True:
-        time.sleep(3600)  # 1h
+        time.sleep(3600)
+        update_novels_stats()
 
-        for novel in database.all_novels:
-            # Security to avoid stopping the program while updating stats and having corrupted stats file
-            # if KeyboardInterrupt or SystemExit is raised, finish the current loop then stop
-            for attempt in range(4):
-                try:
-                    if not novel.path:
-                        continue
-                    stat_path = novel.path / "stats.json"
-
-                    if not stat_path.exists():
-                        shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
-
-                    with open(stat_path, "w", encoding="utf-8") as f:
-
-                        novel_stats = {
-                            "clicks": novel.clicks,
-                            "ratings": novel.ratings,
-                            "comment_count": novel.comment_count,
-                        }
-
-                        json.dump(novel_stats, f, indent=4)
-
-                except KeyboardInterrupt or SystemExit:
-                    stopping = True
-                    continue
-
-                break
-
-            if stopping:
-                sys.exit(0)
-
-        print("Updated novels stats")
-
-
+# In case of an internal error, we want to save the stats every hour as well as on exit
+# This thread will be terminated at the same time as the main thread
 threading.Thread(target=update_novels_stats, daemon=True).start()
