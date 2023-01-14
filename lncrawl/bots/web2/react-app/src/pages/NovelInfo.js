@@ -217,7 +217,7 @@ function NovelInfo() {
 
                     </div>
                     <div className="download">
-                        <button onClick={() => console.log("download")} className={"downloadbtn"}>
+                        <button onClick={() => _navigate(`/api/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"}>
                             DOWNLOAD
                         </button>
                     </div>

@@ -428,3 +428,8 @@ def search_tags():
     results.sort(key=lambda x: x[1], reverse=True)
 
     return {"content": results}, 200
+
+@flaskapp.app.route("/api/download")
+@flaskapp.app.route("/download")
+def download():
+    return "<p>Soon™</p>"
