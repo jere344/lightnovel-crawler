@@ -19,7 +19,7 @@ def image(file: str):
     if os.path.exists(path) and os.path.realpath(path).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
         return send_from_directory(lib.LIGHTNOVEL_FOLDER, file), 200
     else:
-        print(path)
+        print("unknown image :", path)
     return "", 404
 
 @flaskapp.app.route("/api/flags/<string:language>")
@@ -353,7 +353,6 @@ def rate():
 @flaskapp.app.route("/api/toptags")
 @flaskapp.app.route("/toptags")
 def toptags():
-    print(database.top_tags)
     return {"content": database.top_tags}, 200
 
 @flaskapp.app.route("/api/searchtags")
