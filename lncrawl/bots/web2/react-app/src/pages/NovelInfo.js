@@ -116,6 +116,20 @@ function NovelInfo() {
         setUpdating(false);
         return response
     }
+
+    const download = (url) => {
+        fetch(url, { method: 'GET' })
+          .then((response) => {
+              const filename = response.headers.get("Content-Disposition").split("filename=")[1];
+              return response.blob().then(blob => {
+                  const link = document.createElement('a');
+                  link.href = URL.createObjectURL(blob);
+                  link.download = filename;
+                  link.click();
+              });
+          });
+      };
+
     return (
 
         <main role="main">
@@ -217,7 +231,7 @@ function NovelInfo() {
 
                     </div>
                     <div className="download">
-                        <button onClick={() => _navigate(`/api/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"}>
+                        <button onClick={() => download(`/api/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"}>
                             DOWNLOAD
                         </button>
                     </div>
