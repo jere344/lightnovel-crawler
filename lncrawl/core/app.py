@@ -131,9 +131,6 @@ class App:
             logger.debug("Login with %s", self.login_data)
             self.crawler.login(*list(self.login_data))
 
-        print("Retrieving novel info...")
-        print(self.crawler.novel_url)
-        previous = self.crawler.novel_url
         self.__background(self.crawler.read_novel_info)
 
         format_novel(self.crawler)
@@ -141,14 +138,6 @@ class App:
             raise Exception("No chapters found")
         if not len(self.crawler.volumes):
             raise Exception("No volumes found")
-
-        if self.crawler.novel_url != previous:
-            print(self.crawler.novel_url)
-        print("TITLE: %s" % self.crawler.novel_title)
-        print(
-            "%d volumes and %d chapters found"
-            % (len(self.crawler.volumes), len(self.crawler.chapters))
-        )
 
         if not self.good_file_name:
             self.good_file_name = slugify(
@@ -254,7 +243,7 @@ class App:
                     format="zip",
                     root_dir=root_dir,
                 )
-                print("Compressed:", os.path.basename(archived_file))
+                logger.info("Compressed:", os.path.basename(archived_file))
 
             if archived_file:
                 self.archived_outputs.append(archived_file)
