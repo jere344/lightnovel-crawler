@@ -346,10 +346,10 @@ def rate():
 
     novel = utils.get_novel_with_slug(novel_slug)
 
-    print(request.environ.get('HTTP_X_REAL_IP', request.remote_addr) )
-    novel.ratings[utils.shuffle_ip(request.remote_addr)] = rating
+    ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    novel.ratings[utils.shuffle_ip(ip)] = rating
 
-    print(f"Rating added for {novel_slug} : {rating} (from {request.remote_addr})")
+    print(f"Rating added for {novel_slug} : {rating} (from {ip})")
 
     return {"status": "success", "message": "Rating added"}, 200
 
