@@ -102,6 +102,8 @@ def add_comment():
     novel: Novel = utils.get_novel_with_url(url)
     novel.comment_count += 1
 
+    print(f"Comment added to {url} by {name} ({text})")
+
     return {"status": "success"}, 200
 
 @flaskapp.app.route("/api/add_reaction", methods=["POST"])
@@ -130,24 +132,24 @@ def rate_comment():
     if not comment:
         return {"status": "error", "message": "Comment not found"}, 400
 
-    ip = utils.shuffle_ip(request.remote_addr)
+    shuffled_ip = utils.shuffle_ip(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
     if reaction == "like":
-        if ip in comment["dislikes"]:
-            comment["dislikes"].remove(ip)
-        if ip not in comment["likes"]:
-            comment["likes"].append(ip)
+        if shuffled_ip in comment["dislikes"]:
+            comment["dislikes"].remove(shuffled_ip)
+        if shuffled_ip not in comment["likes"]:
+            comment["likes"].append(shuffled_ip)
 
     elif reaction == "dislike":
-        if ip in comment["likes"]:
-            comment["likes"].remove(ip)
-        if ip not in comment["dislikes"]:
-            comment["dislikes"].append(ip)
+        if shuffled_ip in comment["likes"]:
+            comment["likes"].remove(shuffled_ip)
+        if shuffled_ip not in comment["dislikes"]:
+            comment["dislikes"].append(shuffled_ip)
 
     elif reaction == "none":
-        if ip in comment["likes"]:
-            comment["likes"].remove(ip)
-        if ip in comment["dislikes"]:
-            comment["dislikes"].remove(ip)
+        if shuffled_ip in comment["likes"]:
+            comment["likes"].remove(shuffled_ip)
+        if shuffled_ip in comment["dislikes"]:
+            comment["dislikes"].remove(shuffled_ip)
 
     with open(path, "w", encoding='utf-8') as f:
         json.dump(comments, f)

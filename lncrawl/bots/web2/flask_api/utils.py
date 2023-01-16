@@ -50,8 +50,8 @@ import hashlib
 
 
 def shuffle_ip(ip) -> str:
-    """Just a way to not keep ip in clear text"""
-    return hashlib.sha256(str(ip[:5] + ip[7:]).encode()).hexdigest()
+    """Just a way to not keep ip in clear text, we remove the 5th and 7th character and hash it"""
+    return hashlib.sha256(str(ip[:4] + ip[5:6] + ip[7:]).encode()).hexdigest()
 
 
 def add_novel_to_database(novel: Novel):
