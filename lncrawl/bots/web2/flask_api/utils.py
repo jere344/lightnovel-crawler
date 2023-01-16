@@ -63,6 +63,11 @@ def add_novel_to_database(novel: Novel):
         database.all_novels.remove(novel)
     database.all_novels.append(novel)
 
+    for source in novel.sources:
+        if source in database.all_sources:
+            database.all_sources.remove(source)
+        database.all_sources.append(source)
+        
     database.refresh_sorted_all()
     database.set_ranks()
 
