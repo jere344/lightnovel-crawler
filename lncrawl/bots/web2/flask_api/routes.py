@@ -72,7 +72,7 @@ def get_novels():
             total_pages = math.ceil(len(database.all_novels) / number)
 
         else:
-            filtered_novels = [novel for novel in database.sorted_all_novels[sort]() if utils.has_tags(novel, tags)]
+            filtered_novels:List[Novel] = [novel for novel in database.sorted_all_novels[sort]() if utils.has_tags(novel, tags)]
             novels = filtered_novels[start:stop]
             total_pages = math.ceil(len(filtered_novels) / number) 
 

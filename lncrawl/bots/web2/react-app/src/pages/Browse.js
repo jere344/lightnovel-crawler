@@ -32,7 +32,8 @@ function Browse() {
     const tags = searchParams.get('tags') || '';
 
     useEffect(() => {
-        fetch(`/api/novels?page=${parseInt(page) - 1}&sort=${sort}&tags=${tags}`).then(
+        const type = sort.startsWith('last_updated') ? 'sources' : 'novels';
+        fetch(`/api/${type}?page=${parseInt(page) - 1}&sort=${sort}&tags=${tags}`).then(
             response => response.json()
         ).then(
             data => {
