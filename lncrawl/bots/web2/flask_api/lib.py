@@ -79,23 +79,27 @@ def update_novels_stats():
     """function to update each novels stats"""
 
     for novel in database.all_novels:
-
         if not novel.path:
             break
-        stat_path = novel.path / "stats.json"
 
-        if not stat_path.exists():
-            shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
+        try :
+            stat_path = novel.path / "stats.json"
 
-        with open(stat_path, "w", encoding="utf-8") as f:
+            if not stat_path.exists():
+                shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
 
-            novel_stats = {
-                "clicks": novel.clicks,
-                "ratings": novel.ratings,
-                "comment_count": novel.comment_count,
-            }
+            with open(stat_path, "w", encoding="utf-8") as f:
 
-            json.dump(novel_stats, f, indent=4)
+                novel_stats = {
+                    "clicks": novel.clicks,
+                    "ratings": novel.ratings,
+                    "comment_count": novel.comment_count,
+                }
+
+                json.dump(novel_stats, f, indent=4)
+        except Exception as e:
+            print(f"Error while updating novel stats for {novel.name}: {e}")
+            continue
 
     print("Updated novels stats")
 

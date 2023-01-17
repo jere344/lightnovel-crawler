@@ -93,6 +93,7 @@ class Novel:
             prefered_source_slug = self.prefered_source.slug
         except AttributeError:
             prefered_source_slug = None
+            print("\n\nerror with", self.title, self.path, "\n\n")
 
         return {
             # "path": self.path,

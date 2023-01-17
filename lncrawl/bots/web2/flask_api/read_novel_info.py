@@ -72,6 +72,9 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
     language = ", ".join(language)
 
+    if not prefered_source:
+        prefered_source = sources[0]
+
     if not title:
         title = novel_folder.name
     

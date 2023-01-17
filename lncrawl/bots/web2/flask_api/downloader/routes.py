@@ -253,9 +253,16 @@ def _update(url: str, job_id: str):
 
         else:
             no_new_chapters = False
+    
+    image_path = source_folder_path / "cover.jpg"
+    # we check if the cover image is less than 100 bytes, if it is we assume it was not downloaded correctly
+    if image_path.exists():
+        if image_path.stat().st_size < 1000:
+            image_path.unlink()
+
                 
-    if no_new_chapters:
-        job.set_last_action("No new chapters")
+    if no_new_chapters and image_path.exists():
+        job.set_last_action("Nothing new")
         job.destroy()
         return
 
