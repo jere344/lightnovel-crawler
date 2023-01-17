@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 
 function NovelItemChapter({ novel }) {
   const source = novel
+  if (source.novel === undefined) {
+    return null
+  }
 
   const novelUrl = `/novel/${source.novel.slug}/${source.slug}`
 

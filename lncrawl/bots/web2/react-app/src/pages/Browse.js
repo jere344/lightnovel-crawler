@@ -68,7 +68,7 @@ function Browse() {
                     </header>
                     {(typeof novels.content === 'undefined') ? (
                         <div>Loading...</div>
-                    ) : (<NovelList novels={novels.content} className="novel-list horizontal col2" />)
+                    ) : (<NovelList novels={novels.content} className="novel-list horizontal col2" type={sort.startsWith('last_updated') ? 'chapter' : 'classic'}/>)
                     }
                     <footer className="pagination" style={{ "height": "auto" }}>
                         {pagination}
