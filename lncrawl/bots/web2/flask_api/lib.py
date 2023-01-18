@@ -98,7 +98,11 @@ def update_novels_stats():
 
                 json.dump(novel_stats, f, indent=4)
         except Exception as e:
-            print(f"Error while updating novel stats for {novel.name}: {e}")
+            print(f"Error while updating novel stats for {novel}: {e}")
+            try:
+                print(novel.name)
+            except AttributeError:
+                print("name unavailable")
             continue
 
     print("Updated novels stats")
