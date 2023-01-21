@@ -191,21 +191,22 @@ function Chapter() {
         setDisplayMode("classic");
     }
 
-    const [commonRatio, setCommonRatio] = useState(1350);
+    const [commonRatio, setCommonRatio] = useState(undefined);
     // First iteration, get all images aspect ratio and find the most common one
     useEffect(() => {
         if (displayModeCookie.displayMode !== "manga") return;
-        let images = document.querySelectorAll('img');
+        // All images inside div class=chapter-content
+        let images = document.querySelectorAll(".chapter-content img");
         let ratios = [];
         images.forEach(img => {
             let image = new Image();
             image.src = img.src;
             image.onload = function(){
-                let ratio = (this.width / this.height).toFixed(2);
+                let ratio = Math.round(image.width / image.height * 100) / 100; // Round to 2 decimals
                 ratios.push(ratio);
                 img.dataset.ratio = ratio; // Store the ratio in the image dataset
                 if(ratios.length === images.length) { // if all images are loaded
-                    setCommonRatio(mode(ratios));
+                    setCommonRatio(mode(ratios));  
                 }
                 img.ondblclick = function() {
                     img.classList.toggle("large");
@@ -216,10 +217,10 @@ function Chapter() {
 
     // Second iteration, add class to images that are larger than the most common ratio
     useEffect(() => {
-        if (displayModeCookie.displayMode !== "manga") return;
-        let images = document.querySelectorAll('img');
+        if (displayModeCookie.displayMode !== "manga" || commonRatio === undefined) return;
+        let images = document.querySelectorAll('.chapter-content img');
         images.forEach(img => {
-            if(img.dataset.ratio > commonRatio){ // Use the stored ratio in the dataset to have the true ratio of the image
+            if(parseFloat(img.dataset.ratio) > commonRatio){ // Use the stored ratio in the dataset to have the true ratio of the image
                 img.classList.add("large");
             }
         });
