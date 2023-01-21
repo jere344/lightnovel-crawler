@@ -191,20 +191,21 @@ function Chapter() {
         setDisplayMode("classic");
     }
 
-    const [commonWidth, setCommonWidth] = useState(1350);
-    // First iteration, get all images width and find the most common width
+    const [commonRatio, setCommonRatio] = useState(1350);
+    // First iteration, get all images aspect ratio and find the most common one
     useEffect(() => {
         if (displayModeCookie.displayMode !== "manga") return;
         let images = document.querySelectorAll('img');
-        let widths = [];
+        let ratios = [];
         images.forEach(img => {
             let image = new Image();
             image.src = img.src;
             image.onload = function(){
-                widths.push(this.width);
-                img.dataset.width = this.width; // Store the width in the image dataset
-                if(widths.length === images.length) { // if all images are loaded
-                    setCommonWidth(mode(widths));
+                let ratio = (this.width / this.height).toFixed(2);
+                ratios.push(ratio);
+                img.dataset.ratio = ratio; // Store the ratio in the image dataset
+                if(ratios.length === images.length) { // if all images are loaded
+                    setCommonRatio(mode(ratios));
                 }
                 img.ondblclick = function() {
                     img.classList.toggle("large");
@@ -213,16 +214,16 @@ function Chapter() {
         });
     }, [response, displayModeCookie]);
 
-    // Second iteration, add class to images that are larger than the most common width
+    // Second iteration, add class to images that are larger than the most common ratio
     useEffect(() => {
         if (displayModeCookie.displayMode !== "manga") return;
         let images = document.querySelectorAll('img');
         images.forEach(img => {
-            if(img.dataset.width > commonWidth){ // Use the stored width in the dataset to have the true width of the image
+            if(img.dataset.ratio > commonRatio){ // Use the stored ratio in the dataset to have the true ratio of the image
                 img.classList.add("large");
             }
         });
-    }, [commonWidth, displayModeCookie]);
+    }, [commonRatio, displayModeCookie]);
 
     
     /* #endregion */
