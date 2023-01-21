@@ -143,11 +143,8 @@ function Chapter() {
 
     /* #endregion */
 
-    /* #region  Prefetch */
+    /* #region fetch */
 
-    /* #endregion */
-
-    // -----------------  Chapter -----------------
 
     useEffect(() => {
         // When the user click next too fast sometimes the prefetched data is not the next chapter but the current chapter
@@ -180,6 +177,56 @@ function Chapter() {
             
         }
     }, [response, novelSlug, sourceSlug, nextPrefetchedData]);
+
+    /* #endregion */
+
+    /* #region Display mode */
+
+    const [displayModeCookie, setDisplayModeCookie] = useCookies(['displayMode']);
+    function setDisplayMode(mode) {
+        setDisplayModeCookie('displayMode', mode, { path: '/', sameSite: 'strict', maxAge: 2592000 });
+    }
+
+    if (displayModeCookie.displayMode === undefined) {
+        setDisplayMode("classic");
+    }
+
+    const [commonWidth, setCommonWidth] = useState(1350);
+    // First iteration, get all images width and find the most common width
+    useEffect(() => {
+        if (displayModeCookie.displayMode !== "manga") return;
+        let images = document.querySelectorAll('img');
+        let widths = [];
+        images.forEach(img => {
+            let image = new Image();
+            image.src = img.src;
+            image.onload = function(){
+                widths.push(this.width);
+                img.dataset.width = this.width; // Store the width in the image dataset
+                if(widths.length === images.length) { // if all images are loaded
+                    setCommonWidth(mode(widths));
+                }
+                img.ondblclick = function() {
+                    img.classList.toggle("large");
+                }
+            }
+        });
+    }, [response, displayModeCookie]);
+
+    // Second iteration, add class to images that are larger than the most common width
+    useEffect(() => {
+        if (displayModeCookie.displayMode !== "manga") return;
+        let images = document.querySelectorAll('img');
+        images.forEach(img => {
+            if(img.dataset.width > commonWidth){ // Use the stored width in the dataset to have the true width of the image
+                img.classList.add("large");
+            }
+        });
+    }, [commonWidth, displayModeCookie]);
+
+    
+    /* #endregion */
+
 
 
     if (response === undefined) {
@@ -228,7 +275,7 @@ function Chapter() {
                         </div>
 
                     </div>
-                    <div id="chapter-container" className={"chapter-content " + fontCookie.font} itemProp="description"
+                    <div id="chapter-container" className={"chapter-content " + fontCookie.font + " " + displayModeCookie.displayMode} itemProp="description"
                         onClick={() => { window.innerWidth > 768 ? setMenuOpen(false) : setMenuOpen(!menuOpen) }}
                         style={{ "fontSize": fontSizeCookie.fontSize + "px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="/api/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
                     </div>
@@ -286,15 +333,15 @@ function Chapter() {
                                     <i className="icon-right-open"></i>
                                 </Link>
                             </div>
-                            <div className="font-select">
-                                <div className="font-wrap">
-                                    <input type="radio" id="radioDefault" name="radioFont" defaultValue="default" defaultChecked="" onClick={() => { setFont("font_default") }} />
+                            <div className="option-select">
+                                <div className="option-wrap">
+                                    <input type="radio" id="radioDefault" name="radioFont" defaultValue="default" defaultChecked={fontCookie.font === "font_default" ? true : false} onClick={() => { setFont("font_default") }} />
                                     <label htmlFor="radioDefault">Default</label>
-                                    <input type="radio" id="radioDyslexic" name="radioFont" defaultValue="dyslexic" onClick={() => { setFont("font_dyslexic") }} />
+                                    <input type="radio" id="radioDyslexic" name="radioFont" defaultValue="dyslexic" defaultChecked={fontCookie.font === "font_dyslexic" ? true : false} onClick={() => { setFont("font_dyslexic") }} />
                                     <label htmlFor="radioDyslexic">Dyslexic</label>
-                                    <input type="radio" id="radioRoboto" name="radioFont" defaultValue="roboto" onClick={() => { setFont("font_roboto") }} />
+                                    <input type="radio" id="radioRoboto" name="radioFont" defaultValue="roboto" defaultChecked={fontCookie.font === "font_roboto" ? true : false} onClick={() => { setFont("font_roboto") }} />
                                     <label htmlFor="radioRoboto">Roboto</label>
-                                    <input type="radio" id="radioLora" name="radioFont" defaultValue="lora" onClick={() => { setFont("font_lora") }} />
+                                    <input type="radio" id="radioLora" name="radioFont" defaultValue="lora" defaultChecked={fontCookie.font === "font_lora" ? true : false} onClick={() => { setFont("font_lora") }} />
                                     <label htmlFor="radioLora">Lora</label>
                                 </div>
                             </div>
@@ -326,7 +373,16 @@ function Chapter() {
                                     </button>
                                 </div>
                             </div>
-
+                            <div className="option-select">
+                                <div className="option-wrap"> 
+                                    <input type="radio" id="radioManga" name="radioMode" defaultValue="manga" defaultChecked={displayModeCookie.displayMode === "manga" ? true : false} onClick={() => { setDisplayMode("manga") }} />
+                                    <label htmlFor="radioManga">Manga</label>
+                                    <input type="radio" id="radioClassic" name="radioMode" defaultValue="classic" defaultChecked={displayModeCookie.displayMode === "classic" ? true : false} onClick={() => { setDisplayMode("classic") }} />
+                                    <label htmlFor="radioClassic">Classic</label>
+                                    <input type="radio" id="radioWebtoon" name="radioMode" defaultValue="webtoon" defaultChecked={displayModeCookie.displayMode === "webtoon" ? true : false} onClick={() => { setDisplayMode("webtoon") }} />
+                                    <label htmlFor="radioWebtoon">Webtoon</label>
+                                </div>
+                            </div>
                         </nav>
                     </dialog>
 
@@ -366,4 +422,14 @@ function useOuterClick(callback) {
     }, []); // no dependencies -> stable click listener
 
     return innerRef; // convenience for client (doesn't need to init ref himself) 
+}
+
+
+const mode = (arr) => {
+    // https://stackoverflow.com/a/20762713
+    // highest occuring element in array
+    return arr.sort((a, b) =>
+        arr.filter(v => v === a).length
+        - arr.filter(v => v === b).length
+    ).pop();
 }

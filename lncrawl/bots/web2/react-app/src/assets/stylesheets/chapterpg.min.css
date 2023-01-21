@@ -259,23 +259,23 @@
 	padding-bottom: 126px;
 }
 
-.control-action .font-select {
+.control-action .option-select {
 	width: 100%;
 }
 
-.control-action .font-select .font-wrap {
+.control-action .option-select .option-wrap {
 	display: flex;
 	padding: 13px 0 13px;
 	position: relative;
 }
 
-.control-action .font-select .font-wrap input[type=radio] {
+.control-action .option-select .option-wrap input[type=radio] {
 	opacity: 0;
 	position: fixed;
 	width: 0;
 }
 
-.control-action .font-select .font-wrap label {
+.control-action .option-select .option-wrap label {
 	flex: 1;
 	display: inline-block;
 	background-color: var(--bg-color-secondary);
@@ -286,15 +286,15 @@
 	text-align: center;
 }
 
-.control-action .font-select .font-wrap label:not(:last-child) {
+.control-action .option-select .option-wrap label:not(:last-child) {
 	margin-right: .5rem;
 }
 
-.control-action .font-select .font-wrap label:hover {
+.control-action .option-select .option-wrap label:hover {
 	background-color: var(--bg-color-secondary-2);
 }
 
-.control-action .font-select .font-wrap input[type=radio]:checked+label {
+.control-action .option-select .option-wrap input[type=radio]:checked+label {
 	background-color: var(--bg-color-secondary-2);
 	color: #e1e1e1;
 }
@@ -599,7 +599,6 @@
 	top: 2px;
 	height: 0;
 	margin: 0;
-	-webkit-appearance: none;
 }
 
 .range-fontsize .range input::-webkit-slider-thumb {
@@ -896,4 +895,41 @@
 		left: initial;
 		right: -300px;
 	}
+}
+
+#chapter-article .chapter-content.manga {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(n, 1fr);
+	grid-row-gap: 10px;
+}
+
+#chapter-article .chapter-content.manga img {
+	grid-column: span 1;
+	grid-row: span 1;
+}
+
+#chapter-article .chapter-content.manga h1 {
+	grid-column: 1 / 3;
+	grid-row: 1;
+	text-align: center;
+	align-self: center;
+}
+
+#chapter-article .chapter-content.manga img.large {
+	grid-column: span 2;
+	grid-row: span 1;
+}
+
+#chapter-article .chapter-content.webtoon h1 {
+	text-align: center;
+	align-self: center;
+}
+
+#chapter-article .chapter-content.webtoon * {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	display: block;
 }
