@@ -19,7 +19,7 @@ def image(file: str):
     if os.path.exists(path) and os.path.realpath(path).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
         return send_from_directory(lib.LIGHTNOVEL_FOLDER, file), 200
     else:
-        return send_from_directory("static/assets",  "404.svg"),404
+        return send_from_directory("static/assets",  "404.svg"), 200
 
 @flaskapp.app.route("/api/flags/<string:language>")
 @flaskapp.app.route("/flags/<string:language>")
