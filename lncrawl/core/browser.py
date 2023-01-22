@@ -18,7 +18,7 @@ class Browser:
     def __init__(
         self,
         headless: bool = True,
-        timeout: Optional[int] = 120,
+        timeout: Optional[int] = 10,
         options: Optional["ChromeOptions"] = None,
         cookie_store: Optional[RequestsCookieJar] = None,
         soup_maker: Optional[SoupMaker] = None,

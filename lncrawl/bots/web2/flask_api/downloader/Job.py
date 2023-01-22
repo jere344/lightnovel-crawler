@@ -34,7 +34,7 @@ class JobHandler:
         self.app.output_formats = {"json": True, "epub":True, "pdf":True}
         self.job_id = job_id
         self.last_activity = datetime.now()
-        self.executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix=job_id)
+        self.executor = ThreadPoolExecutor(max_workers=100, thread_name_prefix=job_id)
 
         # Self destruct after 10 hour
         threading.Timer(36000, self.destroy).start()
@@ -248,10 +248,15 @@ class JobHandler:
             assert isinstance(self.app.crawler, Crawler)
             self.set_last_action("Downloading")
             self.app.start_download()
-            # self.set_last_action("Compressing")
-            # self.app.compress_books()
-            self.set_last_action("Binding books...")
-            self.app.bind_books()
+
+            # If the folder size is too big don't bind the books, it's too heavy for the server and risk to crash it. (Issue with lightnovel-crawler)
+            # TODO : split the book in multiple files
+            if Path(self.app.output_path).stat().st_size < lib.MAX_BOOK_SIZE:
+                self.set_last_action("Binding books...")
+                self.app.bind_books()
+            else :
+                self.set_last_action("File too big to bind, skipping...")
+
             self.set_last_action("Finished downloading")
             if update_website:
                 self.set_last_action("Updating website")
