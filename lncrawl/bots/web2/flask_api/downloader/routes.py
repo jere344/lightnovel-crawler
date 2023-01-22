@@ -237,6 +237,8 @@ def _update(url: str, job_id: str):
 
     json_folder_path = source_folder_path / "json"
 
+    # region missing chapters
+
     no_new_chapters = True
     for chapter in job.app.crawler.chapters:
         chapter_path = json_folder_path / f"{str(chapter['id']).zfill(5)}.json"
@@ -253,15 +255,37 @@ def _update(url: str, job_id: str):
 
         else:
             no_new_chapters = False
+
+    # endregion
     
+    # region missing cover image
+
     image_path = source_folder_path / "cover.jpg"
-    # we check if the cover image is less than 100 bytes, if it is we assume it was not downloaded correctly
+    # we check if the cover image is less than 1000 bytes, if it is we assume it was not downloaded correctly
     if image_path.exists():
         if image_path.stat().st_size < 1000:
             image_path.unlink()
 
+    # endregion
+
+    # region missing images
+    meta_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "meta.json"
+    with open(str(meta_folder), "r", encoding='utf-8') as f:
+        meta = json.load(f)
+
+    image_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "images"
+
+    missing_images = {}
+    for chapter in meta["novel"]["chapters"]:
+        # {"3e14b82305271562c7e800d612cff023.jpg": "https://cdn1.mangaclash.com/temp/manga_62d6697ba3072/80980f031c78a3c45513ddabf083b99a/1.jpg"}
+        for image_id, image_url in chapter["images"].items():
+            image_path = image_folder / image_id
+            
+            if not image_path.exists():
+                missing_images[image_id] = image_url
+    # endregion
                 
-    if no_new_chapters and image_path.exists():
+    if no_new_chapters and image_path.exists() and not missing_images:
         job.set_last_action("Nothing new")
         job.destroy()
         return
@@ -273,14 +297,7 @@ def _update(url: str, job_id: str):
         if ebook_folder_path.exists():
             shutil.rmtree(str(ebook_folder_path))
     
-    job.start_download()
-    while job.is_busy:
-        time.sleep(0.1)
-    
-    
-
-
-    
+    job.start_download()     
 
 
 
