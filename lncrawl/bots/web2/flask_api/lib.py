@@ -23,7 +23,7 @@ config_file = Path("lncrawl/bots/web2/config.json")
 if not config_file.exists():
     with open(config_file, "w", encoding="utf-8") as f:
         json.dump(
-            {"host": "localhost", "port": "5000", "website_url": "localhost:5000", "max_book_size" : 300_000_000},
+            {"host": "localhost", "port": "5000", "website_url": "localhost:5000"},
             f,
             indent=4,
         )
@@ -34,7 +34,6 @@ HOST = config["host"]
 PORT = int(config["port"])
 WEBSITE_URL = config["website_url"]
 WEBSITE_URL = WEBSITE_URL.strip("/")
-MAX_BOOK_SIZE = int(config["max_book_size"])
 
 
 database.all_novels: List[Novel] = []

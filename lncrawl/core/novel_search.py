@@ -12,10 +12,10 @@ from tqdm import tqdm
 from ..core.sources import crawler_list, prepare_crawler
 from ..models import CombinedSearchResult, SearchResult
 
-SEARCH_TIMEOUT = 30
+SEARCH_TIMEOUT = 60
 
 logger = logging.getLogger(__name__)
-executor = futures.ThreadPoolExecutor(40)
+executor = futures.ThreadPoolExecutor(20)
 
 
 def _perform_search(app, link, bar):
