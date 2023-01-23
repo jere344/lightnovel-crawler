@@ -34,7 +34,7 @@ class JobHandler:
         self.app.output_formats = {"json": True, "epub":True, "pdf":True}
         self.job_id = job_id
         self.last_activity = datetime.now()
-        self.executor = ThreadPoolExecutor(max_workers=100, thread_name_prefix=job_id)
+        self.executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix=job_id)
 
         # Self destruct after 10 hour
         threading.Timer(36000, self.destroy).start()
