@@ -238,8 +238,9 @@ def _update(url: str, job_id: str):
     json_folder_path = source_folder_path / "json"
 
     # region missing chapters
+    # Check if any chapter is missing, and delete any missdownloaded chapters
 
-    no_new_chapters = True
+    missing_chapters = False
     for chapter in job.app.crawler.chapters:
         chapter_path = json_folder_path / f"{str(chapter['id']).zfill(5)}.json"
 
@@ -251,10 +252,11 @@ def _update(url: str, job_id: str):
                 print(f"Chapter {chapter['id']} is corrupted, redownloading it")
                 # we simply delete the file for it to be re downloaded
                 chapter_path.unlink()
-                no_new_chapters = False
+                missing_chapters = True
 
         else:
-            no_new_chapters = False
+            missing_chapters = True
+
 
     # endregion
     
@@ -266,6 +268,7 @@ def _update(url: str, job_id: str):
         if image_path.stat().st_size < 1000:
             image_path.unlink()
 
+    missing_cover = not image_path.exists()
     # endregion
 
     # region missing images
@@ -275,30 +278,35 @@ def _update(url: str, job_id: str):
 
     image_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "images"
 
-    missing_images = {}
+    missing_images = False
     for chapter in meta["novel"]["chapters"]:
         # {"3e14b82305271562c7e800d612cff023.jpg": "https://cdn1.mangaclash.com/temp/manga_62d6697ba3072/80980f031c78a3c45513ddabf083b99a/1.jpg"}
-        for image_id, image_url in chapter["images"].items():
+        for image_id in chapter["images"]:
             image_path = image_folder / image_id
             
             if not image_path.exists():
-                missing_images[image_id] = image_url
+                missing_images = True
+                break
+
+        if missing_images :
+            break
+                
     # endregion
                 
-    if no_new_chapters and image_path.exists() and not missing_images:
+    if missing_chapters or missing_cover or missing_images:
+        # We delete the ebook folders to force the creation of a new one
+        ebook_folders_path = [source_folder_path / "epub", source_folder_path / "pdf"]
+        for ebook_folder_path in ebook_folders_path:
+            if ebook_folder_path.exists():
+                shutil.rmtree(str(ebook_folder_path))
+        
+    else :    
+        job.start_download()     
         job.set_last_action("Nothing new")
         job.destroy()
-        return
 
 
-    # We delete the ebook folders to force the creation of a new one
-    ebook_folders_path = [source_folder_path / "epub", source_folder_path / "pdf"]
-    for ebook_folder_path in ebook_folders_path:
-        if ebook_folder_path.exists():
-            shutil.rmtree(str(ebook_folder_path))
     
-    job.start_download()     
-
 
 
 # ----------------------------------------------- Load snapshot ----------------------------------------------- #
