@@ -249,7 +249,6 @@ def _update(url: str, job_id: str):
             with open(str(chapter_path), "r", encoding='utf-8') as f:
                 json_data = json.load(f)
             if len(json_data["body"]) < 100:
-                print(f"Chapter {chapter['id']} is corrupted, redownloading it")
                 # we simply delete the file for it to be re downloaded
                 chapter_path.unlink()
                 missing_chapters = True

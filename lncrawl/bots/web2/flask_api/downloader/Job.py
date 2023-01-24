@@ -249,14 +249,13 @@ class JobHandler:
             self.set_last_action("Downloading")
             self.app.start_download()
 
-            # If the folder size is too big don't bind the books, it's too heavy for the server and risk to crash it. (Issue with lightnovel-crawler)
-            # TODO : split the book in multiple files
-            if Path(self.app.output_path).stat().st_size < lib.MAX_BOOK_SIZE:
+            folder = Path(self.app.output_path)
+            # If the ebook is too big, don't bind it as it cran crash the app.
+            # TODO : split the ebook 
+            if folder.stat().st_size < lib.MAX_EBOOK_SIZE:
                 self.set_last_action("Binding books...")
                 self.app.bind_books()
-            else :
-                self.set_last_action("File too big to bind, skipping...")
-
+                
             self.set_last_action("Finished downloading")
             if update_website:
                 self.set_last_action("Updating website")

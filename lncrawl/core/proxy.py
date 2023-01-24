@@ -160,7 +160,7 @@ def __find_proxies():
 
             wait_times = 3 * 60
             while wait_times and not __has_exit:
-                time.sleep(0.1)
+                time.sleep(1)
                 wait_times -= 1
         except RequestException:
             err_count += 1

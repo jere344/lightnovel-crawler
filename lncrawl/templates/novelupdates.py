@@ -146,7 +146,7 @@ class NovelupdatesTemplate(SearchableBrowserTemplate, ChapterOnlyBrowserTemplate
         for i in range(30):
             if not self.browser.current_url.startswith(chapter.url):
                 break
-            time.sleep(0.1)
+            time.sleep(1)
 
         logger.info("%s => %s", chapter.url, self.browser.current_url)
         chapter.url = self.browser.current_url
