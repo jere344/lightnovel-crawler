@@ -249,7 +249,7 @@ class JobHandler:
             self.set_last_action("Downloading")
             self.app.start_download()
 
-            folder = Path(self.app.output_path)
+            folder = lib.LIGHTNOVEL_FOLDER / self.novel_slug / self.source_slug
             # If the ebook is too big, don't bind it as it cran crash the app.
             # TODO : split the ebook 
             if folder.stat().st_size < lib.MAX_EBOOK_SIZE:
