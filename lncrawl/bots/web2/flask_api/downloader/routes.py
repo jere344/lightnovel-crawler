@@ -7,6 +7,7 @@ import shutil
 
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
 
+
 @app.route("/api/addnovel/create_session")
 @app.route("/addnovel/create_session")
 def create_session():
@@ -29,6 +30,7 @@ def create_session():
 
 
 # ----------------------------------------------- Choose Novel ----------------------------------------------- #
+
 
 @app.route("/api/addnovel/get_novels_founds")
 @app.route("/addnovel/get_novels_founds")
@@ -58,6 +60,7 @@ def get_novels_founds():
 
 # ----------------------------------------------- Choose Source ----------------------------------------------- #
 
+
 @app.route("/api/addnovel/get_sources_founds")
 @app.route("/addnovel/get_sources_founds")
 def get_sources_founds():
@@ -84,6 +87,7 @@ def get_sources_founds():
 
 
 # ----------------------------------------------- Start Download ----------------------------------------------- #
+
 
 @app.route("/api/addnovel/download")
 @app.route("/addnovel/download")
@@ -114,10 +118,7 @@ def addnovel_download():
                 "url": url,
             }, 200
         else:
-            return {
-                "status": "error",
-                "message": job.get_status()
-            }, 500
+            return {"status": "error", "message": job.get_status()}, 500
 
     if not job.metadata_downloaded:
         job.select_novel(novel_id)
@@ -140,6 +141,7 @@ def addnovel_download():
 
 
 # ----------------------------------------------- Direct Download ----------------------------------------------- #
+
 
 @app.route("/api/addnovel/direct_download")
 @app.route("/addnovel/direct_download")
@@ -194,6 +196,7 @@ import time
 from threading import Thread
 import datetime
 
+
 @app.route("/api/addnovel/update")
 @app.route("/addnovel/update")
 def update():
@@ -233,12 +236,11 @@ def _update(url: str, job_id: str):
     while job.is_busy:
         time.sleep(0.1)
 
-    source_folder_path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug 
+    source_folder_path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug
 
     json_folder_path = source_folder_path / "json"
 
     # region missing chapters
-    # Check if any chapter is missing, and delete any missdownloaded chapters
 
     missing_chapters = False
     for chapter in job.app.crawler.chapters:
@@ -246,7 +248,7 @@ def _update(url: str, job_id: str):
 
         if chapter_path.exists():
             # We assume that if the body lenght is < 100 it was not downloaded correctly
-            with open(str(chapter_path), "r", encoding='utf-8') as f:
+            with open(str(chapter_path), "r", encoding="utf-8") as f:
                 json_data = json.load(f)
             if len(json_data["body"]) < 100:
                 # we simply delete the file for it to be re downloaded
@@ -256,9 +258,8 @@ def _update(url: str, job_id: str):
         else:
             missing_chapters = True
 
-
     # endregion
-    
+
     # region missing cover image
 
     image_path = source_folder_path / "cover.jpg"
@@ -268,11 +269,12 @@ def _update(url: str, job_id: str):
             image_path.unlink()
 
     missing_cover = not image_path.exists()
+
     # endregion
 
     # region missing images
     meta_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "meta.json"
-    with open(str(meta_folder), "r", encoding='utf-8') as f:
+    with open(str(meta_folder), "r", encoding="utf-8") as f:
         meta = json.load(f)
 
     image_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "images"
@@ -282,30 +284,29 @@ def _update(url: str, job_id: str):
         # {"3e14b82305271562c7e800d612cff023.jpg": "https://cdn1.mangaclash.com/temp/manga_62d6697ba3072/80980f031c78a3c45513ddabf083b99a/1.jpg"}
         for image_id in chapter["images"]:
             image_path = image_folder / image_id
-            
+
             if not image_path.exists():
                 missing_images = True
                 break
 
-        if missing_images :
+        if missing_images:
             break
-                
+
     # endregion
-                
+
     if missing_chapters or missing_cover or missing_images:
         # We delete the ebook folders to force the creation of a new one
         ebook_folders_path = [source_folder_path / "epub", source_folder_path / "pdf"]
         for ebook_folder_path in ebook_folders_path:
             if ebook_folder_path.exists():
                 shutil.rmtree(str(ebook_folder_path))
-        
-    else :    
-        job.start_download()     
+
+        job.start_download()
+
+    else:
         job.set_last_action("Nothing new")
         job.destroy()
-
-
-    
+        return
 
 
 # ----------------------------------------------- Load snapshot ----------------------------------------------- #
@@ -315,14 +316,14 @@ def load_snapshot():
     job_id = request.args.get("job_id")
     if job_id in database.jobs:
         job = database.jobs[job_id]
-    else :
+    else:
         print("Job not found")
         return {"status": "error", "message": "Invalid job_id"}, 400
-        
+
     if not isinstance(job, FinishedJob):
         print("Job not finished")
         return {"status": "error", "message": "Job is not finished"}, 400
-    
+
     if not job.snapshot_exists():
         print("Snapshot not found")
         return {"status": "error", "message": "No snapshot for this job"}, 400
@@ -330,5 +331,3 @@ def load_snapshot():
     job.restore_snapshot()
 
     return {"status": "success", "message": "Snapshot loaded"}, 200
-        
-           
