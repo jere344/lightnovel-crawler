@@ -20,7 +20,7 @@ class BasicBrowserTemplate(Crawler):
     def __init__(
         self,
         headless: bool = False,
-        timeout: Optional[int] = 120,
+        timeout: Optional[int] = 20,
         workers: Optional[int] = None,
         parser: Optional[str] = None,
     ) -> None:

@@ -6,7 +6,7 @@ function Footer() {
         <footer translate="no">
             <div className="wrapper">
                 <div className="col logo">
-                    <a href="/lncrawl" style={{ "display": "inline-block" }}>
+                    <a href="/" style={{ "display": "inline-block" }}>
                         <img className="footer-logo" src={logo} alt="logo-footer" />
                     </a>
                 </div>

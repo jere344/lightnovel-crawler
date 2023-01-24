@@ -81,7 +81,7 @@ def remove_faulty_proxies(faulty_url: str):
 
 def wait_for_first_proxy(scheme: str, timeout: int = 0):
     if timeout <= 0:
-        timeout = 10 * 60
+        timeout = 60
 
     elapsed = 0
     while not __has_exit and elapsed < timeout:

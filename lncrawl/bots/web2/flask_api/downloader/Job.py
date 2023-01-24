@@ -248,10 +248,14 @@ class JobHandler:
             assert isinstance(self.app.crawler, Crawler)
             self.set_last_action("Downloading")
             self.app.start_download()
-            # self.set_last_action("Compressing")
-            # self.app.compress_books()
-            self.set_last_action("Binding books...")
-            self.app.bind_books()
+
+            folder = lib.LIGHTNOVEL_FOLDER / self.novel_slug / self.source_slug
+            # If the ebook is too big, don't bind it as it cran crash the app.
+            # TODO : split the ebook 
+            if folder.stat().st_size < lib.MAX_EBOOK_SIZE:
+                self.set_last_action("Binding books...")
+                self.app.bind_books()
+                
             self.set_last_action("Finished downloading")
             if update_website:
                 self.set_last_action("Updating website")
