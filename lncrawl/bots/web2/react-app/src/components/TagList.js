@@ -2,6 +2,8 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 
 function TagList({ tags }) {
+    const [expand, setExpand] = React.useState(false)
+
     if (tags.length === 0) {
         return <></>
     }
@@ -15,15 +17,18 @@ function TagList({ tags }) {
         </li>)
     });
 
-
+    
 
     return (
-        <div className="expand-wrapper">
+        <div className={"expand-wrapper" + (expand ? ' show' : '')}>
             <ul className="content">
                 {tagsLi}
             </ul>
             <div className="expand">
-                <button className="expand-btn"><i className="icon-right-open"></i> <span>Show More</span></button>
+                <button className="expand-btn" onClick={() => setExpand(!expand)}>
+                    <i className="icon-right-open"></i> 
+                    <span>Show More</span>
+                </button>
             </div>
         </div>
     )
