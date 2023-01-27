@@ -97,6 +97,7 @@ class BasicBrowserTemplate(Crawler):
             self.close_browser()
 
     def download_chapters(self, chapters: List[Chapter], app=None) -> Generator[int, None, None]:
+        raise NotImplementedError("Not supported yet")
         try:
             yield from super().download_chapters(chapters, fail_fast=True, app=app)
         except ScraperErrorGroup as e:

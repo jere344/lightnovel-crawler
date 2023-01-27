@@ -30,3 +30,4 @@ __pycache__/
 lncrawl/bots/web/
 google*.html
 sitemap.xml
+log.txt
