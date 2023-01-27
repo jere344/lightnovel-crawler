@@ -576,6 +576,10 @@
 	flex-wrap: wrap;
 }
 
+#info .tags .expand-wrapper{
+	margin: 10px;
+}
+
 #info .tags ul li {
 	margin: var(--gap) 0 0 var(--gap);
 	border: 1px dashed var(--bg-color-secondary-3);
