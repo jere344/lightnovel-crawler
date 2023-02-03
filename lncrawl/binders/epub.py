@@ -27,12 +27,13 @@ def bind_epub_book(
     book_cover: str,
     novel_title: str,
     novel_url: str,
+    novel_synopsis: str,
+    novel_tags: list,
     good_file_name: str,
     suffix: str,  # suffix to the file name
-    novel_summary: str,
-    novel_language: str,
     no_suffix_after_filename: bool = False,
     is_rtl: bool = False,
+    novel_language: str = "en",
 ):
     logger.info("Binding epub for %s", book_title)
 
@@ -42,7 +43,11 @@ def bind_epub_book(
     book.set_title(book_title)
     book.add_author(novel_author)
     book.set_identifier(output_path + suffix)
-    # book.set_direction("rtl" if is_rtl else "default")
+    if is_rtl:
+        book.set_direction("rtl")
+
+    for tag in novel_tags:
+        book.add_metadata("DC", "subject", tag)
 
     logger.debug("Adding %s", STYLE_FILE_NAME)
     style_item = epub.EpubItem(
@@ -75,9 +80,6 @@ def bind_epub_book(
             <h1>{novel_title or "N/A"}</h1>
             <h3>{novel_author}</h3>
         </div>
-        <div class="summary">
-            <p>{novel_summary}</p>
-        </div>
         <img class="cover" src="{COVER_IMAGE_NAME}">
         <div class="footer">
             <b>Source:</b> <a href="{novel_url}">{novel_url}</a>
@@ -99,9 +101,32 @@ def bind_epub_book(
     )
     book.add_item(intro_item)
 
+    if novel_synopsis:
+        synopsis_html = f"""
+        <div class="synopsis">
+            <h1>Synopsis</h1>
+            <p>{novel_synopsis}</p>
+        </div>
+        """
+        synopsis_item = epub.EpubHtml(
+            title="Synopsis",
+            file_name="synopsis.xhtml",
+            content=synopsis_html,
+        )
+        synopsis_item.add_link(
+            href=STYLE_FILE_NAME,
+            rel="stylesheet",
+            type="text/css",
+        )
+        book.add_item(synopsis_item)
+
     logger.debug("Creating chapter contents")
     toc = []
-    spine = ["cover", intro_item, "nav"]
+    spine = ["cover", intro_item]
+    if novel_synopsis:
+        spine.append(synopsis_item)
+    spine.append("nav")
+
     for chapters in chapter_groups:
         first_chapter = chapters[0]
         volume_id = first_chapter.volume
@@ -208,12 +233,13 @@ def make_epubs(app, data: Dict[str, List[Chapter]]) -> List[str]:
             novel_title=app.crawler.novel_title,
             novel_author=app.crawler.novel_author or app.crawler.home_url,
             novel_url=app.crawler.novel_url,
+            novel_synopsis=app.crawler.novel_synopsis,
+            novel_language=app.crawler.novel_language,
+            novel_tags=app.crawler.novel_tags,
             output_path=app.output_path,
             book_cover=app.book_cover,
             good_file_name=app.good_file_name,
             no_suffix_after_filename=app.no_suffix_after_filename,
-            novel_summary=app.crawler.summary,
-            novel_language=app.crawler.language,
             
         )
         epub_files.append(output)

@@ -17,6 +17,7 @@ class Crawler(Scraper):
     has_manga = False
     has_mtl = False
     base_url: List[str]
+    novel_language = ""
 
     # ------------------------------------------------------------------------- #
     # Constructor & Destructors
@@ -42,10 +43,10 @@ class Crawler(Scraper):
         # Must resolve these fields inside `read_novel_info`
         self.novel_title = ''
         self.novel_author = ''
-        self.summary = ''
-        self.tags = []
         self.novel_cover = None
         self.is_rtl = False
+        self.novel_synopsis = ""
+        self.novel_tags = []
 
         # The folder in which the crawler is located
         # If the source contains multiple languages it need to be overridden 

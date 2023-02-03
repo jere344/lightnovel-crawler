@@ -48,12 +48,16 @@ class Lnmtlfr(Crawler):
         self.novel_cover = self.absolute_url(
             soup.find("div", {"class": "summary_image"}).find("img").get("src")
         )
-        self.summary = self.cleaner.extract_contents(soup.find("div", {"class": "summary__content"}).find("p"))
+
+        self.synopsis = self.cleaner.extract_contents(soup.find("div", {"class": "summary__content"}).find("p"))
         self.language = "fr"
-        self.novel_author = ", ".join([
-            e.text.strip()
-            for e in soup.find("div", {"class": "author-content"}).find_all("a")
-        ])
+
+        self.novel_author = ", ".join(
+            [
+                e.text.strip()
+                for e in soup.find("div", {"class": "author-content"}).find_all("a")
+            ]
+        )
 
         # Chapter are recuperated from a post request.
         id = soup.find("input", {"class": "rating-post-id"}).get("value")

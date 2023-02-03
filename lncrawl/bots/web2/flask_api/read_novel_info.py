@@ -160,8 +160,9 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
     title = novel_metadata["title"] if "title" in novel_metadata else source_folder.parent.name
     language = novel_metadata["language"] if "language" in novel_metadata else "en"
     url = novel_metadata["url"] if "url" in novel_metadata else ""
-    summary = novel_metadata["summary"] if "summary" in novel_metadata else ""
-    tags = novel_metadata["tags"] if "tags" in novel_metadata else []
+    # Multiple ternary for backward compatibility
+    summary = novel_metadata["synopsis"] if "synopsis" in novel_metadata else novel_metadata["summary"] if "summary" in novel_metadata else ""
+    tags = novel_metadata["novel_tags"] if "novel_tags" in novel_metadata else novel_metadata["tags"] if "tags" in novel_metadata else []
 
     last_update_date = data["last_update_date"] if "last_update_date" in data else ""
 
