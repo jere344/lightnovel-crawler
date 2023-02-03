@@ -25,6 +25,9 @@ class Novel(Box):
         chapters: List[Chapter] = [],
         volumes: List[Volume] = [],
         is_rtl: Optional[bool] = None,
+        synopsis: Optional[str] = None,
+        language: Optional[str] = None,
+        novel_tags: List[str] = [],
         has_manga: Optional[bool] = None,
         has_mtl: Optional[bool] = None,
         language_code: List[str] = [],
@@ -34,13 +37,9 @@ class Novel(Box):
         status: Optional[NovelStatus] = NovelStatus.unknown,
         genres: List[str] = [],
         description: Optional[str] = None,
-        synopsis: Optional[str] = None,
         original_publisher: Optional[str] = None,
         english_publisher: Optional[str] = None,
         novelupdates_url: Optional[str] = None,
-        language: Optional[str] = None,
-        summary: Optional[str] = None,
-        tags: Optional[List[str]] = [],
         **kwargs,
     ) -> None:
         self.url = url
@@ -50,6 +49,9 @@ class Novel(Box):
         self.chapters = chapters
         self.volumes = volumes
         self.is_rtl = is_rtl
+        self.synopsis = synopsis
+        self.language = language
+        self.novel_tags = novel_tags
         self.has_manga = has_manga
         self.has_mtl = has_mtl
         self.language_code = language_code
@@ -59,13 +61,9 @@ class Novel(Box):
         self.status = status
         self.genres = genres
         self.description = description
-        self.synopsis = synopsis
         self.original_publisher = original_publisher
         self.english_publisher = english_publisher
         self.novelupdates_url = novelupdates_url
-        self.language = language
-        self.summary = summary
-        self.tags = tags
         self.update(kwargs)
 
     @property

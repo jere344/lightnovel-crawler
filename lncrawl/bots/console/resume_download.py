@@ -95,17 +95,15 @@ def load_session_from_metadata(meta: MetaInfo) -> App:
     if not isinstance(app.crawler, Crawler):
         raise LNException("No crawler found for " + meta.novel.url)
 
-    app.crawler.novel_title = meta['title']
-    app.crawler.novel_author = meta['author']
-    # ternary operator necessary for novels downloaded before language and summary where implemented
-    app.crawler.language = meta['language'] if 'language' in meta else 'en'
-    app.crawler.summary = meta['summary'] if 'summary' in meta else ''
-    app.crawler.tags = meta['tags'] if 'tags' in meta else []
-    app.crawler.novel_cover = meta['cover']
-    app.crawler.volumes = meta['volumes']
-    app.crawler.chapters = meta['chapters']
-    app.crawler.is_rtl = meta['rtl']
-
+    app.crawler.novel_title = meta.novel.title
+    app.crawler.novel_author = ", ".join(meta.novel.authors)
+    app.crawler.novel_cover = meta.novel.cover_url
+    app.crawler.volumes = meta.novel.volumes
+    app.crawler.chapters = meta.novel.chapters
+    app.crawler.is_rtl = meta.novel.is_rtl
+    app.crawler.novel_language = meta.novel.language
+    app.crawler.novel_synopsis = meta.novel.synopsis
+    app.crawler.novel_tags = meta.novel.novel_tags
 
     for k, v in meta.session.cookies.items():
         app.crawler.set_cookie(k, v)
