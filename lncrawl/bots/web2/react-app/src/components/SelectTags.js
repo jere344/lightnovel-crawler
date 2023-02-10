@@ -138,29 +138,49 @@ function SelectTags({ urlWithoutTags }) {
     }
 
     const handleChange = e => {
-        setQuery(e.target.value);
-        //clear the previous tags
-        setComboBoxTags([]);
-        // clear the previous timeout
-        clearTimeout(timeoutId);
-        // delay the API call by 1 second to avoid making too many requests
-        setTimeoutId(setTimeout(updateComboBox, 1000, e.target.value));
+        console.log(e.type)
+        const tag = e.target.value.replace(/ \(\d+\)/, ''); // remove occurance number
+        // If the query contain a (x) at the end, we assume he clicked on a select choice.
+        // So we don't want to clear the tags and start a new query
+        if (tag !== e.target.value){
+            setQuery(tag);
+        }
+        // Else he typed, start a new query
+        else {
+            setQuery(e.target.value);
+            //clear the previous tags
+            setComboBoxTags([]);
+            // clear the previous timeout
+            clearTimeout(timeoutId);
+            // delay the API call by 1 second to avoid making too many requests
+            setTimeoutId(setTimeout(updateComboBox, 1000, e.target.value));
+        }
     }
 
     const handleKeyPress = e => {
         if (e.key === 'Enter') {
-            if (query === comboBoxTags[0][0]) {
-                // add the selected tag to the tags list
-                // regex remove the occurence number in the tag
-                const tag = query.replace(/ \(\d+\)/, '');
-                if (!(tags.includes(tag) || tags.includes("-" + tag) || tags.includes("~" + tag))) {
-                    setTags([...tags, tag]);
+            
+            // Find if the query correspond to a tag sent by the server
+            let comboBoxTag = null
+            const cleanedQuery = query.toLowerCase().trim().replace(/ \(\d+\)/, ''); // remove occurance number
+            for (let i = 0; i < comboBoxTags.length; i++){
+                if (cleanedQuery === comboBoxTags[i][0].toLowerCase().trim()){
+                    comboBoxTag = comboBoxTags[i][0]
+                    break;
                 }
+            }
+            
+            // If it does correspond
+            if (comboBoxTag) {
+                // If the tag isn't already here : add the selected tag to the tags list
+                if (!(tags.includes(comboBoxTag) || tags.includes("-" + comboBoxTag) || tags.includes("~" + comboBoxTag))) {
+                    setTags([...tags, comboBoxTag]);
+                }
+                // else toggle the tag
                 else {
-                    // else toggle the tag
-                    let tagIndex = tags.indexOf("~" + tag) !== -1 ? tags.indexOf("~" + tag) : tags.indexOf("-" + tag);
+                    let tagIndex = tags.indexOf("~" + comboBoxTag) !== -1 ? tags.indexOf("~" + comboBoxTag) : tags.indexOf("-" + comboBoxTag);
                     if (tagIndex !== -1) { // false mean it's already selected
-                        tags[tagIndex] = tag;
+                        tags[tagIndex] = comboBoxTag;
                         setTags([...tags]);
                     }
 
