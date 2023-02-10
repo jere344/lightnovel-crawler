@@ -48,7 +48,6 @@ for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
     except Exception as e:
         print(f"Error while reading novel info from {novel_folder.name}: {e}")
 
-database.all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
 database.set_ranks()
 
 

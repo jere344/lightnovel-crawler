@@ -394,7 +394,7 @@ def ebook():
     if not novel_slug or not source_slug or not ebook_format:
         return "Missing parameter", 400
     
-    if ebook_format not in ["epub", "pdf"]:
+    if ebook_format not in ["epub"]:
         return "Invalid ebook format", 400
     
 

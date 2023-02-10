@@ -31,7 +31,7 @@ class JobHandler:
 
     def __init__(self, job_id: str):
         self.app = App()
-        self.app.output_formats = {"json": True, "epub":True, "pdf":True}
+        self.app.output_formats = {"json": True, "epub":True}
         self.job_id = job_id
         self.last_activity = datetime.now()
         self.executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix=job_id)
@@ -280,6 +280,8 @@ class JobHandler:
                 if source.slug == self.source_slug:
                     source.last_update_date = datetools.utc_str_date()
                     meta_path = source.path / "meta.json"
+
+                    # Add last_update_date to metadata
                     with open(str(meta_path), "r", encoding="utf-8") as f:
                         metadata = json.load(f)
 

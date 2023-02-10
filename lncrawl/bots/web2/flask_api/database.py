@@ -74,5 +74,6 @@ jobs = {}
 jobs_snapshots = {}
 
 def set_ranks():
+    all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
     for i, n in enumerate(all_novels, start=1):
         n.rank = i
