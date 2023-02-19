@@ -276,6 +276,7 @@ class JobHandler:
             novel_info = read_novel_info.get_novel_info(
                 Path(self.app.output_path).parent
             )
+            # If the source is already in the database, update the last_update_date
             for source in novel_info.sources:
                 if source.slug == self.source_slug:
                     source.last_update_date = datetools.utc_str_date()

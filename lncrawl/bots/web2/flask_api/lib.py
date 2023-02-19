@@ -47,6 +47,13 @@ for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
 
     except Exception as e:
         print(f"Error while reading novel info from {novel_folder.name}: {e}")
+        # Uncomment this to debug
+        # import traceback
+
+        # traceback.print_exc()
+        
+        # import sys
+        # sys.exit(1)
 
 database.set_ranks()
 
@@ -73,6 +80,27 @@ import threading, time
 import shutil
 import sys
 
+def _update_novel_stats(novel: Novel):
+    """
+    function to update a novel stats
+    args: novel: Novel
+    """
+    stat_path = novel.path / "stats.json"
+
+    if not stat_path.exists():
+        shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
+
+    with open(stat_path, "w", encoding="utf-8") as f:
+
+        novel_stats = {
+            "clicks": novel.clicks,
+            "ratings": novel.ratings,
+            "comment_count": novel.comment_count,
+            "source_ratings": {source.slug: source.source_rating for source in novel.sources},
+        }
+
+        json.dump(novel_stats, f, indent=4)
+
 
 def update_novels_stats():
     """function to update each novels stats"""
@@ -82,20 +110,7 @@ def update_novels_stats():
             break
 
         try :
-            stat_path = novel.path / "stats.json"
-
-            if not stat_path.exists():
-                shutil.copyfile("bots/web2/flask_api/_stats.json", stat_path)
-
-            with open(stat_path, "w", encoding="utf-8") as f:
-
-                novel_stats = {
-                    "clicks": novel.clicks,
-                    "ratings": novel.ratings,
-                    "comment_count": novel.comment_count,
-                }
-
-                json.dump(novel_stats, f, indent=4)
+            _update_novel_stats(novel)
         except Exception as e:
             print(f"Error while updating novel stats for {novel}: {e}")
             try:

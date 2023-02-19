@@ -226,8 +226,6 @@ def update():
 
 
 import json
-import datetime
-
 
 def _update(url: str, job_id: str):
     job = database.jobs[job_id] = JobHandler(job_id)

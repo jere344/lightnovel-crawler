@@ -617,7 +617,6 @@
     border: none;
     border: 1px solid var(--border-color-3);
     overflow: auto;
-    vertical-align: top;
     color: var(--text-color);
     background-color: var(--bg-color);
     margin-bottom: 1rem;

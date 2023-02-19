@@ -352,6 +352,34 @@ def rate():
 
     return {"status": "success", "message": "Rating added"}, 200
 
+@flaskapp.app.route("/api/rate_source", methods=["POST"])
+@flaskapp.app.route("/rate_source", methods=["POST"])
+def rate_source():
+    data = request.get_json()
+    novel_slug = data.get("novel")
+    source_slug = data.get("source")
+    rating = int(data.get("rating"))
+
+
+    if not rating in [-1, 1]:
+        print("a")
+        return {"status": "error", "message": "Rating must be -1 or 1"}, 400
+    
+    novel = utils.get_novel_with_slug(novel_slug)
+    if not novel:
+        return {"status": "error", "message": "Unknown novel"}, 404
+    
+    source = utils.get_source_with_slugs(novel_slug, source_slug)
+    if not source:
+        return {"status": "error", "message": "Unknown source"}, 404
+
+    source.source_rating += rating
+
+    # ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    # print(f"Rating added for {novel_slug} : {rating} (from {ip})")
+
+    return {"status": "success", "message": "Rating added"}, 200
+
 @flaskapp.app.route("/api/toptags")
 @flaskapp.app.route("/toptags")
 def toptags():

@@ -12,20 +12,35 @@ def get_novel_info(novel_folder: Path) -> Novel:
     Metadata are randomly picked from the sources.
     """
 
+    # region Get Novel Stats
+    novel_stats_file = Path(novel_folder / "stats.json")
+
+    if not novel_stats_file.exists():
+        shutil.copy(str(Path(__file__).parent / "_stats.json"), str(novel_stats_file))
+
+    # Retry 2 times. If it crash it is reset to default and retried.
+    for _ in range(2):
+        try :
+            with open(novel_stats_file, "r", encoding="utf-8") as f:
+                novel_stats = json.load(f)
+                clicks = novel_stats["clicks"]
+                ratings = novel_stats["ratings"] if "ratings" in novel_stats else {}
+                comment_count = novel_stats["comment_count"] 
+                source_ratings = novel_stats["source_ratings"]
+
+        except Exception as e:
+            print(f"Resetting novel stats for {novel_folder.name}: {e}")
+            shutil.copyfile("./lncrawl/bots/web2/flask_api/_stats.json", novel_stats_file)
+            continue
+
+        break
+
+    # endregion
+    # region Load Sources
     path = novel_folder.absolute()
-    cover = None
-    prefered_source = None
-    author = ""
-    chapter_count = 0
-    latest = ""
-    first = ""
-    volume_count = 0
-    title = ""
-    summary = ""
+
     tags = set()
     sources = []
-
-    # --------------------------------------------------------------------------
     language: set[str] = set()
 
     for source_folder in novel_folder.iterdir():
@@ -33,34 +48,12 @@ def get_novel_info(novel_folder: Path) -> Novel:
             continue
 
         source = _get_source_info(source_folder)
+        source.source_rating = (
+            source_ratings[source.slug] if source.slug in source_ratings else 0
+        )
 
         if not source:
             continue
-
-        if not cover and source.cover:
-            cover = source.cover
-            prefered_source = source
-
-        if not author and source.author:
-            author = source.author
-
-        if not chapter_count and source.chapter_count:
-            chapter_count = source.chapter_count
-
-        if not latest and source.latest:
-            latest = source.latest
-
-        if not first and source.first:
-            first = source.first
-
-        if not volume_count and source.volume_count:
-            volume_count = source.volume_count
-
-        if not title and source.title:
-            title = source.title
-
-        if not summary and source.summary:
-            summary = source.summary
 
         if source.tags:
             tags.update(source.tags)
@@ -72,24 +65,49 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
     language = ", ".join(language)
 
-    if not prefered_source:
-        prefered_source = sources[0]
+    # endregion
+
+    # region Set Novel Info from Sources
+    cover = None
+    prefered_source = None
+    author = ""
+    chapter_count = 0
+    latest = ""
+    first = ""
+    volume_count = 0
+    title = ""
+    summary = ""
+
+    for source in sorted(sources, key=lambda x: x.source_rating, reverse=True):
+        if not prefered_source:
+            prefered_source = source
+
+        if not cover:
+            cover = source.cover
+
+        if not author:
+            author = source.author
+
+        if not chapter_count:
+            chapter_count = source.chapter_count
+
+        if not latest:
+            latest = source.latest
+
+        if not first:
+            first = source.first
+
+        if not volume_count:
+            volume_count = source.volume_count
+
+        if not title:
+            title = source.title
+
+        if not summary:
+            summary = source.summary
 
     if not title:
         title = novel_folder.name
-    
-    # --------------------------------------------------------------------------
-
-    novel_stats_file = Path(novel_folder / "stats.json")
-
-    if not novel_stats_file.exists():
-        shutil.copy(str(Path(__file__).parent / "_stats.json"), str(novel_stats_file))
-
-    with open(novel_stats_file, "r", encoding="utf-8") as f:
-        novel_stats = json.load(f)
-        clicks = novel_stats["clicks"] if "clicks" in novel_stats and isinstance(novel_stats["clicks"], dict) else {}
-        ratings = novel_stats["ratings"]
-        comment_count = novel_stats["comment_count"] if "comment_count" in novel_stats else 0
 
     novel = Novel(
         path=path,
@@ -110,6 +128,8 @@ def get_novel_info(novel_folder: Path) -> Novel:
         ratings=ratings,
         comment_count=comment_count,
     )
+
+    # endregion
 
     for source in novel.sources:
         source.novel = novel
@@ -135,9 +155,9 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
     with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         # For backward compatibility
-        if "novel" in data :
+        if "novel" in data:
             novel_metadata = data["novel"]
-        else :
+        else:
             novel_metadata = data
 
     try:
@@ -152,17 +172,41 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
         first = ""
     except IndexError:
         first = ""
-    author = novel_metadata["author"] if "author" in novel_metadata else novel_metadata["authors"] if "authors" in novel_metadata else ""
+    author = (
+        novel_metadata["author"]
+        if "author" in novel_metadata
+        else novel_metadata["authors"]
+        if "authors" in novel_metadata
+        else ""
+    )
     if isinstance(author, list):
         author = ", ".join(author)
-    chapter_count = len(novel_metadata["chapters"]) if "chapters" in novel_metadata else 0
+    chapter_count = (
+        len(novel_metadata["chapters"]) if "chapters" in novel_metadata else 0
+    )
     volume_count = len(novel_metadata["volumes"]) if "volumes" in novel_metadata else 0
-    title = novel_metadata["title"] if "title" in novel_metadata else source_folder.parent.name
+    title = (
+        novel_metadata["title"]
+        if "title" in novel_metadata
+        else source_folder.parent.name
+    )
     language = novel_metadata["language"] if "language" in novel_metadata else "en"
     url = novel_metadata["url"] if "url" in novel_metadata else ""
     # Multiple ternary for backward compatibility
-    summary = novel_metadata["synopsis"] if "synopsis" in novel_metadata else novel_metadata["summary"] if "summary" in novel_metadata else ""
-    tags = novel_metadata["novel_tags"] if "novel_tags" in novel_metadata else novel_metadata["tags"] if "tags" in novel_metadata else []
+    summary = (
+        novel_metadata["synopsis"]
+        if "synopsis" in novel_metadata
+        else novel_metadata["summary"]
+        if "summary" in novel_metadata
+        else ""
+    )
+    tags = (
+        novel_metadata["novel_tags"]
+        if "novel_tags" in novel_metadata
+        else novel_metadata["tags"]
+        if "tags" in novel_metadata
+        else []
+    )
 
     last_update_date = data["last_update_date"] if "last_update_date" in data else ""
 

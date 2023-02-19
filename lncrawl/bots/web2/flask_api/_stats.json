@@ -3,5 +3,6 @@
     "ratings": {
         "admin": 5
     },
-    "comment_count": 0
+    "comment_count": 0,
+    "source_ratings": {}
 }

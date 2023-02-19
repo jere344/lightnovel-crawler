@@ -7,6 +7,7 @@ import "../assets/stylesheets/chapterpg.min.css"
 import SettingsWheel from '../components/SettingsWheel';
 import Metadata from '../components/Metadata';
 import CommentComponent from '../components/CommentComponent';
+import RateSource from '../components/RateSource';
 
 
 
@@ -379,6 +380,9 @@ function Chapter() {
                         <span className="desktop">Tip: You can use left and right keyboard keys to browse between
                             chapters.</span>
                     </div>
+                </section>
+                <section className="rate-source">
+                    <RateSource novelSlug={novelSlug} sourceSlug={sourceSlug} />
                 </section>
             </article>
         </main>

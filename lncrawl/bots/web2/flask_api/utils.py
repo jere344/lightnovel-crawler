@@ -9,7 +9,7 @@ def get_novel_with_slug(novel_slug) -> Optional[Novel]:
     """
     Returns the novel with the given slug
     """
-    return next(n for n in database.all_novels if n.slug == novel_slug)
+    return next((n for n in database.all_novels if n.slug == novel_slug), None)
 
 
 def get_novel_with_url(url: str) -> Optional[Novel]:
@@ -22,6 +22,17 @@ def get_novel_with_url(url: str) -> Optional[Novel]:
     novel_slug = url.split("/")[1]
     return get_novel_with_slug(novel_slug)
 
+def get_source_with_slugs(novel_slug, source_slug) -> Optional[NovelFromSource]:
+    """
+    Returns the source with the given slugs
+    """
+    novel = get_novel_with_slug(novel_slug)
+    if not novel:
+        return None
+    for source in novel.sources:
+        if source.slug == source_slug:
+            return source
+    return None
 
 def find_source_with_path(novel_and_source_path: Path) -> Optional[NovelFromSource]:
     """
@@ -60,6 +71,14 @@ def add_novel_to_database(novel: Novel):
     """
 
     if novel in database.all_novels:
+        # We find the novel in the database and take its stats if they are higher to get the most recent stats
+        for dbn in database.all_novels:
+            if dbn == novel:
+                if sum(dbn.clicks.values()) > sum(novel.clicks.values()):
+                    novel.clicks = dbn.clicks
+                    novel.ratings = dbn.ratings
+                    novel.comment_count = dbn.comment_count
+
         database.all_novels.remove(novel)
     database.all_novels.append(novel)
 

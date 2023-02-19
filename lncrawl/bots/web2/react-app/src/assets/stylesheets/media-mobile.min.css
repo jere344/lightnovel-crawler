@@ -3093,6 +3093,34 @@ svg {
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .5);
 }
 
+.lnw-modal .modal-section .modal-rating-area {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	margin-bottom: 1rem;
+	justify-content: space-evenly;
+}
+
+.lnw-modal .modal-section .modal-rating-area #compostbtn {
+	background:transparent;
+	border: none;
+	box-shadow: none;
+	font-size: 2rem;
+}
+
+.lnw-modal .modal-section .modal-rating-area #compostbtn:hover {
+	color: var(--button-bg);
+}
+
+.rate-source .thanks-panel {
+	position: fixed;
+	left: calc(50% - 4.5em);
+	top: 65%;
+}
+
 .lnw-modal._show,
 .lnw-modal-soft._show {
 	visibility: visible !important;
@@ -3328,9 +3356,6 @@ svg {
 	margin: 0;
 }
 
-.premium .process input[type=number] {
-	-moz-appearance: textfield;
-}
 
 .premium .process .quantity-nav {
 	float: left;

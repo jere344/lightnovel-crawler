@@ -145,6 +145,7 @@ class NovelFromSource:
     language: str = "en"
     url: str = ""
     last_update_date: str = ""  # isoformat : ex : "2022-09-10T20:59:35.166239"
+    source_rating: int = 0
 
     # Auto
 
