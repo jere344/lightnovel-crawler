@@ -7,6 +7,8 @@ function RatingStars(param) {
     const count = param.count;
     const ratingStars = [];
 
+    const formatter = Intl.NumberFormat('en', { notation: 'compact' })
+
     const [thanksPanelActive, setThanksPanelActive] = useState(false);
 
 
@@ -60,7 +62,7 @@ function RatingStars(param) {
     return (
         <div className="rating-stars-container">
             <p>{ratingStars}
-                <strong>{rating} ({count})</strong>
+                <strong>{formatter.format(rating)} ({formatter.format(count)})</strong>
             </p>
             <div className={"thanks-panel" + (thanksPanelActive ? " active" : "")}>
                 <div className="thanks-panel-rating-text">

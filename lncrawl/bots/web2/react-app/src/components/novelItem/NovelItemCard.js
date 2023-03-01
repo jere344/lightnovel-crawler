@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 function NovelItemCard({ novel }) {
+    const formatter = Intl.NumberFormat('en', { notation: 'compact' })
     const languages = novel.language.split(', ')
     const languagesSpan = [];
     for (let i = 0; i < languages.length; i++) {
@@ -20,7 +21,7 @@ function NovelItemCard({ novel }) {
                     <img className=" ls-is-cached lazyloaded" src={`/api/image/${novel.cover}`} data-src={novel.cover} alt={novel.title} />
                     <span className="badge _bl">
                         <i className="icon-star" ></i>
-                        <span>{novel.overall_rating}</span>
+                        <span>{formatter.format(novel.overall_rating)}</span>
                     </span>
                 </figure>
                 <h4 className="novel-title text2row">

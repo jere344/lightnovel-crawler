@@ -21,7 +21,7 @@ function NovelItemCompactRating({ novel }) {
                 </h4>
                 <div className="novel-stats">
                     <div className="rating-star">
-                        <RatingStars rating={novel.overall_rating} count={formatter.format(novel.ratings_count)} novel={novel.slug} />
+                        <RatingStars rating={novel.overall_rating} count={novel.ratings_count} novel={novel.slug} />
                     </div>
                 </div>
                 <span><i className="icon-eye"></i> {formatter.format(novel.clicks)} (All times)</span>
