@@ -9,6 +9,12 @@ function RateSource({ novelSlug, sourceSlug }) {
     const [numberVisit, setNumberVisit] = useState(parseInt(visitedNovelPageCookies.visitedNovelPage) || 0);
     const location = useLocation();
 
+    function setNumberOfVisitAndCookie(number)
+    {
+        setCookie('visitedNovelPage', number, { path: `/novel/${novelSlug}/${sourceSlug}/`, sameSite: 'strict', maxAge: 259200 });  // 3 days
+        setNumberVisit(number);
+    }
+
     // We use this state to make sure useEffect is only executed once. Is reset everytime the user navigates to a new page
     const [executed, setExecuted] = useState(false);
     useEffect(() => {
@@ -31,7 +37,7 @@ function RateSource({ novelSlug, sourceSlug }) {
 
     const [thanksPanelActive, setThanksPanelActive] = useState(false);
     function sendRating(rating) {
-        setNumberVisit(100); // Set numberVisit to 100 so that the component is not rendered again
+        setNumberOfVisitAndCookie(100); // Set numberVisit to 100 so that the component is not rendered again
         fetch("/api/rate_source", {
             method: "POST",
             headers: {
@@ -53,7 +59,7 @@ function RateSource({ novelSlug, sourceSlug }) {
         return (
             <div className="lnw-modal _show" id="childcomeditor">
                 <div className="modal-section">
-                    <button onClick={() => setNumberVisit(100)} className="_close">
+                    <button onClick={() => setNumberOfVisitAndCookie(100)} className="_close">
                         <i className="icon-cancel"></i>
                     </button>
                     <div className="modal-header">Is this source well formatted?</div>
