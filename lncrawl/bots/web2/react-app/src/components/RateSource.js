@@ -1,19 +1,30 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useCookies } from 'react-cookie';
 import { useLocation } from "react-router-dom";
 
 function RateSource({ novelSlug, sourceSlug }) {
     // We use cookies to track how many times a user has visited a novel page
     // If the user has visited the page 2 times, we show RateSource component else we show nothing
-    const [visitedNovelPageCookies, setCookie] = useCookies(['visitedNovelPage']);
-    const [numberVisit, setNumberVisit] = useState(parseInt(visitedNovelPageCookies.visitedNovelPage) || 0);
+    //The cookie name is numberOfVisit_/novel/${novelSlug}/${sourceSlug}/ and its path is /
+    // I have no idea why but when I use a path of /novel/${novelSlug}/${sourceSlug}/, the cookie is read after a full remount
+    // It is terrible but I have no idea how to fix it
+    const [visitedNovelPageCookies, setVisitedNovelPageCookies] = useCookies([`numberOfVisit_/novel/${novelSlug}/${sourceSlug}/`]);
+    const setNumberOfVisit = useCallback((number) => {
+        setVisitedNovelPageCookies(`numberOfVisit_/novel/${novelSlug}/${sourceSlug}/`, number.toString(), {
+          path: '/',
+          sameSite: 'strict',
+          maxAge: 2592000 // 3 days
+        });
+      }, [novelSlug, sourceSlug, setVisitedNovelPageCookies]);
+
+    if (isNaN(parseInt(visitedNovelPageCookies[`numberOfVisit_/novel/${novelSlug}/${sourceSlug}/`]))) {
+        setNumberOfVisit("0");
+    }
+    const numberOfVisit = parseInt(visitedNovelPageCookies[`numberOfVisit_/novel/${novelSlug}/${sourceSlug}/`]);
+
     const location = useLocation();
 
-    function setNumberOfVisitAndCookie(number)
-    {
-        setCookie('visitedNovelPage', number, { path: `/novel/${novelSlug}/${sourceSlug}/`, sameSite: 'strict', maxAge: 259200 });  // 3 days
-        setNumberVisit(number);
-    }
+    
 
     // We use this state to make sure useEffect is only executed once. Is reset everytime the user navigates to a new page
     const [executed, setExecuted] = useState(false);
@@ -25,19 +36,18 @@ function RateSource({ novelSlug, sourceSlug }) {
         // If the use already visited the page 2 times, we don't need to do anything. Return early to avoid unnecessary rerenders
         // If the useEffect has already been executed on this page, we don't need to do anything. 
         // Without this check, the useEffect will loop until numberVisit > 2 because setNumberVisit will trigger a rerender
-        if (numberVisit > 2 || executed) {
+        if (numberOfVisit > 2 || executed) {
             return;
         }
-        setCookie('visitedNovelPage', numberVisit + 1, { path: `/novel/${novelSlug}/${sourceSlug}/`, sameSite: 'strict', maxAge: 259200 });  // 3 days
-        setNumberVisit(numberVisit + 1);
+        setNumberOfVisit(numberOfVisit + 1);
         setExecuted(true);
 
-    }, [setCookie, numberVisit, novelSlug, sourceSlug, executed]);
+    }, [novelSlug, sourceSlug, executed, numberOfVisit, setNumberOfVisit]);
 
 
     const [thanksPanelActive, setThanksPanelActive] = useState(false);
     function sendRating(rating) {
-        setNumberOfVisitAndCookie(100); // Set numberVisit to 100 so that the component is not rendered again
+        setNumberOfVisit(100); // Set numberVisit to 100 so that the component is not rendered again
         fetch("/api/rate_source", {
             method: "POST",
             headers: {
@@ -55,11 +65,11 @@ function RateSource({ novelSlug, sourceSlug }) {
         
     }
 
-    if (numberVisit === 2) {
+    if (numberOfVisit === 2) {
         return (
             <div className="lnw-modal _show" id="childcomeditor">
                 <div className="modal-section">
-                    <button onClick={() => setNumberOfVisitAndCookie(100)} className="_close">
+                    <button onClick={() => setNumberOfVisit(100)} className="_close">
                         <i className="icon-cancel"></i>
                     </button>
                     <div className="modal-header">Is this source well formatted?</div>
