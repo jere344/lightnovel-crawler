@@ -17,7 +17,7 @@ class Crawler(Scraper):
     has_manga = False
     has_mtl = False
     base_url: List[str]
-    novel_language = ""
+    language = ""
 
     # ------------------------------------------------------------------------- #
     # Constructor & Destructors
