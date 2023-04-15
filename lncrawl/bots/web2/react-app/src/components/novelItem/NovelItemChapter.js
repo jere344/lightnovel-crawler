@@ -10,8 +10,8 @@ function NovelItemChapter({ novel }) {
 
   const novelUrl = `/novel/${source.novel.slug}/${source.slug}`
 
-  const re = new RegExp('(Chapter|Chapitre|Ch) ?[0-9]*.? ?(:|;|-|\.)?')
-  let chapterName = source.latest.replace(source.title, '').replace(re, '').trim()
+  const re = new RegExp('(((Chapter|Chapitre|Ch) ?|C)[0-9]+(\.[0-9]+)? ?(-|[:;.])?)|^[0-9]+(\.[0-9]+)?')
+  let chapterName = source.latest.replace(source.title, '').trim().replace(re, '').trim()
   // chapterName = novel.latest
 
   function formatTimeAgo(timeAgo) {
