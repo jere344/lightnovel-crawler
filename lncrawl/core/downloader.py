@@ -195,6 +195,7 @@ def fetch_chapter_images(app):
             (filename, url)
             for chapter in app.chapters
             for filename, url in chapter.get("images", {}).items()
+            if not os.path.isfile(os.path.join(image_folder, filename))
         ]
     )
     futures += [
