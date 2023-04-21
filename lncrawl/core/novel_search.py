@@ -61,7 +61,7 @@ def _combine_results(results: List[SearchResult]) -> List[CombinedSearchResult]:
         )
 
     processed.sort(key=lambda x: -len(x.novels))
-    return processed[:15]  # Control the number of results
+    return processed#[:15]  # Control the number of results # I want all results
 
 
 def search_novels(app):
