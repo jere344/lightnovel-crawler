@@ -48,6 +48,9 @@ def get_novel_info(novel_folder: Path) -> Novel:
             continue
 
         source = _get_source_info(source_folder)
+        if not source:
+            continue
+
         source.source_rating = (
             source_ratings[source.slug] if source.slug in source_ratings else 0
         )
