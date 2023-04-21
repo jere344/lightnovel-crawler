@@ -14,6 +14,7 @@ path_to_cache = {
 
 @app.after_request
 def add_header(response):
+    response.headers['Set-Cookie'] = ''
     for path, duration in path_to_cache.items():
         if request.path.removeprefix("/api").startswith(path):
             response.headers["Cache-Control"] = f"public, max-age={duration}"
