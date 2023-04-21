@@ -254,7 +254,7 @@ class JobHandler:
             # TODO : split the ebook 
             if folder.stat().st_size < lib.MAX_EBOOK_SIZE:
                 self.set_last_action("Binding books...")
-                self.app.bind_books()
+               # self.app.bind_books() temporarily disabled
                 
             self.set_last_action("Finished downloading")
             if update_website:
