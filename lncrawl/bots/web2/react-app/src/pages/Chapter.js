@@ -194,7 +194,7 @@ function Chapter() {
 
 
     useEffect(() => {
-        if (displayModeCookie.displayMode !== "manga") return;
+        if (!displayModeCookie.displayMode.startsWith("manga")) return;
         // All images inside div class=chapter-content
         let images = document.querySelectorAll(".chapter-content img");
         images.forEach(img => {
@@ -365,6 +365,8 @@ function Chapter() {
                                 <div className="option-wrap"> 
                                     <input type="radio" id="radioManga" name="radioMode" defaultValue="manga" defaultChecked={displayModeCookie.displayMode === "manga" ? true : false} onClick={() => { setDisplayMode("manga") }} />
                                     <label htmlFor="radioManga">Manga</label>
+                                    <input type="radio" id="radioMangaReversed" name="radioMode" defaultValue="manga reversed" defaultChecked={displayModeCookie.displayMode === "manga reversed" ? true : false} onClick={() => { setDisplayMode("manga reversed") }} />
+                                    <label htmlFor="radioMangaReversed">Manga Reversed</label>
                                     <input type="radio" id="radioClassic" name="radioMode" defaultValue="classic" defaultChecked={displayModeCookie.displayMode === "classic" ? true : false} onClick={() => { setDisplayMode("classic") }} />
                                     <label htmlFor="radioClassic">Classic</label>
                                     <input type="radio" id="radioWebtoon" name="radioMode" defaultValue="webtoon" defaultChecked={displayModeCookie.displayMode === "webtoon" ? true : false} onClick={() => { setDisplayMode("webtoon") }} />
