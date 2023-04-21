@@ -9,7 +9,7 @@ function Metadata(data) {
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
             <meta name="mobile-web-app-capable" content="yes" />
-            <meta name="author" content="https://github.com/jere344/lightnovel-crawler/tree/react-dev/lncrawl/bots/web2" />
+            <meta name="author" content="https://github.com/jere344/lightnovel-crawler/blob/react-dev-dev/lncrawl/bots/web2/README.md" />
             <meta name="language" content="en" />
             <meta name="distribution" content="global" />
 
@@ -19,7 +19,7 @@ function Metadata(data) {
             <meta property="og:site_name" content="lncrawler.monster" />
 
             <meta name="twitter:site" content="lncrawler.monster" />
-            <meta name="twitter:creator" content="https://github.com/jere344/lightnovel-crawler/tree/react-dev/lncrawl/bots/web2" />
+            <meta name="twitter:creator" content="https://github.com/jere344/lightnovel-crawler/blob/react-dev-dev/lncrawl/bots/web2/README.md" />
             <meta name="twitter:url" content="lncrawler.monster" />
             <meta name="twitter:locale" content="en_US" />
 
