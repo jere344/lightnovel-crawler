@@ -87,10 +87,7 @@ function Home() {
                         <Link className="getmorebtn" title="Most recently added light novels" to="/browse/page-1?sort=rank">View More</Link>
                     </div>
                     <div className="section-body" id="new-novel-section">
-                        {(novelsSortViews.content == null) ? (
-                            <div>Loading...</div>
-                        ) : (<NovelList novels={novelsSortViews.content} type="card" className="novel-list" />)
-                        }
+                        {<NovelList novels={novelsSortViews.content || null} type="card" className="novel-list" />}
                     </div>
                 </section>
                 <section className="container vspace">
@@ -108,25 +105,16 @@ function Home() {
                             <label htmlFor="tab_user_rated">User Rated</label>
                             <div className="rank-container">
                                 <h3><span>Most Read</span></h3>
-                                {(novelsSortViews.content == null) ? (
-                                    <div>Loading...</div>
-                                ) : (<NovelList novels={novelsSortViews.content} type="compact-clicks" />)
-                                }
+                                {(<NovelList novels={novelsSortViews.content || null} type="compact-clicks" />) }
                             </div>
                             <div className="rank-container">
                                 <h3><span>New Trends</span></h3>
-                                {(novelsSortWeeklyViews.content == null) ? (
-                                    <div>Loading...</div>
-                                ) : (<NovelList novels={novelsSortWeeklyViews.content} type="compact-trends" />)
-                                }
+                                {(<NovelList novels={novelsSortWeeklyViews.content || null} type="compact-trends" />)}
 
                             </div>
                             <div className="rank-container">
                                 <h3><span>User Rated</span></h3>
-                                {(novelsSortRating.content == null) ? (
-                                    <div>Loading...</div>
-                                ) : (<NovelList novels={novelsSortRating.content} type="compact-rating" />)
-                                }
+                                {(<NovelList novels={novelsSortRating.content || null} type="compact-rating" />)}
                             </div>
                         </div>
                     </div>
@@ -137,10 +125,7 @@ function Home() {
                         <Link className="getmorebtn" title="Top Rated Light Novels" to="/browse/page-1?sort=weekly_views">View More</Link>
                     </div>
                     <div className="section-body">
-                        {(novelsSortWeeklyViews.content == null) ? (
-                            <div>Loading...</div>
-                        ) : (<NovelList novels={novelsSortWeeklyViews.content} type="card" className="novel-list" />)
-                        }
+                        {(<NovelList novels={novelsSortWeeklyViews.content || null} type="card" className="novel-list" />)}
                     </div>
                 </section>
                 <section className="container vspace">
@@ -149,14 +134,11 @@ function Home() {
                         <Link className="getmorebtn mr" title="Recently Added Chapters Novels Chapters" to="/browse/page-1?sort=last_updated">View More</Link>
                     </header>
                     <div className="section-body">
-                        {(novelsSortLastUpdate.content == null) ? (
-                            <div>Loading...</div>
-                        ) : (<NovelList novels={novelsSortLastUpdate.content} type="chapter" className="novel-list horizontal col3" />)
-                        }
+                        {(<NovelList novels={novelsSortLastUpdate.content || null} type="chapter" className="novel-list horizontal col3" />)}
                     </div>
                 </section>
             </article>
-        </main >
+        </main>
     )
 }
 

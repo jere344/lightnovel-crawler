@@ -18,7 +18,7 @@ function NovelItemCard({ novel }) {
         <li className="novel-item">
             <Link title={novel.title} to={novelUrl}>
                 <figure className="novel-cover">
-                    <img className=" ls-is-cached lazyloaded" src={`/api/image/${novel.cover}`} data-src={novel.cover} alt={novel.title} />
+                    <img className=" ls-is-cached lazyloaded" src={novel.cover} data-src={novel.cover} alt={novel.title} />
                     <span className="badge _bl">
                         <i className="icon-star" ></i>
                         <span>{formatter.format(novel.overall_rating)}</span>

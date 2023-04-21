@@ -66,16 +66,13 @@ function Browse() {
                             <SortButton url={`/browse/page-${page}`} key={2} />
                         </div>
                     </header>
-                    {(typeof novels.content === 'undefined') ? (
-                        <div>Loading...</div>
-                    ) : (<NovelList novels={novels.content} className="novel-list horizontal col2" type={sort.startsWith('last_updated') ? 'chapter' : 'classic'}/>)
-                    }
+                    {(<NovelList novels={novels.content || null} className="novel-list horizontal col2" type={sort.startsWith('last_updated') ? 'chapter' : 'classic'} placeholderAmount='20'/>)}
                     <footer className="pagination" style={{ "height": "auto" }}>
                         {pagination}
-                    </footer >
-                </div >
-            </article >
-        </main >
+                    </footer>
+                </div>
+            </article>
+        </main>
     )
 }
 

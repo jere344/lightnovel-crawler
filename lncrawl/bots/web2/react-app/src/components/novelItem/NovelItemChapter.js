@@ -50,7 +50,7 @@ function NovelItemChapter({ novel }) {
       <div className="cover-wrap">
         <Link to={`${novelUrl}/chapter-${source.chapter_count}`} title={source.latest}>
           <figure className="novel-cover">
-            <img className="lazyload" data-src={`/api/image/${source.cover}`} src={`/api/image/${source.cover}`} alt={source.title} />
+            <img className="lazyload" data-src={source.cover} src={source.cover} alt={source.title} />
           </figure>
         </Link>
       </div>

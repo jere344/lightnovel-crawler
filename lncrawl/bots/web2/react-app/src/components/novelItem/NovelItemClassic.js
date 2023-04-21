@@ -21,7 +21,7 @@ function NovelItemClassic(novel) {
         <Link title={novel.title}
           to={novelUrl}>
           <figure className="novel-cover">
-            <img className="lazyload" src={`/api/image/${novel.cover}`} alt={novel.title} />
+            <img className="lazyload" src={novel.cover} alt={novel.title} />
           </figure>
           <div className="novel-languages">
             {languagesSpan}
