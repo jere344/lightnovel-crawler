@@ -26,7 +26,7 @@ client_secrets.json
 /lightnovel-crawler-*
 __pycache__/
 .idea/
-/test.py
+test/
 lncrawl/bots/web/
 google*.html
 sitemap.xml
