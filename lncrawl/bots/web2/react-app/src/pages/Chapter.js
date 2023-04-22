@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom'
 import { useCookies } from 'react-cookie';
+import { Helmet } from 'react-helmet';
 
 import "../assets/stylesheets/chapterpg.min.css"
 
@@ -8,8 +9,7 @@ import SettingsWheel from '../components/SettingsWheel';
 import Metadata from '../components/Metadata';
 import CommentComponent from '../components/CommentComponent';
 import RateSource from '../components/RateSource';
-
-
+import notFoundImage from "../assets/404.webp"
 
 
 
@@ -40,7 +40,7 @@ function Chapter() {
     }
     const [response, setResponse] = useState(initialResponseValue);
     const [nextPrefetchedData, setNextPrefetchedData] = useState(undefined);
-    
+
     // When changing route but staying in the same component, the component will not unmount
     // So we need to set the state to the initial value when the route changes
     // renderedWithId will not be updated when we change chapter, so we can use it to detect route change
@@ -60,7 +60,7 @@ function Chapter() {
     }
 
     /* #endregion */
-    
+
     /* #region Font size */
 
     const fontSizes = ["12", "14", "16", "18", "20", "22", "24", "26", "28"]
@@ -84,7 +84,7 @@ function Chapter() {
                     key={fontSize}
                     onClick={() => { setFontSize(fontSize) }}>
                     {fontSize}
-                </li >
+                </li>
             )
         });
 
@@ -152,7 +152,7 @@ function Chapter() {
         // So we need to check if the prefetched data is the next chapter
         if (currentPreFetchedData !== undefined && currentPreFetchedData.content.id === parseInt(chapterId)) {
             setResponse(currentPreFetchedData);
-        } 
+        }
         else {
             setNextPrefetchedData(undefined); // And if not we need to clear the next prefetched data
             fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
@@ -174,8 +174,8 @@ function Chapter() {
                     setNextPrefetchedData(data);
                 }
             )
-           
-            
+
+
         }
     }, [response, novelSlug, sourceSlug, nextPrefetchedData]);
 
@@ -200,11 +200,11 @@ function Chapter() {
         images.forEach(img => {
             let image = new Image();
             image.src = img.src;
-            image.onload = function(){
-                img.ondblclick = function() {
+            image.onload = function () {
+                img.ondblclick = function () {
                     img.classList.toggle("large");
                 }
-                if(image.width / image.height > 1) { 
+                if (image.width / image.height > 1) {
                     img.classList.add("large");
                 }
             }
@@ -212,24 +212,38 @@ function Chapter() {
     }, [response, displayModeCookie]);
 
 
-    
+
     /* #endregion */
 
 
 
     if (response === undefined) {
-
+        const title = "Chapter not found"
+        const description = "This chapter does not exist"
+        const imageUrl = notFoundImage;
+        const imageAlt = "404 - Not Found"
+        const imageType = "image/bmp"
         return (
-            <main role="main">
-                <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
-                    <section className="page-in content-wrap" ref={innerRef}>
-                        <p>This chapter does not exist</p>
-                        <Link to={`/novel/${novelSlug}/${sourceSlug}/chapter-1`}>Chapter 1</Link>
-                        <br />
-                        <Link to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>Index</Link>
-                    </section>
-                </article>
-            </main >)
+            <>
+                <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
+                <Helmet>
+                    <meta name="robots" content="noindex" />
+                    <meta name='errorpage' content='true' />
+                    <meta name='errortype' content='404 - Not Found' />
+                </Helmet>
+                <main role="main">
+
+                    <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
+                        <section className="page-in content-wrap" ref={innerRef}>
+                            <p>This chapter does not exist</p>
+                            <Link to={`/novel/${novelSlug}/${sourceSlug}/chapter-1`}>Chapter 1</Link>
+                            <br />
+                            <Link to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>Index</Link>
+                        </section>
+                    </article>
+                </main>
+            </>
+        )
     } else {
         const chapter = response.content;
         const source = response.source;
@@ -250,7 +264,7 @@ function Chapter() {
                 <section className="page-in content-wrap" ref={innerRef}>
                     <div className="titles">
                         <h1 itemProp="headline">
-                            <Link className="booktitle" to={`/novel/${novelSlug}/${sourceSlug}`} title={source.title} rel="up" 
+                            <Link className="booktitle" to={`/novel/${novelSlug}/${sourceSlug}`} title={source.title} rel="up"
                                 itemProp="sameAs">{source.title}</Link>
                             <span hidden=""></span>
                             <br />
@@ -279,7 +293,7 @@ function Chapter() {
                         </Link>
                         <Link rel="next" className={`button nextchap ${response.is_next ? "" : 'isDisabled'}`}
                             to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}
-                            state={{ currentPreFetchedData: nextPrefetchedData}}>
+                            state={{ currentPreFetchedData: nextPrefetchedData }}>
                             <span>Next</span>
                             <i className="icon-right-open"></i>
                         </Link>
@@ -316,7 +330,7 @@ function Chapter() {
                                 </button>
                                 <Link rel="next" className={(response.is_next ? "" : 'isDisabled ') + "chnav next"}
                                     to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}
-                                    state={{ currentPreFetchedData: nextPrefetchedData}}>
+                                    state={{ currentPreFetchedData: nextPrefetchedData }}>
                                     <span>Next</span>
                                     <i className="icon-right-open"></i>
                                 </Link>
@@ -362,7 +376,7 @@ function Chapter() {
                                 </div>
                             </div>
                             <div className="option-select">
-                                <div className="option-wrap"> 
+                                <div className="option-wrap">
                                     <input type="radio" id="radioManga" name="radioMode" defaultValue="manga" defaultChecked={displayModeCookie.displayMode === "manga" ? true : false} onClick={() => { setDisplayMode("manga") }} />
                                     <label htmlFor="radioManga">Manga</label>
                                     <input type="radio" id="radioMangaReversed" name="radioMode" defaultValue="manga reversed" defaultChecked={displayModeCookie.displayMode === "manga reversed" ? true : false} onClick={() => { setDisplayMode("manga reversed") }} />
