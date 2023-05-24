@@ -7,7 +7,7 @@ function NovelItemCard({ novel }) {
     const languagesSpan = [];
     for (let i = 0; i < languages.length; i++) {
         languagesSpan.push(
-            <span className="flag-wrap" key={i}><img src={`/api/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
+            <span className="flag-wrap" key={i}><img src={`https://api.lncrawler.monster/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
         );
     }
 
@@ -18,7 +18,7 @@ function NovelItemCard({ novel }) {
         <li className="novel-item">
             <Link title={novel.title} to={novelUrl}>
                 <figure className="novel-cover">
-                    <img className=" ls-is-cached lazyloaded" src={novel.cover} data-src={novel.cover} alt={novel.title} />
+                    <img className=" ls-is-cached lazyloaded" src={novel.cover.replace(".jpg", ".sm.jpg")} data-src={novel.cover.replace(".jpg", ".sm.jpg")} alt={novel.title} />
                     <span className="badge _bl">
                         <i className="icon-star" ></i>
                         <span>{formatter.format(novel.overall_rating)}</span>

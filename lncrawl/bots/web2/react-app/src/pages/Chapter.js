@@ -8,7 +8,7 @@ import "../assets/stylesheets/chapterpg.min.css"
 import SettingsWheel from '../components/SettingsWheel';
 import Metadata from '../components/Metadata';
 import CommentComponent from '../components/CommentComponent';
-import RateSource from '../components/RateSource';
+// import RateSource from '../components/RateSource';
 import notFoundImage from "../assets/404.webp"
 
 
@@ -155,7 +155,7 @@ function Chapter() {
         }
         else {
             setNextPrefetchedData(undefined); // And if not we need to clear the next prefetched data
-            fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
+            fetch(`https://api.lncrawler.monster/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
                 (response) => { return ((response.status === 404) ? undefined : response.json()) }
             ).then(
                 data => {
@@ -167,7 +167,7 @@ function Chapter() {
 
     useEffect(() => {
         if (response !== undefined && response.is_next && nextPrefetchedData === undefined) {
-            fetch(`/api/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${response.content.id + 1}`).then(
+            fetch(`https://api.lncrawler.monster/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${response.content.id + 1}`).then(
                 (response) => { return ((response.status === 404) ? undefined : response.json()) }
             ).then(
                 data => {
@@ -190,6 +190,7 @@ function Chapter() {
 
     if (displayModeCookie.displayMode === undefined) {
         setDisplayMode("classic");
+        displayModeCookie.displayMode = "classic";
     }
 
 
@@ -279,8 +280,21 @@ function Chapter() {
                     </div>
                     <div id="chapter-container" className={"chapter-content " + fontCookie.font + " " + displayModeCookie.displayMode} itemProp="description"
                         onClick={() => { window.innerWidth > 768 ? setMenuOpen(false) : setMenuOpen(!menuOpen) }}
-                        style={{ "fontSize": fontSizeCookie.fontSize + "px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="/api/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
+                        style={{ "fontSize": fontSizeCookie.fontSize + "px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="https://api.lncrawler.monster/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
                     </div>
+                    {
+                        chapter.body.includes("<i>Failed to download chapter body</i>") ?
+                            (
+                                <p>
+                                    It seems like this chapter wasn't properly downloaded. <br />
+                                    You can try going to <Link to={`/novel/${novelSlug}/${sourceSlug}/`}>the index page</Link> and click on update to attempt a redownload.
+                                    <br />
+                                    You can also try <Link to="/addnovel">adding this novel again</Link> from a different source
+                                    <br />
+                                    And if it is not availible, you can still read directly from the <a href={chapter.url}>source website</a>
+                                </p>)
+                            : null
+                    }
                     <div className="chapternav skiptranslate">
                         <Link rel="prev" className={`button prevchap ${response.is_prev ? "" : 'isDisabled'}`}
                             to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
@@ -308,7 +322,7 @@ function Chapter() {
                             </svg></i>
                             <div className="bar-titles">
                                 <Link className="booktitle text1row" to={`/novel/${novelSlug}/${sourceSlug}`}
-                                    title={chapter.title}>{chapter.title}
+                                    title={source.title}>{source.title}
                                 </Link>
                                 <span className="chapter-title">{chapter.title}</span>
                             </div>
@@ -398,7 +412,7 @@ function Chapter() {
                     </div>
                 </section>
                 <section className="rate-source">
-                    <RateSource novelSlug={novelSlug} sourceSlug={sourceSlug} />
+                    {/* <RateSource novelSlug={novelSlug} sourceSlug={sourceSlug} /> */}
                 </section>
             </article>
         </main>

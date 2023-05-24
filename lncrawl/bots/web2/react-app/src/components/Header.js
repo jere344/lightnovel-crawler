@@ -40,7 +40,7 @@ function Header() {
                 <div className="wrapper">
                     <div className="nav-logo">
                         <Link to="/" title="Read Most Popular Light Novels Online for Fre">
-                            <img src={logo} alt="Light Novel" />
+                            <img src={logo} alt="Light Novel" width="110" height="70" />
                         </Link>
                     </div>
                     <div className="navigation-bar" ref={innerRef}>

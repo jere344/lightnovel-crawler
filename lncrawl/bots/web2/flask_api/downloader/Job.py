@@ -28,6 +28,7 @@ class JobHandler:
     crashed: bool = False
     last_action: str = "Created job"
     metadata_downloaded = False
+    destroyed = False
 
     def __init__(self, job_id: str):
         self.app = App()
@@ -36,7 +37,7 @@ class JobHandler:
         self.last_activity = datetime.now()
         self.executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix=job_id)
 
-        # Self destruct after 10 hour
+        # Self destruct after 10 hour 
         threading.Timer(36000, self.destroy).start()
 
 
@@ -50,7 +51,10 @@ class JobHandler:
         return reason
 
     def destroy(self):
-        self.executor.submit(self.destroy_sync)
+        if not self.destroyed:
+            self.destroyed = True
+            self.executor.submit(self.destroy_sync)
+        # Else it's already destroyed, do nothing  
 
     def destroy_sync(self):
         try:

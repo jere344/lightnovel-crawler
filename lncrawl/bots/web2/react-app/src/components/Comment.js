@@ -51,7 +51,7 @@ function Comment({ comment, setReplyTo, setCommenting }) {
             "reaction": type
         }
 
-        fetch('/api/add_reaction', {
+        fetch('https://api.lncrawler.monster/add_reaction', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

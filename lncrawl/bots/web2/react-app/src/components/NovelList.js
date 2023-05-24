@@ -66,8 +66,8 @@ function NovelList({ novels, className, type = 'classic', placeholderAmount = '1
         if (!novel.cover) {
             novel.cover = loadIcon;
         }
-        else if (!novel.cover.startsWith('/api/image/') && novel.cover !== loadIcon){
-            novel.cover = `/api/image/${novel.cover}`
+        else if (!novel.cover.startsWith('https://api.lncrawler.monster/image/') && novel.cover !== loadIcon){
+            novel.cover = `https://api.lncrawler.monster/image/${novel.cover}`
         }
 
         if (type === 'classic') {

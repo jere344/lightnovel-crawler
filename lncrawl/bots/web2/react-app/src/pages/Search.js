@@ -40,7 +40,7 @@ function Search() {
     const [searchQuery, setSearchQuery] = useState("");
 
     function searchNovel(e) {
-        fetch(`/api/search/?query=${e}`).then(
+        fetch(`https://api.lncrawler.monster/search/?query=${e}`).then(
             (response) => { return ((response.status === 404) ? undefined : response.json()) }
         ).then(
             data => {
@@ -59,7 +59,7 @@ function Search() {
                     to={`/novel/${novelList[i].slug}/${novelList[i].prefered_source}`}>
                     <div className="cover-wrap">
                         <figure className="novel-cover">
-                            <img src={`/api/image/${novelList[i].cover}`} alt={novelList[i].title} />
+                            <img src={`https://api.lncrawler.monster/image/${novelList[i].cover}`} alt={novelList[i].title} />
                         </figure>
                     </div>
                     <div className="item-body">

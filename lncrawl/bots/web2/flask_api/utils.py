@@ -112,4 +112,15 @@ def add_tag(tag):
         database.all_tags[sanatized_tag][1] += 1
     else:
         database.all_tags[sanatized_tag] = [tag, 1]
+
+from PIL import Image
+def create_miniature(path, output_path, size=200):
+    """
+    Create a miniature of the image at path and save it to output_path
+    Biggest side will be 200px and the other will be scaled accordingly
+    """
     
+    img = Image.open(path)
+    img.thumbnail((size, size))
+    img.save(output_path)
+    return output_path

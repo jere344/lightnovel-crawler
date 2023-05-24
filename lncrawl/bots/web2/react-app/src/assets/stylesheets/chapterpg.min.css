@@ -908,6 +908,10 @@
 	direction: ltr;
 }
 
+#chapter-article .chapter-content.manga p {
+	display: contents;
+}
+
 #chapter-article .chapter-content.manga img {
 	grid-column: span 1;
 	grid-row: span 1;

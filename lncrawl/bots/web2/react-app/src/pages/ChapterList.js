@@ -52,7 +52,7 @@ function ChapterList() {
 
     const { novelSlug, sourceSlug, page } = useParams();
     useEffect(() => {
-        fetch(`/api/chapterlist/?novel=${novelSlug}&source=${sourceSlug}&page=${page}`).then(
+        fetch(`https://api.lncrawler.monster/chapterlist/?novel=${novelSlug}&source=${sourceSlug}&page=${page}`).then(
             response => response.json()
         ).then(
             data => {
@@ -109,7 +109,7 @@ function ChapterList() {
                         <div className="cover-wrap">
                             <Link title={source.title} to={`/novel/${novelSlug}/${sourceSlug}`}>
                                 <figure className="novel-cover">
-                                    <img src={source.cover ? `/api/image/${source.cover}` : undefined} alt={source.title} />
+                                    <img src={source.cover ? `https://api.lncrawler.monster/image/${source.cover}` : undefined} alt={source.title} />
                                 </figure>
                             </Link>
                         </div>

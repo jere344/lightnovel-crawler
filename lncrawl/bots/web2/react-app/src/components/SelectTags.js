@@ -46,7 +46,7 @@ function SelectTags({ urlWithoutTags }) {
             return;
         }
 
-        fetch(`/api/toptags`).then(
+        fetch(`https://api.lncrawler.monster/toptags`).then(
             response => response.json()
         ).then(
             data => {
@@ -132,7 +132,7 @@ function SelectTags({ urlWithoutTags }) {
         }
         // if match / \(\d+\)/ then it's a tag with occurence number, so we don't need to fetch it
         if (!query.match(/ \(\d+\)/)) {
-            fetch(`/api/search_tags?query=${query}`).then(response => response.json())
+            fetch(`https://api.lncrawler.monster/search_tags?query=${query}`).then(response => response.json())
                 .then(data => setComboBoxTags(data.content));
         }
     }

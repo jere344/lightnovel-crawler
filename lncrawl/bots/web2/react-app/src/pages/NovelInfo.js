@@ -1,3 +1,4 @@
+import "../assets/stylesheets/fontello-embedded.css"
 import React, { useEffect, useState } from 'react';
 import Metadata from '../components/Metadata';
 import { Link, useParams, useNavigate } from 'react-router-dom';
@@ -8,7 +9,6 @@ import CommentComponent from '../components/CommentComponent';
 import TagList from '../components/TagList';
 
 import "../assets/stylesheets/navbar.min.css"
-import "../assets/stylesheets/fontello-embedded.css"
 
 import "../assets/stylesheets/novel.min.css"
 import "../assets/stylesheets/novel.768.min.css"
@@ -52,7 +52,7 @@ function NovelInfo() {
         "title": currentUrlSplitted[currentUrlSplitted.length - 2],
     });
     useEffect(() => {
-        fetch(`/api/novel?novel=${novelSlug}&source=${sourceSlug}`).then(
+        fetch(`https://api.lncrawler.monster/novel?novel=${novelSlug}&source=${sourceSlug}`).then(
             response => response.json()
         ).then(
             data => {
@@ -63,8 +63,8 @@ function NovelInfo() {
 
     const title = `Read ${source.title} in ${languageDict[source.language]} for free | LnCrawler`;
     const description = `Read ${source.title} in ${languageDict[source.language]} and thousands of famous Light Novels and Web Novels in any language from more that 140 different websites`;
-    const imageUrl = logo; // Not an url but whatever
-    const imageAlt = "LnCrawler"
+    const imageUrl = `https://api.lncrawler.monster/image/${source.cover}`;
+    const imageAlt = `${source.title} cover`;
     const imageType = "image/bmp"
 
     const tags = <TagList tags={source.tags} />;
@@ -92,7 +92,7 @@ function NovelInfo() {
         let response = false;
         let finished = false;
         while (!finished) {
-            response = await fetch(`/api/addnovel/update?job_id=${jobId}&&url=${source.url}`).then(res => res.json());
+            response = await fetch(`https://api.lncrawler.monster/addnovel/update?job_id=${jobId}&&url=${source.url}`).then(res => res.json());
 
             if (response.status === "success") {
                 finished = true;
@@ -119,16 +119,28 @@ function NovelInfo() {
 
     const download = (url) => {
         fetch(url, { method: 'GET' })
-          .then((response) => {
-              const filename = response.headers.get("Content-Disposition").split("filename=")[1];
-              return response.blob().then(blob => {
-                  const link = document.createElement('a');
-                  link.href = URL.createObjectURL(blob);
-                  link.download = filename;
-                  link.click();
-              });
-          });
-      };
+            .then((response) => {
+                const filename = response.headers.get("Content-Disposition").split("filename=")[1];
+                return response.blob().then(blob => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = filename;
+                    link.click();
+                });
+            });
+    };
+
+
+    // eslint-disable-next-line no-extend-native
+    String.prototype.replaceAll = function(strReplace, strWith) {
+        // See http://stackoverflow.com/a/3561711/556609
+        var esc = strReplace.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        var reg = new RegExp(esc, 'ig');
+        return this.replace(reg, strWith);
+    };
+    
+    const firstChapterName = source.first.replaceAll(source.title, '').trim() || source.first
+    const latestChapterName = source.latest.replaceAll(source.title, '').trim() || source.latest
 
     return (
 
@@ -139,13 +151,13 @@ function NovelInfo() {
 
                 <header className="novel-header">
                     <div className="glass-background">
-                        {(typeof source.cover === 'undefined') ? ("") : (<img src={`/api/image/${source.cover}`} alt={source.title} itemProp="image" />)}
+                        {(typeof source.cover === 'undefined') ? ("") : (<img src={`https://api.lncrawler.monster/image/${source.cover}`} alt={source.title} itemProp="image" />)}
                         <div className="glass-shade"></div>
                     </div>
                     <div className="header-body container">
                         <div className="fixed-img">
                             <figure className="cover">
-                                {(typeof source.cover === 'undefined') ? (<div>Loading...</div>) : <img className=" ls-is-cached lazyloaded" src={`/api/image/${source.cover}`} alt={source.title} />}
+                                {(typeof source.cover === 'undefined') ? (<div>Loading...</div>) : <img className=" ls-is-cached lazyloaded" src={`https://api.lncrawler.monster/image/${source.cover}`} alt={source.title} />}
                             </figure>
                         </div>
                         <div className="novel-info">
@@ -183,7 +195,7 @@ function NovelInfo() {
                                 </span>
                                 <span>
                                     <strong style={{ "alignSelf": "center" }} >
-                                        {(typeof source.language === 'undefined') ? (<div>Loading...</div>) : <img src={`/api/flags/${source.language}`} alt={`${source.language} flag`} style={{ "width": "25px", "marginTop": "4px" }} />}
+                                        {(typeof source.language === 'undefined') ? (<div>Loading...</div>) : <img src={`https://api.lncrawler.monster/flags/${source.language}`} alt={`${source.language} flag`} style={{ "width": "25px", "marginTop": "4px", "height": "auto" }} width="16" height="12"/>}
                                     </strong>
                                     <small>Language</small>
                                 </span>
@@ -207,7 +219,7 @@ function NovelInfo() {
                             to="chapter-1">
                             <div className="body">
                                 <h4>FIRST CHAPTER</h4>
-                                <p className="latest text1row"> {source.first}</p>
+                                <p className="latest text1row"> {firstChapterName}</p>
                             </div>
                             <i className="icon-right-open"></i>
                         </Link>
@@ -216,7 +228,7 @@ function NovelInfo() {
                             <div className="body">
                                 <h4>Novel Chapters</h4>
                                 <p className="latest text1row">
-                                    latest : {source.latest}
+                                    latest : {latestChapterName}
                                 </p>
 
                             </div>
@@ -231,10 +243,13 @@ function NovelInfo() {
 
                     </div>
                     <div className="download">
-                        <button onClick={() => download(`/api/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"}>
+                        <button onClick={() => download(`https://api.lncrawler.monster/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"} disabled>
                             DOWNLOAD
                         </button>
                     </div>
+                    <p>
+                        Sorry, I don't have enough storage so download are disabled for now.
+                    </p>
                     <section id="info">
                         <div className="summary">
                             <h4 className="lined">Summary</h4>

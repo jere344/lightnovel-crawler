@@ -38,7 +38,7 @@
 
 #explore .action-panel .action-list {
 	font-size: 0;
-	width: 1000px;
+	width: 100%;
 	height: auto
 }
 
@@ -84,6 +84,50 @@
 
 #explore .action-panel .action-list.mb0 li {
 	margin-bottom: 0
+}
+
+#explore .action-panel .action-tags {
+	display: flex;
+	justify-content: space-between;
+}
+
+#explore .action-panel .action-tags .combo-box-container {
+	width: 7em;
+	display:flex;
+	justify-content: left;
+	align-items: center;
+}
+
+#explore .action-panel .action-tags .combo-box-container .combo-box-tags {
+	background-color:var(--bg-color-2);
+	border : 1px solid var(--text-color);
+	border-radius: 5px;
+	width: 100%;
+	height: 22px;
+	color: var(--text-color);
+}
+
+#explore .action-panel .action-tags .combo-box-container .combo-box-enter {
+	background-color: var(--bg-color-2);
+	border: none;
+	color: var(--button-bg);
+	border-radius: 5px;
+	margin-left:2px;
+	font-size: 15px;
+	height: 22px;
+}
+#explore .action-panel .action-tags .combo-box-container .combo-box-enter p {
+	height: 22px;
+}
+
+#explore .action-panel .action-tags .search-button-container .search-button {
+	color:var(--button-bg);
+	border:none;
+	background-color: var(--bg-color-2);
+	font-size: 20px;
+}
+#explore .action-panel .action-tags .search-button-container .search-button:hover {
+	color:var(--bg-color-secondary-3);
 }
 
 #explore .action-panel .scroll-wrapper {
@@ -233,7 +277,6 @@
 		padding-bottom: 6px
 	}
 
-	#explore .action-panel .action-list,
 	#explore .scroll-wrapper ul.proplist {
 		width: 100%
 	}
@@ -263,48 +306,8 @@
 		margin-left: 26px
 	}
 
-	#explore .action-panel .action-tags {
-		display: flex;
-		justify-content: space-between;
-	}
-
 	#explore .action-panel .action-tags .combo-box-container {
 		width: 15%;
-		display:flex;
-		justify-content: left;
-		align-items: center;
-	}
-
-	#explore .action-panel .action-tags .combo-box-container .combo-box-tags {
-		background-color:var(--bg-color-2);
-		border : 1px solid var(--text-color);
-		border-radius: 5px;
-		width: 100%;
-		height: 22px;
-		color: var(--text-color);
-	}
-
-	#explore .action-panel .action-tags .combo-box-container .combo-box-enter {
-		background-color: var(--bg-color-2);
-		border: none;
-		color: var(--button-bg);
-		border-radius: 5px;
-		margin-left:2px;
-		font-size: 15px;
-		height: 22px;
-	}
-	#explore .action-panel .action-tags .combo-box-container .combo-box-enter p {
-		height: 22px;
-	}
-
-	#explore .action-panel .action-tags .search-button-container .search-button {
-		color:var(--button-bg);
-		border:none;
-		background-color: var(--bg-color-2);
-		font-size: 20px;
-	}
-	#explore .action-panel .action-tags .search-button-container .search-button:hover {
-		color:var(--bg-color-secondary-3);
 	}
 	
 

@@ -10,15 +10,15 @@ function NovelItemCompactClicks({ novel }) {
         <li className="novel-item compact">
             <Link className="item-cover" title={novel.title} to={novelUrl}>
                 <div className="novel-cover">
-                    <img className=" ls-is-cached lazyloaded" data-src={novel.cover} src={novel.cover} alt={novel.title} />
+                    <img className=" ls-is-cached lazyloaded" data-src={novel.cover.replace(".jpg", ".min.jpg")} src={novel.cover.replace(".jpg", ".min.jpg")} alt={novel.title} />
                 </div>
             </Link>
             <div className="item-body">
-                <h4 className="novel-title text1row">
-                    <Link title={novel.title} to={novelUrl}>
+                <Link title={novel.title} to={novelUrl}>
+                    <h4 className="novel-title text1row">
                         {novel.title}
-                    </Link>
-                </h4>
+                    </h4>
+                </Link>
                 <span><i className="icon-eye"></i> {formatter.format(novel.clicks)} (All times)</span>
                 <span><i className="icon-commenting-o"></i> {formatter.format(novel.comment_count)} comments</span>
             </div>

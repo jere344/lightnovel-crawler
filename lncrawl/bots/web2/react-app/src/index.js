@@ -16,6 +16,7 @@ import ChapterList from './pages/ChapterList';
 import Search from './pages/Search';
 import AddNovel from './pages/AddNovel';
 import Home from './pages/Home';
+// import Maintenance from './components/Maintenance';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

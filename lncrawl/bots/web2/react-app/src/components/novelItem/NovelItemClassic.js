@@ -9,7 +9,7 @@ function NovelItemClassic(novel) {
   const languagesSpan = [];
   for (let i = 0; i < languages.length; i++) {
     languagesSpan.push(
-      <span className="flag-wrap" key={i}><img src={`/api/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
+      <span className="flag-wrap" key={i}><img src={`https://api.lncrawler.monster/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
     );
   }
 
@@ -21,7 +21,7 @@ function NovelItemClassic(novel) {
         <Link title={novel.title}
           to={novelUrl}>
           <figure className="novel-cover">
-            <img className="lazyload" src={novel.cover} alt={novel.title} />
+            <img className="lazyload" src={novel.cover.replace(".jpg", ".sm.jpg")} alt={novel.title} />
           </figure>
           <div className="novel-languages">
             {languagesSpan}

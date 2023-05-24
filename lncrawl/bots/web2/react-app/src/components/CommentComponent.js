@@ -42,7 +42,7 @@ import "../assets/stylesheets/comments.min.css"
 
 
 function CommentComponent({ currentUrl }) {
-    const url = `/api/get_comments?page=${currentUrl}`
+    const url = `https://api.lncrawler.monster/get_comments?page=${currentUrl}`
     const [comments, setComments] = useState([])
 
     useEffect(() => {

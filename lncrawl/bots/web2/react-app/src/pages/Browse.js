@@ -15,6 +15,7 @@ import "../assets/stylesheets/pagedlist.css"
 import "../assets/stylesheets/browsepg.min.css"
 import SelectTags from '../components/SelectTags';
 
+import { Helmet } from 'react-helmet';
 
 
 function Browse() {
@@ -33,7 +34,7 @@ function Browse() {
 
     useEffect(() => {
         const type = sort.startsWith('last_updated') ? 'sources' : 'novels';
-        fetch(`/api/${type}?page=${parseInt(page) - 1}&sort=${sort}&tags=${tags}`).then(
+        fetch(`https://api.lncrawler.monster/${type}?page=${parseInt(page) - 1}&sort=${sort}&tags=${tags}`).then(
             response => response.json()
         ).then(
             data => {
@@ -45,13 +46,16 @@ function Browse() {
 
     const pagination = ((typeof novels.metadata === 'undefined') ? <div>Loading ...</div> : <Pagination currentPage={parseInt(page)} maxPage={novels.metadata.total_pages} />);
 
-    
+
 
     return (
 
 
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
+            <Helmet>
+                <link rel="canonical" href="https://lncrawler.monster/browse" />
+            </Helmet>
             <article id="explore">
                 <div className="container">
                     <div className="action-panel">
@@ -59,14 +63,18 @@ function Browse() {
                         <SelectTags urlWithoutTags={`/browse/page-${page}?sort=${sort}&`}></SelectTags>
                     </div>
                     <header id="Result">
-                        <h1>{title}</h1>
-                        <p className="description">{description}</p>
+                    {window.innerWidth > 768 ?
+                        <>
+                            <h1>{title}</h1>
+                            <p className="description">{description}</p>
+                        </>
+                        : null}
                         <div className='pagefilter'>
                             {pagination}
                             <SortButton url={`/browse/page-${page}`} key={2} />
                         </div>
                     </header>
-                    {(<NovelList novels={novels.content || null} className="novel-list horizontal col2" type={sort.startsWith('last_updated') ? 'chapter' : 'classic'} placeholderAmount='20'/>)}
+                    {(<NovelList novels={novels.content || null} className="novel-list horizontal col2" type={sort.startsWith('last_updated') ? 'chapter' : 'classic'} placeholderAmount='20' />)}
                     <footer className="pagination" style={{ "height": "auto" }}>
                         {pagination}
                     </footer>

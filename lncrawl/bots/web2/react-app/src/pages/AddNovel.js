@@ -98,7 +98,7 @@ function AddNovel() {
             return;
         }
 
-        fetch(`/api/addnovel/create_session?query=${query}&job_id=${jobId}`).then(
+        fetch(`https://api.lncrawler.monster/addnovel/create_session?query=${query}&job_id=${jobId}`).then(
             response => response.json()
         ).then(
             response => {
@@ -115,7 +115,7 @@ function AddNovel() {
 
 
     async function getNovelsFounds() {
-        let response = await queue(`/api/addnovel/get_novels_founds?job_id=${jobId}`)
+        let response = await queue(`https://api.lncrawler.monster/addnovel/get_novels_founds?job_id=${jobId}`)
         if (response.status === "success") {
             setStatus("");
             setNovels(response.novels.content);
@@ -124,7 +124,7 @@ function AddNovel() {
 
     async function getSourcesFounds(novelId) {
         if (novelId.sourcesList === undefined) {
-            let response = await queue(`/api/addnovel/get_sources_founds?job_id=${jobId}&novel_id=${novelId}`)
+            let response = await queue(`https://api.lncrawler.monster/addnovel/get_sources_founds?job_id=${jobId}&novel_id=${novelId}`)
             if (response.status === "success") {
                 novels[novelId].sourcesList = response.sources.content
                 setNovels([...novels]) // [...val] update the state directly
@@ -141,7 +141,7 @@ function AddNovel() {
 
     async function startDownload(novelId, sourceId) {
         setNovels([]);
-        let response = await queue(`/api/addnovel/download?job_id=${jobId}&novel_id=${novelId}&source_id=${sourceId}`);
+        let response = await queue(`https://api.lncrawler.monster/addnovel/download?job_id=${jobId}&novel_id=${novelId}&source_id=${sourceId}`);
         if (response.status === "success") {
             navigate(`/novel/${response.url}`);
         } else if (response.status === "error") {
@@ -152,7 +152,7 @@ function AddNovel() {
     }
 
     async function directDownload(url) {
-        let response = await queue(`/api/addnovel/direct_download?job_id=${jobId}&url=${url}`);
+        let response = await queue(`https://api.lncrawler.monster/addnovel/direct_download?job_id=${jobId}&url=${url}`);
         if (response.status === "success") {
             navigate(`/novel/${response.url}`);
         }
@@ -163,7 +163,7 @@ function AddNovel() {
         setNovels([]);
         
 
-        let response = await fetch("/api/addnovel/load_snapshot?job_id=" + jobId).then(res => res.json());
+        let response = await fetch("https://api.lncrawler.monster/addnovel/load_snapshot?job_id=" + jobId).then(res => res.json());
 
         if (response.status === "success") {
             getNovelsFounds()

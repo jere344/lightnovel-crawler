@@ -14,7 +14,7 @@ function RatingStars(param) {
 
 
     function rate(rating) {
-        fetch("/api/rate", {
+        fetch("https://api.lncrawler.monster/rate", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

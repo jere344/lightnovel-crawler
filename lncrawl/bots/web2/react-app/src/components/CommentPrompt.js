@@ -17,7 +17,7 @@ function CommentPrompt({ replyTo, setCommenting }) {
         if (replyTo) {
             data.reply_to = replyTo;
         }
-        fetch("/api/add_comment", {
+        fetch("https://api.lncrawler.monster/add_comment", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

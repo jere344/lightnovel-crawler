@@ -13,11 +13,11 @@
       "sizes": "200x128"
     }
   ],
-  "start_url": "http://lncrawler.monster/",
+  "start_url": "https://lncrawler.monster/",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff",
-  "description": "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 140 different websites.",
+  "description": "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 200 different websites.",
   "default_locale": "en",
   "categories": [
     "books",
@@ -28,7 +28,7 @@
       "name": "Read Light Novels",
       "short_name": "Read",
       "description": "Read world famous Japanese Light Novels, Chinese Light Novels and Korean Light Novels in any language from more that 200 different websites.",
-      "url": "http://lncrawler.monster/",
+      "url": "https://lncrawler.monster/",
       "icons": [
         {
           "src": "favicon.png",
@@ -41,7 +41,7 @@
       "name": "Browse Light Novel",
       "short_name": "Browse",
       "description": "Browse All Light Novels",
-      "url": "http://lncrawler.monster/browse/",
+      "url": "https://lncrawler.monster/browse/",
       "icons": [
         {
           "src": "favicon.png",
@@ -54,7 +54,7 @@
       "name": "Light Novel Search",
       "short_name": "Search",
       "description": "Search Light Novel",
-      "url": "http://lncrawler.monster/search",
+      "url": "https://lncrawler.monster/search",
       "icons": [
         {
           "src": "favicon.png",
@@ -66,8 +66,8 @@
     {
       "name": "Add novel",
       "short_name": "addnovel",
-      "description": "Add instantly a new novel to LnCrawler database from more than 140 sources",
-      "url": "http://lncrawler.monster/addnovel",
+      "description": "Add instantly a new novel to LnCrawler database from more than 200 sources",
+      "url": "https://lncrawler.monster/addnovel",
       "icons": [
         {
           "src": "favicon.png",
