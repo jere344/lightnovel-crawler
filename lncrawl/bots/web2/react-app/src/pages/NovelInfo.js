@@ -4,7 +4,6 @@ import Metadata from '../components/Metadata';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import RatingStars from '../components/RatingStars';
 import { nFormatter, toFlag, languageDict } from '../Utils';
-import logo from '../assets/logo.png'
 import CommentComponent from '../components/CommentComponent';
 import TagList from '../components/TagList';
 
@@ -134,7 +133,7 @@ function NovelInfo() {
     // eslint-disable-next-line no-extend-native
     String.prototype.replaceAll = function(strReplace, strWith) {
         // See http://stackoverflow.com/a/3561711/556609
-        var esc = strReplace.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        var esc = strReplace.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
         var reg = new RegExp(esc, 'ig');
         return this.replace(reg, strWith);
     };
