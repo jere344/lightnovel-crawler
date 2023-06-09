@@ -85,20 +85,47 @@
 
 # region largest source
 
-from pathlib import Path
-import os
+# from pathlib import Path
+# import os
 
-sources = {}
+# sources = {}
 
-for novel in Path("Lightnovels").iterdir():
-    if novel.is_dir():
-        for source in novel.iterdir():
-            if source.is_dir():
-                # sources[novel.name + "/" + source.name] = shutil.disk_usage(str(source)).total
-                sources[novel.name + "/" + source.name] = sum(os.path.getsize(f) for f in source.glob('**/*') if os.path.isfile(f))
+# for novel in Path("Lightnovels").iterdir():
+#     if novel.is_dir():
+#         for source in novel.iterdir():
+#             if source.is_dir():
+#                 # sources[novel.name + "/" + source.name] = shutil.disk_usage(str(source)).total
+#                 sources[novel.name + "/" + source.name] = sum(os.path.getsize(f) for f in source.glob('**/*') if os.path.isfile(f))
         
-for source in sorted(sources, key=sources.get, reverse=True):
-    print(source + ": " + str(sources[source]))
+# for source in sorted(sources, key=sources.get, reverse=True):
+#     print(source + ": " + str(sources[source]))
     
+
+# endregion
+
+
+# region set all admin to 4
+
+
+# import pathlib
+# import json
+
+# for novel in pathlib.Path("Lightnovels").iterdir():
+#     if novel.is_dir():
+#         file = novel / "stats.json"
+#         if file.exists():
+#             try :
+#                 with open(file, "r") as f:
+#                     stats = json.load(f)
+#                     if stats["ratings"] and stats["ratings"]["-6455068401711230225"]:
+#                         del stats["ratings"]["-6455068401711230225"]
+#                         stats["ratings"]["admin"] = 4
+#                 with open(file, "w") as f:
+#                     json.dump(stats, f, indent=4)
+#                 print("Set " + str(novel) + " to 4")
+#             except KeyError:
+#                 print("KeyError: " + str(novel))
+
+                    
 
 # endregion
