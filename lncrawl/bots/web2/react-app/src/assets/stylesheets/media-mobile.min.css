@@ -3148,6 +3148,7 @@ svg {
 	-webkit-box-align: center;
 	-ms-flex-align: center;
 	align-items: center;
+	white-space: nowrap;
 }
 
 .rating-star p .star-wrap {
