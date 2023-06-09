@@ -56,8 +56,8 @@ function Header() {
                                         className="icon-th-large"></i> Browse</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link" title="Development Announcements"
-                                        href="https://github.com/dipu-bd/lightnovel-crawler/tree/dev"><i
+                                    <a className="nav-link" title="Development"
+                                        href="https://github.com/jere344/lightnovel-crawler/tree/react-dev-dev"><i
                                             className="icon-megaphone"></i> DEV</a>
                                 </li>
                                 <li className="nav-item">

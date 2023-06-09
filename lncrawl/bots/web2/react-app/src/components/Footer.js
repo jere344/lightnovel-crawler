@@ -13,13 +13,13 @@ function Footer() {
                 <nav className="col links">
                     <ul>
                         <li>
-                            <a href="https://github.com/dipu-bd/lightnovel-crawler/tree/dev">Terms of Service</a>
+                            <a href="https://github.com/jere344/lightnovel-crawler/tree/react-dev-dev">Terms of Service</a>
                         </li>
                         <li>
-                            <a href="https://github.com/dipu-bd/lightnovel-crawler/tree/dev">DMCA Notices</a>
+                            <a href="mailto: jeremy.guerin34@yahoo.com">DMCA Notices</a>
                         </li>
                         <li>
-                            <a href="https://github.com/dipu-bd/lightnovel-crawler/tree/dev">Contact Us</a>
+                            <a href="mailto: jeremy.guerin34@yahoo.com">Contact Us</a>
                         </li>
                     </ul>
                 </nav>
