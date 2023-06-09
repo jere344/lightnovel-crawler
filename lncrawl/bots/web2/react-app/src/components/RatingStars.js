@@ -60,7 +60,7 @@ function RatingStars(param) {
 
 
     return (
-        <div className="rating-stars-container">
+        <div className="rating-star-container">
             <p>{ratingStars}
                 <strong>{formatter.format(rating)} ({formatter.format(count)})</strong>
             </p>
