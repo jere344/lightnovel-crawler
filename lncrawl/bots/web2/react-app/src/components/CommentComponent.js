@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import CommentSection from "./CommentSection"
 import TermsPrompt from "./TermsPrompt"
-
+import { API_URL } from "../config.js"
 import "../assets/stylesheets/comments.min.css"
 
 // const exemple = {
@@ -42,7 +42,7 @@ import "../assets/stylesheets/comments.min.css"
 
 
 function CommentComponent({ currentUrl }) {
-    const url = `https://api.lncrawler.monster/get_comments?page=${currentUrl}`
+    const url = `${API_URL}/get_comments?page=${currentUrl}`
     const [comments, setComments] = useState([])
 
     useEffect(() => {

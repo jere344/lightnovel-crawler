@@ -11,7 +11,7 @@ import CommentComponent from '../components/CommentComponent';
 // import RateSource from '../components/RateSource';
 import notFoundImage from "../assets/404.webp"
 
-
+import { API_URL } from '../config.js';
 
 function Chapter() {
     const location = useLocation();
@@ -155,7 +155,7 @@ function Chapter() {
         }
         else {
             setNextPrefetchedData(undefined); // And if not we need to clear the next prefetched data
-            fetch(`https://api.lncrawler.monster/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
+            fetch(`${API_URL}/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${chapterId}`).then(
                 (response) => { return ((response.status === 404) ? undefined : response.json()) }
             ).then(
                 data => {
@@ -167,7 +167,7 @@ function Chapter() {
 
     useEffect(() => {
         if (response !== undefined && response.is_next && nextPrefetchedData === undefined) {
-            fetch(`https://api.lncrawler.monster/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${response.content.id + 1}`).then(
+            fetch(`${API_URL}/chapter/?novel=${novelSlug}&source=${sourceSlug}&chapter=${response.content.id + 1}`).then(
                 (response) => { return ((response.status === 404) ? undefined : response.json()) }
             ).then(
                 data => {
@@ -280,7 +280,7 @@ function Chapter() {
                     </div>
                     <div id="chapter-container" className={"chapter-content " + fontCookie.font + " " + displayModeCookie.displayMode} itemProp="description"
                         onClick={() => { window.innerWidth > 768 ? setMenuOpen(false) : setMenuOpen(!menuOpen) }}
-                        style={{ "fontSize": fontSizeCookie.fontSize + "px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="https://api.lncrawler.monster/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
+                        style={{ "fontSize": fontSizeCookie.fontSize + "px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="${API_URL}/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
                     </div>
                     {
                         chapter.body.includes("<i>Failed to download chapter body</i>") ?

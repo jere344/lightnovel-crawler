@@ -8,13 +8,12 @@ import CommentComponent from '../components/CommentComponent';
 import TagList from '../components/TagList';
 
 import "../assets/stylesheets/navbar.min.css"
-
 import "../assets/stylesheets/novel.min.css"
 import "../assets/stylesheets/novel.768.min.css"
 import "../assets/stylesheets/media-mobile.min.css"
-
 import "../assets/stylesheets/select.css"
 
+import {API_URL } from '../config.js'
 
 function NovelInfo() {
     const currentUrlSplitted = window.location.href.split('/');
@@ -51,7 +50,7 @@ function NovelInfo() {
         "title": currentUrlSplitted[currentUrlSplitted.length - 2],
     });
     useEffect(() => {
-        fetch(`https://api.lncrawler.monster/novel?novel=${novelSlug}&source=${sourceSlug}`).then(
+        fetch(`${API_URL}/novel?novel=${novelSlug}&source=${sourceSlug}`).then(
             response => response.json()
         ).then(
             data => {
@@ -62,7 +61,7 @@ function NovelInfo() {
 
     const title = `Read ${source.title} in ${languageDict[source.language]} for free | LnCrawler`;
     const description = `Read ${source.title} in ${languageDict[source.language]} and thousands of famous Light Novels and Web Novels in any language from more that 140 different websites`;
-    const imageUrl = `https://api.lncrawler.monster/image/${source.cover}`;
+    const imageUrl = `${API_URL}/image/${source.cover}`;
     const imageAlt = `${source.title} cover`;
     const imageType = "image/bmp"
 
@@ -91,7 +90,7 @@ function NovelInfo() {
         let response = false;
         let finished = false;
         while (!finished) {
-            response = await fetch(`https://api.lncrawler.monster/addnovel/update?job_id=${jobId}&&url=${source.url}`).then(res => res.json());
+            response = await fetch(`${API_URL}/addnovel/update?job_id=${jobId}&&url=${source.url}`).then(res => res.json());
 
             if (response.status === "success") {
                 finished = true;
@@ -150,13 +149,13 @@ function NovelInfo() {
 
                 <header className="novel-header">
                     <div className="glass-background">
-                        {(typeof source.cover === 'undefined') ? ("") : (<img src={`https://api.lncrawler.monster/image/${source.cover}`} alt={source.title} itemProp="image" />)}
+                        {(typeof source.cover === 'undefined') ? ("") : (<img src={`${API_URL}/image/${source.cover}`} alt={source.title} itemProp="image" />)}
                         <div className="glass-shade"></div>
                     </div>
                     <div className="header-body container">
                         <div className="fixed-img">
                             <figure className="cover">
-                                {(typeof source.cover === 'undefined') ? (<div>Loading...</div>) : <img className=" ls-is-cached lazyloaded" src={`https://api.lncrawler.monster/image/${source.cover}`} alt={source.title} />}
+                                {(typeof source.cover === 'undefined') ? (<div>Loading...</div>) : <img className=" ls-is-cached lazyloaded" src={`${API_URL}/image/${source.cover}`} alt={source.title} />}
                             </figure>
                         </div>
                         <div className="novel-info">
@@ -194,7 +193,7 @@ function NovelInfo() {
                                 </span>
                                 <span>
                                     <strong style={{ "alignSelf": "center" }} >
-                                        {(typeof source.language === 'undefined') ? (<div>Loading...</div>) : <img src={`https://api.lncrawler.monster/flags/${source.language}`} alt={`${source.language} flag`} style={{ "width": "25px", "marginTop": "4px", "height": "auto" }} width="16" height="12"/>}
+                                        {(typeof source.language === 'undefined') ? (<div>Loading...</div>) : <img src={`${API_URL}/flags/${source.language}`} alt={`${source.language} flag`} style={{ "width": "25px", "marginTop": "4px", "height": "auto" }} width="16" height="12"/>}
                                     </strong>
                                     <small>Language</small>
                                 </span>
@@ -242,7 +241,7 @@ function NovelInfo() {
 
                     </div>
                     <div className="download">
-                        <button onClick={() => download(`https://api.lncrawler.monster/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"} disabled>
+                        <button onClick={() => download(`${API_URL}/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"} disabled>
                             DOWNLOAD
                         </button>
                     </div>

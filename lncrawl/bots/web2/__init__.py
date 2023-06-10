@@ -1,12 +1,18 @@
 from . import flask_api
 
+# You can change the port and the host in the configuration file "config.json"
+
+
 def start():
-    # For developpement server uncomment this line :
-    # flask_api.flaskapp.app.run()
+    if flask_api.lib.config["dev_mode"] == "true":
+        flask_api.flaskapp.app.run()
 
-    # For production server uncomment theses two lines :
-    from waitress import serve
-    serve(flask_api.flaskapp.app, host=flask_api.lib.HOST, port=flask_api.lib.PORT)
+    elif flask_api.lib.config["dev_mode"] == "false":
+        from waitress import serve
 
-    # You can change the port and the host in the configuration file "config.json"
+        serve(flask_api.flaskapp.app, host=flask_api.lib.HOST, port=flask_api.lib.PORT)
 
+    else:
+        raise ValueError(
+            "Invalid value for dev_mode in config.json (must be true or false)"
+        )

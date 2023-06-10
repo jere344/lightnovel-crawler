@@ -1,5 +1,6 @@
 import React from 'react'
 import { Helmet } from "react-helmet";
+import { DOMAIN } from "../config.js";
 
 function Metadata(data) {
     const { description, title, imageUrl, imageAlt, imageType } = data;
@@ -13,19 +14,19 @@ function Metadata(data) {
             <meta name="language" content="en" />
             <meta name="distribution" content="global" />
 
-            <meta property="og:url" content="lncrawler.monster" />
+            <meta property="og:url" content={DOMAIN} />
             <meta property="og:locale" content="en_US" />
             <meta property="og:type" content="website" />
-            <meta property="og:site_name" content="lncrawler.monster" />
+            <meta property="og:site_name" content={DOMAIN} />
 
-            <meta name="twitter:site" content="lncrawler.monster" />
+            <meta name="twitter:site" content={DOMAIN} />
             <meta name="twitter:creator" content="https://github.com/jere344/lightnovel-crawler/blob/react-dev-dev/lncrawl/bots/web2/README.md" />
-            <meta name="twitter:url" content="lncrawler.monster" />
+            <meta name="twitter:url" content={DOMAIN} />
             <meta name="twitter:locale" content="en_US" />
 
             <meta name="apple-mobile-web-app-capable" content="yes" />
             <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-            <meta name="apple-mobile-web-app-title" content="lncrawler.monster" />
+            <meta name="apple-mobile-web-app-title" content={DOMAIN} />
 
             <title>{title}</title>
             <meta name="description" content={description} />

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from "../config.js";
 
 function CommentPrompt({ replyTo, setCommenting }) {
     const [text, setText] = useState("");
@@ -17,7 +18,7 @@ function CommentPrompt({ replyTo, setCommenting }) {
         if (replyTo) {
             data.reply_to = replyTo;
         }
-        fetch("https://api.lncrawler.monster/add_comment", {
+        fetch(`${API_URL}/add_comment`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

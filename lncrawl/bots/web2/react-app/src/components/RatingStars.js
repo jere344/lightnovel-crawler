@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import { API_URL } from "../config.js"
 
 function RatingStars(param) {
     const [ratingHovered, setRatingHovered] = useState(false);
@@ -14,7 +15,7 @@ function RatingStars(param) {
 
 
     function rate(rating) {
-        fetch("https://api.lncrawler.monster/rate", {
+        fetch(`${API_URL}/rate`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
