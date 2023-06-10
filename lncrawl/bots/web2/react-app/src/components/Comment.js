@@ -84,7 +84,7 @@ function Comment({ comment, setReplyTo, setCommenting }) {
                             <span itemProp="name">{comment.name}</span>
                         </div>
                         <div className="sub-items">
-                            <span className="tier tier0">{comment.rank}</span>
+                            <span className={"tier " + (comment.rank == "Owner" ? "tier1" : "tier0")}>{comment.rank}</span>
                         </div>
                     </div>
                 </div>
