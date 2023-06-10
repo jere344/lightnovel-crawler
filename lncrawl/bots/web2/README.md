@@ -74,9 +74,15 @@ cd lncrawl/bots/web2/react-app
 $ npm install -g serve
 ```
 
-- First put the backend bot in production mode :
+- Edit the configuration file `lncrawl/bot/web2/flask_api/config.json` with your domain name:
+```json 
+"website_url": "https://lncrawler.monster",
+"api_url": "https://api.lncrawler.monster",
 ```
-edit lncrawl\bots\web2\__init__.py and follow the commented instructions
+
+- Copy the configuration file to the frontend folder :
+```bash
+$ cp "lncrawl/bots/web2/flask_api/config.json" "lncrawl/bots/web2/react-app/src/"
 ```
 
 - Start the backend bot
@@ -96,14 +102,7 @@ $ cd lncrawl/bots/web2/react-app
 $ serve -s build
 ```
 
-You will need to redirect http://yourdomain.com/ to the frontend server and http://yourdomain.com/api/ to the backend bot
-
-
-For https you will need 
-- a reverse proxy like nginx or apache
-- edit lncrawl\bots\web2\react-app\.env and set HTTPS=true
-
-
+For the rest you will need some kind of reverse proxy like nginx or apache2 to serve the backend and the frontend.
 
 ## Build with
 

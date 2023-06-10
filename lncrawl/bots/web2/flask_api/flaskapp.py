@@ -1,13 +1,11 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from flask_compress import Compress
+from . import lib
 
 origins = [
-    "http://localhost:3000",
-    "http://lncrawler.monster",
-    "https://lncrawler.monster",
-    "http://www.lncrawler.monster",
-    "https://www.lncrawler.monster",
+    lib.WEBSITE_URL,
+    lib.WEBSITE_URL.replace("http://", "https://"),
 ]
 
 app = Flask(__name__)

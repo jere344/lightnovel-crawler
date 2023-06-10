@@ -4,6 +4,7 @@ import NovelList from '../components/NovelList';
 import Pagination from '../components/Pagination';
 import SortButton from '../components/SortButton';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { WEBSITE_URL, API_URL } from '../config.js'
 
 import "../assets/stylesheets/navbar.min.css"
 import "../assets/stylesheets/media-mobile.min.css"
@@ -34,7 +35,7 @@ function Browse() {
 
     useEffect(() => {
         const type = sort.startsWith('last_updated') ? 'sources' : 'novels';
-        fetch(`https://api.lncrawler.monster/${type}?page=${parseInt(page) - 1}&sort=${sort}&tags=${tags}`).then(
+        fetch(`${API_URL}/${type}?page=${parseInt(page) - 1}&sort=${sort}&tags=${tags}`).then(
             response => response.json()
         ).then(
             data => {
@@ -54,7 +55,7 @@ function Browse() {
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <Helmet>
-                <link rel="canonical" href="https://lncrawler.monster/browse" />
+                <link rel="canonical" href={WEBSITE_URL + "/browse"} />
             </Helmet>
             <article id="explore">
                 <div className="container">

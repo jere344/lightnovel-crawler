@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from "../config.js";
 
 function Comment({ comment, setReplyTo, setCommenting }) {
 
@@ -51,7 +52,7 @@ function Comment({ comment, setReplyTo, setCommenting }) {
             "reaction": type
         }
 
-        fetch('https://api.lncrawler.monster/add_reaction', {
+        fetch(`${API_URL}/add_reaction`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

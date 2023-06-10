@@ -19,21 +19,36 @@ if not LIGHTNOVEL_FOLDER.exists():
 if not COMMENT_FOLDER.exists():
     COMMENT_FOLDER.mkdir()
 
-config_file = Path("lncrawl/bots/web2/config.json")
+config_file = Path("lncrawl/bots/web2/flask_api/config.json")
 if not config_file.exists():
     with open(config_file, "w", encoding="utf-8") as f:
         json.dump(
-            {"host": "localhost", "port": "5000", "website_url": "localhost:5000", "max_ebook_size": "300_000_000"},
+            {
+                "dev_mode": "true",
+                "dev_website_url": "http://localhost:3000",
+                "dev_api_url": "http://localhost:5000",
+                "website_url": "https://lncrawler.monster",
+                "api_url": "https://api.lncrawler.monster",
+                "max_ebook_size": 300000000,
+                "api_host": "localhost",
+                "api_port": 5000,
+            },
             f,
             indent=4,
         )
 with open(config_file, "r", encoding="utf-8") as f:
     config = json.load(f)
 
-HOST = config["host"]
-PORT = int(config["port"])
-WEBSITE_URL = config["website_url"]
-WEBSITE_URL = WEBSITE_URL.strip("/")
+if config["dev_mode"] == "true":
+    WEBSITE_URL = config["dev_website_url"]
+    API_URL = config["dev_api_url"]
+else:
+    WEBSITE_URL = config["website_url"]
+    API_URL = config["api_url"]
+
+HOST = config["api_host"]
+PORT = int(config["api_port"])
+
 MAX_EBOOK_SIZE = int(config["max_ebook_size"])
 
 database.all_novels: List[Novel] = []
@@ -51,7 +66,7 @@ for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
         # import traceback
 
         # traceback.print_exc()
-        
+
         # import sys
         # sys.exit(1)
 
@@ -65,11 +80,14 @@ database.all_sources = [
 database.refresh_sorted_all()
 
 # all_tags: Dict[str,list] = {} # sanatized : [raw : count]
-database.top_tags = [tag[0] for tag in sorted(
-    database.all_tags.values(),
-    key=lambda x: x[1],
-    reverse=True,
-)][:min(20, len(database.all_tags))]
+database.top_tags = [
+    tag[0]
+    for tag in sorted(
+        database.all_tags.values(),
+        key=lambda x: x[1],
+        reverse=True,
+    )
+][: min(20, len(database.all_tags))]
 
 from . import sitemap
 
@@ -79,6 +97,7 @@ sitemap.generate_sitemap(sitemap_file)
 import threading, time
 import shutil
 import sys
+
 
 def _update_novel_stats(novel: Novel):
     """
@@ -96,7 +115,9 @@ def _update_novel_stats(novel: Novel):
             "clicks": novel.clicks,
             "ratings": novel.ratings,
             "comment_count": novel.comment_count,
-            "source_ratings": {source.slug: source.source_rating for source in novel.sources},
+            "source_ratings": {
+                source.slug: source.source_rating for source in novel.sources
+            },
         }
 
         json.dump(novel_stats, f, indent=4)
@@ -109,7 +130,7 @@ def update_novels_stats():
         if not novel.path:
             break
 
-        try :
+        try:
             _update_novel_stats(novel)
         except Exception as e:
             print(f"Error while updating novel stats for {novel}: {e}")
@@ -123,6 +144,7 @@ def update_novels_stats():
 
 
 import atexit
+
 # Save novel stats on exit
 atexit.register(update_novels_stats)
 
@@ -132,6 +154,7 @@ def periodic_update_novels_stats():
     while True:
         time.sleep(3600)
         update_novels_stats()
+
 
 # In case of an internal error, we want to save the stats every hour as well as on exit
 # This thread will be terminated at the same time as the main thread

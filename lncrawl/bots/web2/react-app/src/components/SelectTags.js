@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
+import { API_URL } from '../config.js';
 function SelectTags({ urlWithoutTags }) {
 
     let navigate = useNavigate();
@@ -46,7 +46,7 @@ function SelectTags({ urlWithoutTags }) {
             return;
         }
 
-        fetch(`https://api.lncrawler.monster/toptags`).then(
+        fetch(`${API_URL}/toptags`).then(
             response => response.json()
         ).then(
             data => {
@@ -132,7 +132,7 @@ function SelectTags({ urlWithoutTags }) {
         }
         // if match / \(\d+\)/ then it's a tag with occurence number, so we don't need to fetch it
         if (!query.match(/ \(\d+\)/)) {
-            fetch(`https://api.lncrawler.monster/search_tags?query=${query}`).then(response => response.json())
+            fetch(`${API_URL}/search_tags?query=${query}`).then(response => response.json())
                 .then(data => setComboBoxTags(data.content));
         }
     }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { API_URL } from '../../config.js';
 
 function NovelItemCard({ novel }) {
     const formatter = Intl.NumberFormat('en', { notation: 'compact' })
@@ -7,7 +8,7 @@ function NovelItemCard({ novel }) {
     const languagesSpan = [];
     for (let i = 0; i < languages.length; i++) {
         languagesSpan.push(
-            <span className="flag-wrap" key={i}><img src={`https://api.lncrawler.monster/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
+            <span className="flag-wrap" key={i}><img src={`${API_URL}/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
         );
     }
 

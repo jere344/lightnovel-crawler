@@ -5,7 +5,7 @@ import NovelItemCompactTrends from './novelItem/NovelItemCompactTrends';
 import NovelItemCard from './novelItem/NovelItemCard';
 import NovelItemChapter from './novelItem/NovelItemChapter';
 import loadIcon from "./../assets/load-icon-png-8.png";
-
+import { API_URL } from '../config';
 
 
 const placeholderSource = {
@@ -66,8 +66,8 @@ function NovelList({ novels, className, type = 'classic', placeholderAmount = '1
         if (!novel.cover) {
             novel.cover = loadIcon;
         }
-        else if (!novel.cover.startsWith('https://api.lncrawler.monster/image/') && novel.cover !== loadIcon){
-            novel.cover = `https://api.lncrawler.monster/image/${novel.cover}`
+        else if (!novel.cover.startsWith(`${API_URL}/image/`) && novel.cover !== loadIcon){
+            novel.cover = `${API_URL}/image/${novel.cover}`
         }
 
         if (type === 'classic') {

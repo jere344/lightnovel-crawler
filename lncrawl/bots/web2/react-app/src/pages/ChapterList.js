@@ -13,6 +13,7 @@ import "../assets/stylesheets/fontello-embedded.css"
 import "../assets/stylesheets/novel.chapter-review.min.css"
 import "../assets/stylesheets/pagedlist.css"
 
+import { API_URL } from '../config.js';
 
 
 function ChapterList() {
@@ -52,7 +53,7 @@ function ChapterList() {
 
     const { novelSlug, sourceSlug, page } = useParams();
     useEffect(() => {
-        fetch(`https://api.lncrawler.monster/chapterlist/?novel=${novelSlug}&source=${sourceSlug}&page=${page}`).then(
+        fetch(`${API_URL}/chapterlist/?novel=${novelSlug}&source=${sourceSlug}&page=${page}`).then(
             response => response.json()
         ).then(
             data => {
@@ -109,7 +110,7 @@ function ChapterList() {
                         <div className="cover-wrap">
                             <Link title={source.title} to={`/novel/${novelSlug}/${sourceSlug}`}>
                                 <figure className="novel-cover">
-                                    <img src={source.cover ? `https://api.lncrawler.monster/image/${source.cover}` : undefined} alt={source.title} />
+                                    <img src={source.cover ? `${API_URL}/image/${source.cover}` : undefined} alt={source.title} />
                                 </figure>
                             </Link>
                         </div>

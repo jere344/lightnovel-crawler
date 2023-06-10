@@ -48,7 +48,7 @@ function RateSource({ novelSlug, sourceSlug }) {
     const [thanksPanelActive, setThanksPanelActive] = useState(false);
     function sendRating(rating) {
         setNumberOfVisit(100); // Set numberVisit to 100 so that the component is not rendered again
-        fetch("https://api.lncrawler.monster/rate_source", {
+        fetch(`${API_URL}/rate_source`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import banner from '../assets/banner.avif'
 import { useState, useEffect } from 'react';
 import NovelList from '../components/NovelList';
 import { Link } from 'react-router-dom';
-
+import { API_URL } from '../config.js';
 import "../assets/stylesheets/fontello-embedded.css"
 import "../assets/stylesheets/navbar.min.css"
 import "../assets/stylesheets/media-mobile.min.css"
@@ -23,7 +23,7 @@ function Home() {
 
     const [novelsSortViews, setNovelsSortViews] = useState({});
     useEffect(() => {
-        fetch('https://api.lncrawler.monster/novels?page=0&sort=rank&number=12').then(
+        fetch(`${API_URL}/novels?page=0&sort=rank&number=12`).then(
             response => response.json()
         ).then(
             data => {
@@ -34,7 +34,7 @@ function Home() {
 
     const [novelsSortRating, setNovelsSortRating] = useState({});
     useEffect(() => {
-        fetch('https://api.lncrawler.monster/novels?page=0&sort=rating&number=12').then(
+        fetch(`${API_URL}/novels?page=0&sort=rating&number=12`).then(
             response => response.json()
         ).then(
             data => {
@@ -45,7 +45,7 @@ function Home() {
 
     const [novelsSortWeeklyViews, setNovelsSortWeeklyViews] = useState({});
     useEffect(() => {
-        fetch('https://api.lncrawler.monster/novels?page=0&sort=weekly_views&number=12').then(
+        fetch(`${API_URL}/novels?page=0&sort=weekly_views&number=12`).then(
             response => response.json()
         ).then(
             data => {
@@ -56,7 +56,7 @@ function Home() {
 
     const [novelsSortLastUpdate, setNovelsSortLastUpdate] = useState({});
     useEffect(() => {
-        fetch('https://api.lncrawler.monster/sources?page=0&sort=last_updated&number=12').then(
+        fetch(`${API_URL}/sources?page=0&sort=last_updated&number=12`).then(
             response => response.json()
         ).then(
             data => {

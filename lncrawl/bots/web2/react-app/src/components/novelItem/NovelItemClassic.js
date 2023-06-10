@@ -1,6 +1,7 @@
 import React from 'react'
 import RatingStars from '../RatingStars';
 import { Link } from 'react-router-dom'
+import { API_URL } from '../../config.js';
 
 function NovelItemClassic(novel) {
   novel = novel.novel
@@ -9,7 +10,7 @@ function NovelItemClassic(novel) {
   const languagesSpan = [];
   for (let i = 0; i < languages.length; i++) {
     languagesSpan.push(
-      <span className="flag-wrap" key={i}><img src={`https://api.lncrawler.monster/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
+      <span className="flag-wrap" key={i}><img src={`${API_URL}/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
     );
   }
 

@@ -10,6 +10,7 @@ import "../assets/stylesheets/fontello-embedded.css";
 import "../assets/stylesheets/searchpg.min.css";
 import { Link } from 'react-router-dom';
 
+import { API_URL } from '../config.js';
 
 function Search() {
 
@@ -40,7 +41,7 @@ function Search() {
     const [searchQuery, setSearchQuery] = useState("");
 
     function searchNovel(e) {
-        fetch(`https://api.lncrawler.monster/search/?query=${e}`).then(
+        fetch(`${API_URL}/search/?query=${e}`).then(
             (response) => { return ((response.status === 404) ? undefined : response.json()) }
         ).then(
             data => {
@@ -59,7 +60,7 @@ function Search() {
                     to={`/novel/${novelList[i].slug}/${novelList[i].prefered_source}`}>
                     <div className="cover-wrap">
                         <figure className="novel-cover">
-                            <img src={`https://api.lncrawler.monster/image/${novelList[i].cover}`} alt={novelList[i].title} />
+                            <img src={`${API_URL}/image/${novelList[i].cover}`} alt={novelList[i].title} />
                         </figure>
                     </div>
                     <div className="item-body">

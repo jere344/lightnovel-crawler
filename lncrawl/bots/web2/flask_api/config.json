@@ -1,0 +1,10 @@
+{
+    "dev_mode": "true",
+    "dev_website_url": "http://localhost:3000",
+    "dev_api_url": "http://localhost:5000",
+    "website_url": "https://lncrawler.monster",
+    "api_url": "https://api.lncrawler.monster",
+    "max_ebook_size": 300000000,
+    "api_host" : "localhost",
+    "api_port" : 5000
+}
