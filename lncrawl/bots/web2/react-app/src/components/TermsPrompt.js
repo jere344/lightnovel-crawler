@@ -14,17 +14,17 @@ function TermsPrompt({ setCommenting, replyTo }) {
                     <div className="modal-header">Comment &amp; Review Terms of Use</div>
                     <div className="modal-body">
                         <div className="comment-terms">
-                            <p>The responsibility of the content in the comments belongs to the user and the Light Novel Pub platform cannot be held responsible.</p>
+                            <p>The responsibility of the content in the comments belongs to the user and the LNCrawler platform cannot be held responsible.</p>
                             <p>Platform administrators and editors have the authority to edit and delete comments.</p>
                             <p>Behaviors that are strictly prohibited in the comment and review sections;</p>
                             <ol>
-                                <li>Using insulting and abusive expressions against users,</li>
+                                <li>Using insulting and abusive expressions,</li>
                                 <li>To insult the novel and the author,</li>
-                                <li>Sharing the name or link of competitive websites,</li>
-                                <li>Sharing platform channels such as Discord that publish early novel chapters,</li>
-                                <li>Using the comment field with random expressions and characters,</li>
+                                <li>Any form of spam,</li>
+                                <li>Using the comment field for advertising purposes,</li>
+                                <li>Using the comment field for anything other than its intended purpose,</li>
                             </ol>
-                            <p>Accounts of users who do not follow the rules listed above will be banned without warning.</p>
+                            <p>Users who do not follow the rules listed above will be banned and reported without warning.</p>
                         </div>
                         <form onSubmit={e => { e.preventDefault() }}>
                             <div className="fieldset">
