@@ -31,3 +31,6 @@ lncrawl/bots/web/
 google*.html
 sitemap.xml
 log.txt
+sources/*
+success.txt
+config.json

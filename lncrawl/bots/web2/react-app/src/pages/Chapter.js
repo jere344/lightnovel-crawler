@@ -33,7 +33,7 @@ function Chapter() {
         "source": {
             "cover": undefined,
             "novel": {
-                "language": "Loading...",
+                "language": "en",
             },
             "title": "Loading...",
         }
