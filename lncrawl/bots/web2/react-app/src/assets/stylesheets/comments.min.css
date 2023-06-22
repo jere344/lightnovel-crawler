@@ -425,6 +425,12 @@
     font-size: .785rem;
 }
 
+.comment-list ul li .comment-item .comment-body .toolbar ._tl .reply-button {
+    background: transparent;
+    color: var(--text-color);
+    border: none;
+}
+
 .comment-list ul li .comment-item .comment-body .toolbar a {
     color: var(--anchor-color);
     line-height: 1.2;
