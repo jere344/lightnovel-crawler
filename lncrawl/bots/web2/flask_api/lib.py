@@ -59,6 +59,7 @@ for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
             database.all_novels.append(novel)
             for tag in novel.tags:
                 utils.add_tag(tag)
+            print(f"Loaded novel: {novel.slug}")
 
     except Exception as e:
         print(f"Error while reading novel info from {novel_folder.name}: {e}")
@@ -69,6 +70,8 @@ for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
 
         # import sys
         # sys.exit(1)
+
+print("Loaded all novels")
 
 database.set_ranks()
 
