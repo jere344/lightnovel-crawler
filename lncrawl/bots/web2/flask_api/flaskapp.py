@@ -6,6 +6,7 @@ from . import lib
 origins = [
     lib.WEBSITE_URL,
     lib.WEBSITE_URL.replace("http://", "https://"),
+    "http://localhost:5000",
 ]
 
 app = Flask(__name__)
