@@ -507,4 +507,10 @@ def download():
 
     return send_file(ebook.absolute(), as_attachment=True), 200
 
+@flaskapp.app.route("/api/featured")
+@flaskapp.app.route("/featured")
+def featured():
+    """Return the featured source"""
+    featured_novel : Novel = database.sorted_all_novels["rank"]()[0] 
+    return featured_novel.prefered_source.asdict(), 200
     

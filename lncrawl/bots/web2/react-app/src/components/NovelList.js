@@ -4,6 +4,7 @@ import NovelItemCompactRating from './novelItem/NovelItemCompactRating';
 import NovelItemCompactTrends from './novelItem/NovelItemCompactTrends';
 import NovelItemCard from './novelItem/NovelItemCard';
 import NovelItemChapter from './novelItem/NovelItemChapter';
+import NovelItemFeatured from './novelItem/NovelItemFeatured';
 import loadIcon from "./../assets/load-icon-png-8.png";
 import { API_URL } from '../config';
 
@@ -82,6 +83,8 @@ function NovelList({ novels, className, type = 'classic', placeholderAmount = '1
             novelItemList.push(<NovelItemCard key={id} novel={novel} />);
         } else if (type === 'chapter') {
             novelItemList.push(<NovelItemChapter key={id} novel={novel} />);
+        } else if (type === 'featured') {
+            novelItemList.push(<NovelItemFeatured key={id} novel={novel} />);
         }
 
 

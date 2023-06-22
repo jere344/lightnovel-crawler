@@ -65,6 +65,17 @@ function Home() {
         )
     }, []);
 
+    const [featuredNovel, setFeaturedNovel] = useState({});
+    useEffect(() => {
+        fetch(`${API_URL}/featured`).then(
+            response => response.json()
+        ).then(
+            data => {
+                setFeaturedNovel(data);
+            }
+        )
+    }, []);
+
     return (
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
@@ -101,11 +112,11 @@ function Home() {
                             <label htmlFor="tab_most_read">Most Read</label>
                             <input type="radio" name="ranktabs" id="tab_new_trends" />
                             <label htmlFor="tab_new_trends">New Trends</label>
-                            <input type="radio" name="ranktabs" id="tab_user_rated" defaultChecked={true}/>
+                            <input type="radio" name="ranktabs" id="tab_user_rated" defaultChecked={true} />
                             <label htmlFor="tab_user_rated">User Rated</label>
                             <div className="rank-container">
                                 <h3><span>Most Read</span></h3>
-                                {(<NovelList novels={novelsSortViews.content || null} type="compact-clicks" />) }
+                                {(<NovelList novels={novelsSortViews.content || null} type="compact-clicks" />)}
                             </div>
                             <div className="rank-container">
                                 <h3><span>New Trends</span></h3>
@@ -121,11 +132,11 @@ function Home() {
                 </section>
                 <section className="container vspace">
                     <div className="section-header">
-                        <h3>Weekly Most Active</h3>
+                        <h3>Featured</h3>
                         <Link className="getmorebtn" title="Top Rated Light Novels" to="/browse/page-1?sort=weekly_views">View More</Link>
                     </div>
-                    <div className="section-body">
-                        {(<NovelList novels={novelsSortWeeklyViews.content || null} type="card" className="novel-list" />)}
+                    <div className="section-body">{
+                        (<NovelList novels={{ featuredNovel } || null} type="featured" className="novel-list" />)}
                     </div>
                 </section>
                 <section className="container vspace">
