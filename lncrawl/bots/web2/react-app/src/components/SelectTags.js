@@ -126,7 +126,7 @@ function SelectTags({ urlWithoutTags }) {
     const [timeoutId, setTimeoutId] = useState(0);
 
     function updateComboBox(query) {
-        if (query.length < 3) {
+        if (query.length < 1) {
             setComboBoxTags([]);
             return;
         }
@@ -153,7 +153,7 @@ function SelectTags({ urlWithoutTags }) {
             // clear the previous timeout
             clearTimeout(timeoutId);
             // delay the API call by 1 second to avoid making too many requests
-            setTimeoutId(setTimeout(updateComboBox, 1000, e.target.value));
+            setTimeoutId(setTimeout(updateComboBox, 500, e.target.value));
         }
     }
 

@@ -466,7 +466,7 @@ def search_tags():
     :return: list of tuple (tag, number of novels with this tag)
     """
     query = request.args.get("query")
-    if not query or len(query) < 3:
+    if not query or len(query) > 100:
         return "Invalid query", 400
     
     query = sanatize.sanitize(query)
