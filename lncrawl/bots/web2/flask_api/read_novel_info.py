@@ -2,6 +2,9 @@ import json
 from .Novel import Novel, NovelFromSource
 from pathlib import Path
 import shutil
+from . import meta_structure
+from msgspec.json import decode
+from msgspec import ValidationError
 
 
 def get_novel_info(novel_folder: Path) -> Novel:
@@ -155,78 +158,49 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
     if not (source_folder / "meta.json").exists():
         return None
 
-    with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-        # For backward compatibility
-        if "novel" in data:
-            novel_metadata = data["novel"]
-        else:
-            novel_metadata = data
-
     try:
-        latest = novel_metadata["chapters"][-1]["title"]
-    except KeyError:
-        latest = ""
-    except IndexError:
-        latest = ""
-    try:
-        first = novel_metadata["chapters"][0]["title"]
-    except KeyError:
-        first = ""
-    except IndexError:
-        first = ""
-    author = (
-        novel_metadata["author"]
-        if "author" in novel_metadata
-        else novel_metadata["authors"]
-        if "authors" in novel_metadata
-        else ""
-    )
-    if isinstance(author, list):
-        author = ", ".join(author)
-    chapter_count = (
-        len(novel_metadata["chapters"]) if "chapters" in novel_metadata else 0
-    )
-    volume_count = len(novel_metadata["volumes"]) if "volumes" in novel_metadata else 0
-    title = (
-        novel_metadata["title"]
-        if "title" in novel_metadata
-        else source_folder.parent.name
-    )
-    language = novel_metadata["language"] if "language" in novel_metadata else "en"
-    url = novel_metadata["url"] if "url" in novel_metadata else ""
-    # Multiple ternary for backward compatibility
-    summary = (
-        novel_metadata["synopsis"]
-        if "synopsis" in novel_metadata
-        else novel_metadata["summary"]
-        if "summary" in novel_metadata
-        else ""
-    )
-    tags = (
-        novel_metadata["novel_tags"]
-        if "novel_tags" in novel_metadata
-        else novel_metadata["tags"]
-        if "tags" in novel_metadata
-        else []
-    )
+        with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
 
-    last_update_date = data["last_update_date"] if "last_update_date" in data else ""
+            data = decode(f.read(), type=meta_structure.Meta)
+            novel_metadata = data.novel
 
-    source = NovelFromSource(
-        path=path,
-        title=title,
-        cover=cover,
-        author=author,
-        chapter_count=chapter_count,
-        volume_count=volume_count,
-        first=first,
-        latest=latest,
-        summary=summary,
-        tags=tags,
-        language=language,
-        url=url,
-        last_update_date=last_update_date,
-    )
+            source = NovelFromSource(
+                path=path,
+                title=novel_metadata.title,
+                cover=cover,
+                author=", ".join(novel_metadata.authors),
+                chapter_count=len(novel_metadata.chapters),
+                volume_count=len(novel_metadata.volumes),
+                first=(
+                    novel_metadata.chapters[0].title if novel_metadata.chapters else ""
+                ),
+                latest=(
+                    novel_metadata.chapters[-1].title if novel_metadata.chapters else ""
+                ),
+                summary=novel_metadata.synopsis or novel_metadata.summary or "",
+                tags=novel_metadata.novel_tags or novel_metadata.tags or [],
+                language=novel_metadata.language,
+                url=novel_metadata.url,
+                last_update_date=data.last_update_date,
+            )
 
+    except ValidationError:
+        with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
+            data = decode(f.read(), type=meta_structure.MetaOld)
+
+            source = NovelFromSource(
+                path=path,
+                title=data.title,
+                cover=cover,
+                author=data.author,
+                chapter_count=len(data.chapters),
+                volume_count=len(data.volumes),
+                first=(data.chapters[0].title if data.chapters else ""),
+                latest=(data.chapters[-1].title if data.chapters else ""),
+                summary=data.summary or "",
+                tags=[],
+                language=data.language,
+                url=data.url,
+                last_update_date=data.last_update_date,
+            )
     return source
