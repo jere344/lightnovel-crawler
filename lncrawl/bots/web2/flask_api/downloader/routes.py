@@ -248,7 +248,7 @@ def _update(url: str, job_id: str):
             # We assume that if the body lenght is < 100 it was not downloaded correctly
             with open(str(chapter_path), "r", encoding="utf-8") as f:
                 json_data = json.load(f)
-            if len(json_data["body"]) < 100:
+            if len(json_data["body"]) < 100 or "Failed to download chapter body" in json_data["body"]:
                 # we simply delete the file for it to be re downloaded
                 chapter_path.unlink()
                 missing_chapters = True
