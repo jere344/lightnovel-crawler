@@ -19,7 +19,7 @@ const placeholderSource = {
     'latest': 'Loading...',
     'summary': 'Loading...',
     'tags': ['Loading...'],
-    'language': 'Loading...',
+    'language': 'en',
     'url': 'Loading...',
     'last_update_date': 'Loading...',
 }
@@ -30,7 +30,7 @@ const placeholderNovel = {
     'author': 'Loading...',
     'chapter_count': 0,
     'latest': 'Loading...',
-    'language': 'Loading...',
+    'language': 'en',
     'clicks': 0,
     'current_week_clicks': 0,
     'rank': 0,
