@@ -6,6 +6,19 @@ from . import meta_structure
 from msgspec.json import decode
 from msgspec import ValidationError
 
+code_to_lang = {
+    "ar": "Arabic",
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "id": "Indonesian",
+    "jp": "Japanese",
+    "pt": "Portuguese",
+    "ru": "Russian",
+    "vi": "Vietnamese",
+    "zh": "Chinese",
+}
+
 
 def get_novel_info(novel_folder: Path) -> Novel:
     """
@@ -69,7 +82,7 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
         sources.append(source)
 
-    language = ", ".join(language)
+    language:str = ", ".join(language)
 
     # endregion
 
@@ -159,10 +172,14 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
         return None
 
     try:
-        with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
+        with open(source_folder / "meta.json", "rb") as f:
 
             data = decode(f.read(), type=meta_structure.Meta)
             novel_metadata = data.novel
+
+            tags = novel_metadata.novel_tags or novel_metadata.tags or []
+            if novel_metadata.language in code_to_lang:
+                tags.append(code_to_lang[novel_metadata.language])
 
             source = NovelFromSource(
                 path=path,
@@ -178,14 +195,14 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
                     novel_metadata.chapters[-1].title if novel_metadata.chapters else ""
                 ),
                 summary=novel_metadata.synopsis or novel_metadata.summary or "",
-                tags=novel_metadata.novel_tags or novel_metadata.tags or [],
+                tags=tags,
                 language=novel_metadata.language,
                 url=novel_metadata.url,
                 last_update_date=data.last_update_date,
             )
 
     except ValidationError:
-        with open(source_folder / "meta.json", "r", encoding="utf-8") as f:
+        with open(source_folder / "meta.json", "rb") as f:
             data = decode(f.read(), type=meta_structure.MetaOld)
 
             source = NovelFromSource(
@@ -198,7 +215,7 @@ def _get_source_info(source_folder: Path) -> NovelFromSource:
                 first=(data.chapters[0].title if data.chapters else ""),
                 latest=(data.chapters[-1].title if data.chapters else ""),
                 summary=data.summary or "",
-                tags=[],
+                tags=[code_to_lang[data.language]] if data.language in code_to_lang else [],
                 language=data.language,
                 url=data.url,
                 last_update_date=data.last_update_date,
