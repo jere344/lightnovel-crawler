@@ -1,4 +1,3 @@
-
 # region test json
 
 # from pathlib import Path
@@ -31,7 +30,6 @@
 #             shutil.rmtree(novel)
         
 # endregion
-
 
 # region count sources
 
@@ -85,20 +83,20 @@
 
 # region largest source
 
-from pathlib import Path
-import os
+# from pathlib import Path
+# import os
 
-sources = {}
+# sources = {}
 
-for novel in Path("Lightnovels").iterdir():
-    if novel.is_dir():
-        for source in novel.iterdir():
-            if source.is_dir():
-                # sources[novel.name + "/" + source.name] = shutil.disk_usage(str(source)).total
-                sources[novel.name + "/" + source.name] = sum(os.path.getsize(f) for f in source.glob('**/*') if os.path.isfile(f))
+# for novel in Path("Lightnovels").iterdir():
+#     if novel.is_dir():
+#         for source in novel.iterdir():
+#             if source.is_dir():
+#                 # sources[novel.name + "/" + source.name] = shutil.disk_usage(str(source)).total
+#                 sources[novel.name + "/" + source.name] = sum(os.path.getsize(f) for f in source.glob('**/*') if os.path.isfile(f))
         
-for source in sorted(sources, key=sources.get, reverse=True):
-    print(source + ": " + str(sources[source]))
+# for source in sorted(sources, key=sources.get, reverse=True):
+#     print(source + ": " + str(sources[source]))
     
 # One Piece/beautymanga-com: 5172581478
 # Isekai Maou To Shoukan Shoujo Dorei Majutsu/beautymanga-com: 1696360032
@@ -168,7 +166,6 @@ for source in sorted(sources, key=sources.get, reverse=True):
 # A Record Of A MortalS Journey To Immortality/allnovel-org: 40664577
 # endregion
 
-
 # region set all admin to 4
 
 
@@ -195,8 +192,7 @@ for source in sorted(sources, key=sources.get, reverse=True):
 
 # endregion
 
-
-# failed chapters detector / repairer
+# region failed chapters detector / repairer
 
 # import pathlib
 # import json
@@ -239,3 +235,24 @@ for source in sorted(sources, key=sources.get, reverse=True):
 #     if not failed:
 #         with open("success.txt", "a") as f:
 #             f.write(novel.name + "\n")
+
+
+# endregion
+
+# region duplicate of cover
+import pathlib
+import filecmp
+
+cover_to_check = pathlib.Path("Lightnovels/Don T Cry/bestlightnovel-com/cover.jpg")
+
+for novel in pathlib.Path("Lightnovels").iterdir():
+    for source in novel.iterdir():
+        if source.is_dir() and (source / "cover.jpg").exists():
+            # facultatif : check if source is bestlightnovel
+            if not source.name == "bestlightnovel-com" :
+                continue
+
+            if filecmp.cmp(cover_to_check, source / "cover.jpg"):
+                print("Duplicate: " + str(novel.name + "/" + source.name))
+
+            
