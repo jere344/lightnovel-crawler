@@ -292,13 +292,16 @@ def _update(url: str, job_id: str):
             break
 
     # endregion
-
+    print("missing_chapters:", missing_chapters)
+    print("missing_cover:", missing_cover)
+    print("missing_images:", missing_images)
     if missing_chapters or missing_cover or missing_images :
+        # Ebook are disabled for now
         # We delete the ebook folders to force the creation of a new one
-        ebook_folders_path = [source_folder_path / "epub"]
-        for ebook_folder_path in ebook_folders_path:
-            if ebook_folder_path.exists():
-                shutil.rmtree(str(ebook_folder_path))
+        # ebook_folders_path = [source_folder_path / "epub"]
+        # for ebook_folder_path in ebook_folders_path:
+        #     if ebook_folder_path.exists():
+        #         shutil.rmtree(str(ebook_folder_path))
 
         job.start_download()
 
