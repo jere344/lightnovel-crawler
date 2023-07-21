@@ -95,7 +95,6 @@ function AddNovel() {
         }
 
         if (query.startsWith("http")) {
-            console.log("Search query is an url");
             directDownload(searchQuery);
             return;
         }
