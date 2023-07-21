@@ -54,7 +54,8 @@
 @media screen and (max-width:768px) {
     .featured-column .novel-title {
         font-size: 1rem;
-        margin-bottom: 5px;
+        margin-bottom: 0;
+        margin-top:-5px;
     }
 
     .item-body.featured-column i {
@@ -64,21 +65,18 @@
     }
 
     .featured-column span {
-        flex-direction: column;
-        justify-content: left;
-        padding-top: 5px;
+        padding-top: 8px;
     }
 
     .featured-column p {
         font-size: .75rem;
     }
 
-    .novel-item-featured {
-        padding-left: 0;
+    .item-body.featured-column  {
+        width:60%;
     }
     
-    .featured-column {
-        width: 50%;
+    .item-cover.featured-column {
+        width: 36%;
     }
-    
 }
