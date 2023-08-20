@@ -37,7 +37,7 @@ function AddNovel() {
                     <li className="source-item" key={sourceIndex}>
                         <i className="download-icon icon-check-empty" onClick={() => startDownload(novelIndex, sourceIndex)}></i>
                         <div>
-                            <a className="source-url" href={source.url}>{source.url}</a>
+                            <a className="source-url" target="_blank" rel="noreferrer" href={source.url}>{source.url}</a>
                             {source.info ? <label>{source.info}</label> : null}
                         </div>
                     </li>
