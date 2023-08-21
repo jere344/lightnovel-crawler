@@ -67,10 +67,10 @@ $ cd lncrawl/bots/web2/react-app
 $ npm start
 ```
 
-### Adding a novel to development server
+### Adding a novel to the server
 
-- Visit `http://localhost:3000/addnovel` and in the search bar type in a novel's name or a URL of a novel from a supported source. 
-- If you search using a novel's name there will be multiple sources from which you can add novel to dev server. You can check out a source by clicking on the URL of the novel and it should open in a new tab.
+- Visit `http://localhost:3000/addnovel` or just click on `Add Novel` on the website and in the search bar type in a novel's name or a URL of a novel from a supported source. 
+- If you search using a novel's name there will be multiple sources from which you can add novel to the server. You can check out a source by clicking on the URL of the novel and it should open in a new tab.
 
 ![FireShot Capture 009 - Add instantly a new novel to LnCrawler database from more than 140 so_ - localhost](https://user-images.githubusercontent.com/86294972/195616958-3bf6a75c-0872-443e-a316-f3f00e1b8ac7.png)
 
