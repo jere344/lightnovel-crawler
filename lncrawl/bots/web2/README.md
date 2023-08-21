@@ -53,7 +53,7 @@ $ npm install
 
 ## Start the website
 
-### Run the developpement server
+### Run the developement server
 
 - First start the backend bot
 
@@ -66,6 +66,13 @@ python lncrawl --bot web2
 $ cd lncrawl/bots/web2/react-app
 $ npm start
 ```
+
+### Adding a novel to the server
+
+- Visit `http://localhost:3000/addnovel` or just click on `Add Novel` on the website and in the search bar type in a novel's name or a URL of a novel from a supported source. 
+- If you search using a novel's name there will be multiple sources from which you can add novel to the server. You can check out a source by clicking on the URL of the novel and it should open in a new tab.
+
+![FireShot Capture 009 - Add instantly a new novel to LnCrawler database from more than 140 so_ - localhost](https://user-images.githubusercontent.com/86294972/195616958-3bf6a75c-0872-443e-a316-f3f00e1b8ac7.png)
 
 ### Run the production server
 You will need to install serve
@@ -129,15 +136,8 @@ More general informations can be found in the [lightnovel-crawler](https://githu
 
 # Pictures
 
+- Light Theme:
 ![FireShot Capture 002 - Read Light Novels Online For Free - LnCrawler - localhost](https://user-images.githubusercontent.com/86294972/195616533-fd60cfc0-8ecf-4132-9738-db52a68567e8.png)
+
+- Dark Theme:
 ![FireShot Capture 003 - Read Light Novels Online For Free - LnCrawler - localhost](https://user-images.githubusercontent.com/86294972/195616566-92042fde-f414-4b00-ae0d-2cce81fe217a.png)
-
-
-Adding a novel :
-
-![FireShot Capture 006 - Add instantly a new novel to LnCrawler database from more than 140 so_ - localhost](https://user-images.githubusercontent.com/86294972/195616687-5788fd10-f6bd-4fcb-b520-a7eaa32affbd.png)
-![FireShot Capture 008 - Add instantly a new novel to LnCrawler database from more than 140 so_ - localhost](https://user-images.githubusercontent.com/86294972/195616702-17187538-0164-4e9a-b183-3da4ba701d88.png)
-![FireShot Capture 009 - Add instantly a new novel to LnCrawler database from more than 140 so_ - localhost](https://user-images.githubusercontent.com/86294972/195616958-3bf6a75c-0872-443e-a316-f3f00e1b8ac7.png)
-![FireShot Capture 010 - Add instantly a new novel to LnCrawler database from more than 140 so_ - localhost](https://user-images.githubusercontent.com/86294972/195616741-dc5aa5c9-84d2-48e7-80b9-9134e93543a9.png)
-![FireShot Capture 004 - Read Le Maître Des Secrets in French for free - LnCrawler - localhost](https://user-images.githubusercontent.com/86294972/195616756-4e6aba97-8689-4095-8c49-514b54a7180e.png)
-![FireShot Capture 005 - Read Light Novels Online For Free - LnCrawler - localhost](https://user-images.githubusercontent.com/86294972/195616767-8d957bc4-644d-4709-a00b-61363f18e1ff.png)
