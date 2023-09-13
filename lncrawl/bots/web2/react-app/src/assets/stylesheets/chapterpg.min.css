@@ -97,7 +97,7 @@
 
 
 #chapter-article .chapter-content img {
-	width: 100%;
+	max-width: 100%;
 }
 
 #chapter-article .chapter-content p {
