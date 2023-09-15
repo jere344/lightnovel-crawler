@@ -6,6 +6,7 @@ import RatingStars from '../components/RatingStars';
 import { nFormatter, toFlag, languageDict } from '../Utils';
 import CommentComponent from '../components/CommentComponent';
 import TagList from '../components/TagList';
+import { Helmet } from 'react-helmet';
 
 import "../assets/stylesheets/navbar.min.css"
 import "../assets/stylesheets/novel.min.css"
@@ -144,6 +145,10 @@ function NovelInfo() {
 
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
+            <Helmet>
+                <meta name="robots" content="index" />
+                <link rel="canonical" href={window.location.href} />
+            </Helmet>
             <article id="novel" data-novelid="1370" data-volbased="False" itemProp="itemReviewed" itemScope=""
                 itemType="http://schema.org/Book">
 
