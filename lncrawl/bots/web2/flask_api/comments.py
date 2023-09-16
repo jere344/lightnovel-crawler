@@ -1,5 +1,4 @@
 from typing import List
-
 from .Novel import Novel
 from . import flaskapp
 from flask import request
@@ -9,7 +8,67 @@ from . import utils
 import uuid
 from . import datetools
 from . import sanatize
-import urllib.parse
+
+
+def get_newest_comments(url: str, count: int = 5, offset: int = 0):
+    """Get the newest comments for a novel
+    return list of files
+    """
+    path = get_path_from_url(url)
+    if not path.exists():
+        return []
+
+    directory = path.parent
+
+    # Get all files in the directory and sort them by modification time (newest first)
+    files = sorted(
+        directory.glob("[0-9][0-9][0-9][0-9][0-9].json"),
+        key=lambda f: f.stat().st_mtime,
+        reverse=True,
+    )
+
+    return [x.name for x in files[offset : offset + count]]
+
+
+def get_path_from_url(url: str):
+    """Get the path to the comment file from the url
+
+    /novel/Under+The+Oak+Tree/novelnext-com -> lib.COMMENT_FOLDER / Under The Oak Tree.json
+    /novel/Under+The+Oak+Tree/novelnext-com/chapter-1 -> lib.COMMENT_FOLDER / Under The Oak Tree / 00001.json
+
+    """
+
+    url = (
+        url.replace("https://", "").replace("http://", "").replace("\\", "/").split("/")
+    )
+    url = [x for x in url if x != ""]  # remove empty strings
+
+    if url[0] != "novel":
+        return None
+    if len(url) == 3:  # novel info page
+        url_1 = sanatize.pathify(url[1])
+        path = lib.COMMENT_FOLDER / url_1 / f"{url_1}.json"
+    elif len(url) == 4:  # chapter page
+        chap_number = url[3].split("-")[-1]
+        path = (
+            lib.COMMENT_FOLDER
+            / sanatize.pathify(url[1])
+            / f"{chap_number.zfill(5)}.json"
+        )
+    else:
+        return None
+
+    return path
+
+
+def get_source_from_url(url: str):
+    """Get the source from the url"""
+    url = (
+        url.replace("https://", "").replace("http://", "").replace("\\", "/").split("/")
+    )
+    url = [x for x in url if x != ""]
+    if len(url) == 3 or len(url) == 4:
+        return url[2]
 
 
 def prepare_comments(comments: dict):
@@ -21,15 +80,25 @@ def prepare_comments(comments: dict):
         prepare_comments(comment["replies"])
 
 
-def find_comment(comments: List[dict], comment_id: str):
+def _find_comment(comments: List[dict], comment_id: str):
     """Recursively find a comment"""
     for comment in comments:
         if comment["id"] == comment_id:
             return comment
-        found = find_comment(comment["replies"], comment_id)
+        found = _find_comment(comment["replies"], comment_id)
         if found:
             return found
     return None
+
+
+def find_comment(comments: dict, comment_id: str):
+    """Find a comment in a file"""
+    for source in comments:
+        comment = _find_comment(comments[source], comment_id)
+        if comment:
+            return comment
+    return None
+
 
 @flaskapp.app.route("/api/get_comments")
 @flaskapp.app.route("/get_comments")
@@ -38,17 +107,39 @@ def get_comments():
     if not url:
         return {"status": "error", "message": "No page specified"}, 400
 
-    path = lib.COMMENT_FOLDER / f"{sanatize.pathify(url)}.json"
+    path = get_path_from_url(url)
 
     if not path.exists():
-        return {"status": "success", "content": []}, 200
+        return {
+            "status": "success",
+            "content": [],
+            "adjacent": [],
+            # "not_loaded": [],
+        }, 200
 
-    with open(path, "r", encoding='utf-8') as f:
+    with open(path, "r", encoding="utf-8") as f:
         comments = json.load(f)
 
-    prepare_comments(comments)
+    source = get_source_from_url(url)
+    if not source in comments:
+        comments[source] = []
 
-    return {"status": "success", "content": comments}, 200
+    for s in comments:
+        prepare_comments(comments[s])
+
+    content = comments[source]
+    comments[source] = []
+
+    # not_loaded = get_newest_comments(url, 5, 0)
+    # print(not_loaded)
+
+    return {
+        "status": "success",
+        "content": content,
+        "adjacent": comments,
+        # "not_loaded": not_loaded,
+    }, 200
+
 
 @flaskapp.app.route("/api/add_comment", methods=["POST"])
 @flaskapp.app.route("/add_comment", methods=["POST"])
@@ -62,12 +153,15 @@ def add_comment():
     if not url or not name or not text:
         return {"status": "error", "message": "Missing data"}, 400
 
+    requester_ip = request.environ.get("HTTP_X_REAL_IP", request.remote_addr)
+    print(f"Requester IP: {requester_ip}")
+
     reply = {
         "name": name,
         "text": text,
         "date": datetools.utc_str_date(),
         "id": str(uuid.uuid4()),
-        "rank": "Reader",
+        "rank": "Reader" if requester_ip != "127.0.0.1" else "Owner",
         "spoiler": True if spoiler else False,
         "reply_to": None,
         "likes": [],
@@ -75,13 +169,13 @@ def add_comment():
         "replies": [],
     }
 
-    path = (
-        lib.COMMENT_FOLDER / f"{sanatize.pathify(urllib.parse.unquote_plus(url))}.json"
-    )
+    path = get_path_from_url(url)
+
     if not path.exists():
-        with open(path, "w", encoding='utf-8') as f:
-            json.dump([], f)
-    with open(path, "r", encoding='utf-8') as f:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump({}, f)
+    with open(path, "r", encoding="utf-8") as f:
         comments = json.load(f)
 
     comment_id_to_reply_to = data.get("reply_to")
@@ -94,9 +188,12 @@ def add_comment():
             return {"status": "error", "message": "Comment not found"}, 400
 
     else:
-        comments.append(reply)
+        source = get_source_from_url(url)
+        if not source in comments:
+            comments[source] = []
+        comments[source].append(reply)
 
-    with open(path, "w", encoding='utf-8') as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(comments, f)
 
     novel: Novel = utils.get_novel_with_url(url)
@@ -105,6 +202,7 @@ def add_comment():
     print(f"Comment added to {url} by {name} ({text})")
 
     return {"status": "success"}, 200
+
 
 @flaskapp.app.route("/api/add_reaction", methods=["POST"])
 @flaskapp.app.route("/add_reaction", methods=["POST"])
@@ -118,21 +216,21 @@ def rate_comment():
     if not url or not comment_id:
         return {"status": "error", "message": "Missing data"}, 400
 
-    path = (
-        lib.COMMENT_FOLDER / f"{sanatize.pathify(urllib.parse.unquote_plus(url))}.json"
-    )
+    path = get_path_from_url(url)
 
     if not path.exists():
         return {"status": "error", "message": "Comment not found"}, 400
 
-    with open(path, "r", encoding='utf-8') as f:
+    with open(path, "r", encoding="utf-8") as f:
         comments = json.load(f)
 
     comment = find_comment(comments, comment_id)
     if not comment:
         return {"status": "error", "message": "Comment not found"}, 400
 
-    shuffled_ip = utils.shuffle_ip(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
+    shuffled_ip = utils.shuffle_ip(
+        request.environ.get("HTTP_X_REAL_IP", request.remote_addr)
+    )
     if reaction == "like":
         if shuffled_ip in comment["dislikes"]:
             comment["dislikes"].remove(shuffled_ip)
@@ -151,7 +249,7 @@ def rate_comment():
         if shuffled_ip in comment["dislikes"]:
             comment["dislikes"].remove(shuffled_ip)
 
-    with open(path, "w", encoding='utf-8') as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(comments, f)
 
     return {"status": "success"}, 200

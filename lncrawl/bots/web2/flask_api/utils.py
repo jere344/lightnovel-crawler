@@ -16,7 +16,7 @@ def get_novel_with_url(url: str) -> Optional[Novel]:
     """
     Returns the novel with the url
     """
-    url = url.replace("http://", "").replace("https://", "")
+    url = url.replace("http://", "").replace("https://", "").replace("\\", "/")
     if url.startswith("/"):
         url = url[1:]
     novel_slug = url.split("/")[1]

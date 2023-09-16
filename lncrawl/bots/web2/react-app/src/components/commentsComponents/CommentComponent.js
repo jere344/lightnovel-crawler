@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react"
-import CommentSection from "./CommentSection"
-import TermsPrompt from "./TermsPrompt"
-import { API_URL } from "../config.js"
-import "../assets/stylesheets/comments.min.css"
+import { useState, useEffect } from 'react'
+import CommentSection from './CommentSection'
+import AdjacentCommentSection from './AdjacentCommentSection.js'
+import TermsPrompt from './TermsPrompt'
+import { API_URL } from '../../config.js'
+import '../../assets/stylesheets/comments.min.css'
 
 // const exemple = {
 //     "0": {
@@ -38,37 +39,57 @@ import "../assets/stylesheets/comments.min.css"
 //     },
 // }
 
-
-
-
-function CommentComponent({ currentUrl }) {
+function CommentComponent ({ currentUrl }) {
     const url = `${API_URL}/get_comments?page=${currentUrl}`
     const [comments, setComments] = useState([])
+    const [adjacents, setAdjacents] = useState([])
 
     useEffect(() => {
         fetch(url)
             .then(response => response.json())
-            .then(data => setComments(data.content))
+            .then(data => {
+                setComments(data.content)
+                setAdjacents(data.adjacent)
+            })
     }, [url])
 
     const [replyTo, setReplyTo] = useState(null)
 
     const [commenting, setCommenting] = useState(false)
 
-
     return (
-        <section className="comment-list" data-objectid="1422" data-objtype="1">
-            <div className="head">
+        <section className='comment-list' data-objectid='1422' data-objtype='1'>
+            <div className='head'>
                 <h4>User Comments</h4>
-                <button className="button" title="You must be logged in to post a comment." onClick={() => { setReplyTo(false); setCommenting(true) }}>Write Comment</button>
+                <button
+                    className='button'
+                    title='You must be logged in to post a comment.'
+                    onClick={() => {
+                        setReplyTo(false)
+                        setCommenting(true)
+                    }}
+                >
+                    Write Comment
+                </button>
             </div>
-            <div className="comment-policy">
-                <button id="comment-policy-show" onClick={() => { setReplyTo(false); setCommenting(true) }}>Please read and apply the rules before posting a comment.</button>
+            <div className='comment-policy'>
+                <button
+                    id='comment-policy-show'
+                    onClick={() => {
+                        setReplyTo(false)
+                        setCommenting(true)
+                    }}
+                >
+                    Please read and apply the rules before posting a comment.
+                </button>
                 <br />
                 By sharing your comment, you agree to all the relevant terms.
             </div>
-            <div className="comment-wrapper">
+            <div className='comment-wrapper'>
                 <CommentSection comments={comments} setReplyTo={setReplyTo} setCommenting={setCommenting} />
+            </div>
+            <div className='comment-adjacent'>
+                <AdjacentCommentSection adjacents={adjacents} setReplyTo={setReplyTo} setCommenting={setCommenting} />
             </div>
             {/* setCommenting is used in TermsPrompt to stop commenting when clickingon the cross */}
             {/* TermsPrompt will call CommentPromt which will use replyTo to post new comment request */}

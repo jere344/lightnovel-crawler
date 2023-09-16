@@ -7,8 +7,7 @@ import "../assets/stylesheets/chapterpg.min.css"
 
 import SettingsWheel from '../components/SettingsWheel';
 import Metadata from '../components/Metadata';
-import CommentComponent from '../components/CommentComponent';
-// import RateSource from '../components/RateSource';
+import CommentComponent from '../components/commentsComponents/CommentComponent';
 import notFoundImage from "../assets/404.webp"
 
 import { API_URL } from '../config.js';

@@ -83,6 +83,7 @@
     box-shadow: none;
 }
 
+.comment-list ul li .comment-adjacent,
 .comment-list ul li .comment-item {
     position: relative;
     padding: 10px 13px 10px;
@@ -182,6 +183,7 @@
     border-radius: 50%;
 }
 
+.comment-list ul li .comment-adjacent .comment-body .header,
 .comment-list ul li .comment-item .comment-body .header {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -202,6 +204,7 @@
     display: block;
 }
 
+.comment-list ul li .comment-adjacent .comment-body .header,
 .comment-list ul li .comment-item .comment-body .header .comment-info .username {
     display: block;
     font-size: .825rem;
@@ -211,6 +214,9 @@
     font-weight: 500;
     margin-bottom: .2rem;
     color: var(--text-color);
+}
+.comment-list ul li .comment-adjacent .comment-body .header {
+    padding-left: 0px;
 }
 
 .comment-list ul li .comment-item .comment-body .header .comment-info .username span+span {
@@ -298,6 +304,7 @@
     padding: 6px 0 6px 6px;
 }
 
+.comment-list ul li .comment-adjacent .comment-body .comment-text,
 .comment-list ul li .comment-item .comment-body .comment-text {
     word-break: break-word;
     padding: 5px 0;
@@ -308,11 +315,13 @@
     transition: all .1s;
 }
 
+.comment-list ul li .comment-adjacent .comment-body .comment-text p,
 .comment-list ul li .comment-item .comment-body .comment-text p {
     white-space: pre-wrap;
     transition: all .1s;
 }
 
+.comment-list ul li .comment-adjacent .comment-body .comment-text[data-spoiler="1"],
 .comment-list ul li .comment-item .comment-body .comment-text[data-spoiler="1"] {
     position: relative;
     cursor: pointer;
@@ -320,6 +329,7 @@
     padding-right: 7px;
 }
 
+.comment-list ul li .comment-adjacent .comment-body .comment-text[data-spoiler="1"]::before,
 .comment-list ul li .comment-item .comment-body .comment-text[data-spoiler="1"]::before {
     content: "";
     position: absolute;
@@ -330,10 +340,12 @@
     border-radius: 6px;
 }
 
+.comment-list ul li .comment-adjacent .comment-body .comment-text[data-spoiler="1"] p,
 .comment-list ul li .comment-item .comment-body .comment-text[data-spoiler="1"] p {
     filter: blur(4px);
 }
 
+.comment-list ul li .comment-adjacent .comment-body .comment-text[data-spoiler="1"]::after,
 .comment-list ul li .comment-item .comment-body .comment-text[data-spoiler="1"]::after {
     transition: all .3s ease-in-out;
     content: "Reveal Spoiler";
@@ -355,6 +367,9 @@
     border: 1px solid var(--border-color-6);
     border-radius: 20px;
     box-shadow: 0 2px 4px rgba(100, 100, 100, .5);
+}
+.comment-list ul li .comment-adjacent .comment-body .comment-text[data-spoiler="1"]::after {
+    content: "Load";
 }
 
 .comment-list ul li .comment-item .comment-body .edited {
@@ -835,6 +850,7 @@
         box-shadow: var(--global-shadow);
     }
 
+    .comment-list ul li .comment-adjacent,
     .comment-list ul li .comment-item {
         padding: 20px 20px 20px;
         position: relative;
@@ -857,15 +873,21 @@
         font-size: 0;
     }
 
+    .comment-list ul li .comment-adjacent .comment-body .header,
     .comment-list ul li .comment-item .comment-body .header {
         display: flex;
         padding: 3px 0 3px 52px;
     }
 
+    .comment-list ul li .comment-adjacent .comment-body .header,
     .comment-list ul li .comment-item .comment-body .header .comment-info .username {
         font-size: 18px;
         line-height: 20px;
         font-weight: 600;
+    }
+
+    .comment-list ul li .comment-adjacent .comment-body .header {
+        padding-left: 0px;
     }
 
     .comment-list ul li .comment-item .comment-body .header .comment-info .comdate {
@@ -895,6 +917,7 @@
         font-size: 16px;
     }
 
+    .comment-list ul li .comment-adjacent .comment-body .comment-text,
     .comment-list ul li .comment-item .comment-body .comment-text {
         padding: 6px 0;
         margin: 6px 0;
@@ -902,6 +925,7 @@
         line-height: 24px;
     }
 
+    .comment-list ul li .comment-adjacent .comment-body .comment-text[data-spoiler="1"]::after ,
     .comment-list ul li .comment-item .comment-body .comment-text[data-spoiler="1"]::after {
         font-size: 14px;
         top: 50%;

@@ -4,7 +4,7 @@ import Metadata from '../components/Metadata';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import RatingStars from '../components/RatingStars';
 import { nFormatter, toFlag, languageDict } from '../Utils';
-import CommentComponent from '../components/CommentComponent';
+import CommentComponent from '../components/commentsComponents/CommentComponent';
 import TagList from '../components/TagList';
 import { Helmet } from 'react-helmet';
 

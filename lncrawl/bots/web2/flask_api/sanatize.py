@@ -1,4 +1,5 @@
 import unicodedata
+from slugify import slugify
 
 
 def sanitize(text: str) -> str:
@@ -15,8 +16,12 @@ def pathify(text: str) -> str:
     """
     Make a string safe to use as a filename.
     """
-    text = sanitize(text)
-    illegal_chars = r'<>:"/\|?*'
-    for char in illegal_chars:
-        text = text.replace(char, "_")
-    return text
+    # text = sanitize(text)
+    # illegal_chars = r'<>:"/\|?*'
+    # for char in illegal_chars:
+    #     text = text.replace(char, "_")
+    # return urllib.parse.unquote_plus(text)
+
+    # Just use slugify instead :
+    
+    return slugify(text, separator=" ", lowercase=False, word_boundary=True)
