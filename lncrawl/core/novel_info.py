@@ -10,6 +10,7 @@ from .exeptions import LNException
 
 
 def __format_title(text):
+    text = text.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
     return re.sub(r"\s+", " ", str(text)).strip().title()
 
 
