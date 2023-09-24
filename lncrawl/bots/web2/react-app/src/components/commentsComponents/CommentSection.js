@@ -1,6 +1,6 @@
 import Comment from './Comment'
 
-function CommentSection ({ comments, setReplyTo, setCommenting }) {
+function CommentSection ({ comments, setReplyTo, setCommenting, defaultSort='reactions' }) {
     // Recursively render comments
 
     function numberOfReplies (comment) {
@@ -9,6 +9,18 @@ function CommentSection ({ comments, setReplyTo, setCommenting }) {
             count += 1 + numberOfReplies(comment.replies[child])
         }
         return count
+    }
+
+    function repliesDate (comment) {
+        // Returns the date of the last reply, recursively
+        let date = comment.date
+        for (const child in comment.replies) {
+            const childDate = repliesDate(comment.replies[child])
+            if (childDate > date) {
+                date = childDate
+            }
+        }
+        return date
     }
 
     function sortComments (type, object) {
@@ -30,13 +42,17 @@ function CommentSection ({ comments, setReplyTo, setCommenting }) {
                     numberOfReplies(b[1]) -
                     (a[1].likes + a[1].dislikes + numberOfReplies(a[1]))
             )
+        } else if (type === 'replies-date') {
+            return Object.entries(object).sort(
+                (a, b) => new Date(repliesDate(b[1])) - new Date(repliesDate(a[1]))
+            )
         } else {
             return Object.entries(object)
         }
     }
 
     const commentList = []
-    for (const [id, commentData] of sortComments('reactions', comments)) {
+    for (const [id, commentData] of sortComments(defaultSort, comments)) {
         const commentItem = (
             <Comment comment={commentData} key={id} setCommenting={setCommenting} setReplyTo={setReplyTo} />
         )

@@ -61,6 +61,10 @@ function Header() {
                                             className="icon-megaphone"></i> DEV</a>
                                 </li>
                                 <li className="nav-item">
+                                    <Link className="nav-link" title="Chat" to="/chat/chat-general/b"><i
+                                        className="icon-commenting"></i> Chat</Link>
+                                </li>
+                                <li className="nav-item">
                                     <a className="nav-link" title="Discord" href="https://discord.gg/a2b4Mfr4cU" target="_blank" rel="noreferrer"> 
                                         <i className="icon-discord">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">

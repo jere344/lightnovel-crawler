@@ -16,6 +16,7 @@ import ChapterList from './pages/ChapterList';
 import Search from './pages/Search';
 import AddNovel from './pages/AddNovel';
 import Home from './pages/Home';
+import Chat from './pages/Chat';
 // import Maintenance from './components/Maintenance';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -28,6 +29,7 @@ root.render(
         <Route path="/" element={<Home />} />
         <Route path="/browse/" element={<Navigate to="/browse/page-1" />} />
         <Route path="/browse/page-:page" element={<Browse />} />
+        <Route path="/chat/chat-:subject/:part" element={<Chat />} />
         <Route path="/novel/:novelSlug/:sourceSlug" element={<NovelInfo />} />
         <Route path="/novel/:novelSlug/:sourceSlug/chapter-:chapterId" element={<Chapter />} />
         <Route path="/novel/:novelSlug/:sourceSlug/chapterlist/page-:page" element={<ChapterList />} />

@@ -39,7 +39,7 @@ import '../../assets/stylesheets/comments.min.css'
 //     },
 // }
 
-function CommentComponent ({ currentUrl }) {
+function CommentComponent ({ currentUrl, defaultSort = 'reactions'}) {
     const url = `${API_URL}/get_comments?page=${currentUrl}`
     const [comments, setComments] = useState([])
     const [adjacents, setAdjacents] = useState([])
@@ -86,7 +86,7 @@ function CommentComponent ({ currentUrl }) {
                 By sharing your comment, you agree to all the relevant terms.
             </div>
             <div className='comment-wrapper'>
-                <CommentSection comments={comments} setReplyTo={setReplyTo} setCommenting={setCommenting} />
+                <CommentSection comments={comments} setReplyTo={setReplyTo} setCommenting={setCommenting} defaultSort={defaultSort} />
             </div>
             <div className='comment-adjacent'>
                 <AdjacentCommentSection adjacents={adjacents} setReplyTo={setReplyTo} setCommenting={setCommenting} />
