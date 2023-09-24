@@ -8,6 +8,7 @@ from . import utils
 import uuid
 from . import datetools
 from . import sanatize
+import urllib.parse
 
 
 def get_newest_comments(url: str, count: int = 5, offset: int = 0):
@@ -43,7 +44,7 @@ def get_path_from_url(url: str):
     )
     url = [x for x in url if x != ""]  # remove empty strings
 
-    if url[0] != "novel":
+    if url[0] != "novel" and url[0] != "chat":
         return None
     if len(url) == 3:  # novel info page
         url_1 = sanatize.pathify(url[1])
@@ -152,6 +153,7 @@ def add_comment():
     spoiler = data.get("spoiler")
     if not url or not name or not text:
         return {"status": "error", "message": "Missing data"}, 400
+    url = urllib.parse.unquote(url)
 
     requester_ip = request.environ.get("HTTP_X_REAL_IP", request.remote_addr)
     print(f"Requester IP: {requester_ip}")
@@ -197,7 +199,8 @@ def add_comment():
         json.dump(comments, f)
 
     novel: Novel = utils.get_novel_with_url(url)
-    novel.comment_count += 1
+    if novel:
+        novel.comment_count += 1
 
     print(f"Comment added to {url} by {name} ({text})")
 
