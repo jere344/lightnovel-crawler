@@ -21,6 +21,7 @@ from .exeptions import ScraperErrorGroup
 from .novel_info import format_novel, save_metadata
 from .novel_search import search_novels
 from .scraper import Scraper
+from ..bots.web2.flask_api.naming_rules import clean_name
 
 logger = logging.getLogger(__name__)
 
@@ -140,12 +141,14 @@ class App:
             raise Exception("No volumes found")
 
         if not self.good_file_name:
-            self.good_file_name = slugify(
-                self.crawler.novel_title,
-                max_length=50,
-                separator=" ",
-                lowercase=False,
-                word_boundary=True,
+            self.good_file_name = clean_name(
+                slugify(
+                    self.crawler.novel_title,
+                    max_length=50,
+                    separator=" ",
+                    lowercase=False,
+                    word_boundary=True,
+                )
             )
 
         source_name = slugify(urlparse(self.crawler.home_url).netloc)
