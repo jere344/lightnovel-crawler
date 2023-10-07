@@ -149,8 +149,7 @@ function NovelInfo() {
                 <meta name="robots" content="index" />
                 <link rel="canonical" href={window.location.href} />
             </Helmet>
-            <article id="novel" data-novelid="1370" data-volbased="False" itemProp="itemReviewed" itemScope=""
-                itemType="http://schema.org/Book">
+            <article id="novel" itemProp="itemReviewed" itemScope="" itemType="http://schema.org/Book">
 
                 <header className="novel-header">
                     <div className="glass-background">

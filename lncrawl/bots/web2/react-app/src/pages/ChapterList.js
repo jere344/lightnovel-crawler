@@ -67,16 +67,6 @@ function ChapterList() {
 
 
     const chapterList = [];
-    // {% for chapter in chapters %}
-    //     <li data-chapterno="{{ chapter['id'] }}" data-volumeno="{{ chapter['volume'] }}"
-    //         data-orderno="{{ chapter['id'] }}">
-    //         <a href="../chapter-{{ chapter['id'] }}" title="{{ chapter['title'] }}">
-    //             <span className="chapter-no ">{{ chapter['id'] }}</span>
-    //             <strong className="chapter-title">
-    //                 {{ chapter['title'] }} </strong>
-    //         </a>
-    //     </li>
-    // {% endfor %}
     for (let i = 0; i < chapter.length; i++) {
         chapterList.push(
             <li data-chapterno={chapter[i].id} data-volumeno={chapter[i].volume} data-orderno={chapter[i].id} key={chapter[i].id}>

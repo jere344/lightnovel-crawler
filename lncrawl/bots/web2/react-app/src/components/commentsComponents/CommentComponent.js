@@ -58,7 +58,7 @@ function CommentComponent ({ currentUrl, defaultSort = 'reactions'}) {
     const [commenting, setCommenting] = useState(false)
 
     return (
-        <section className='comment-list' data-objectid='1422' data-objtype='1'>
+        <section className='comment-list'>
             <div className='head'>
                 <h4>User Comments</h4>
                 <button
