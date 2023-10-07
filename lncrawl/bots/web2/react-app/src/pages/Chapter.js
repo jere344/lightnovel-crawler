@@ -205,13 +205,12 @@ function Chapter() {
     /* #region fix out of bound background color edit dialog */
 
     // when the window is small, combo-dialog can overflow out of the screen right side
-    // 520 -> 50%
-    // 433 -> 23%
+    // 530 -> 50%
+    // 453 -> 23%
 
     // 87 -> 27%
 
     // 87 / 27 = 3.22
-
 
     // left = ((window width - 453) / 3.22)%
     // left = ((window width / 3.22) - 140.6)%
