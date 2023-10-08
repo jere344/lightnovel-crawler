@@ -371,7 +371,7 @@ function Chapter() {
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <Helmet>
                 <meta name="robots" content="index" />
-                <link rel="canonical" href={window.location.href} />
+                <link rel="canonical" href={window.location.href.replace(/\/+$/, '')} />
             </Helmet>
             <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
                 <div className="head-stick-offset"></div>

@@ -147,7 +147,7 @@ function NovelInfo() {
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <Helmet>
                 <meta name="robots" content="index" />
-                <link rel="canonical" href={window.location.href} />
+                <link rel="canonical" href={window.location.href.replace(/\/+$/, '')} />
             </Helmet>
             <article id="novel" itemProp="itemReviewed" itemScope="" itemType="http://schema.org/Book">
 
