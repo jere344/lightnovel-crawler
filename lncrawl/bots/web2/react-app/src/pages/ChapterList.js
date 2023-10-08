@@ -2,6 +2,7 @@ import Metadata from '../components/Metadata';
 import Pagination from '../components/Pagination';
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 
 
 import "../assets/stylesheets/navbar.min.css"
@@ -94,6 +95,9 @@ function ChapterList() {
     return (
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
+            <Helmet>
+               <link rel="canonical" href={window.location.href.replace(/\/+$/, '').replace(/\/page-\d+$/, '/page-1')} />
+            </Helmet>
             <article id="chapter-list-page">
                 <header className="container">
                     <div className="novel-item">
