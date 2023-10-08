@@ -51,6 +51,9 @@ PORT = int(config["api_port"])
 
 MAX_EBOOK_SIZE = int(config["max_ebook_size"])
 
+# from . import naming_rules
+# naming_rules.fix_existing()
+
 database.all_novels: List[Novel] = []
 for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
     try:
