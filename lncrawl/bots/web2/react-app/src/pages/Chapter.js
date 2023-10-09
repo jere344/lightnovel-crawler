@@ -42,6 +42,7 @@ function Chapter() {
             "cover": undefined,
             "novel": {
                 "language": "en",
+                "slug": novelSlug,
             },
             "title": "Loading...",
         }
@@ -371,7 +372,7 @@ function Chapter() {
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <Helmet>
                 <meta name="robots" content="index" />
-                <link rel="canonical" href={window.location.href.replace(/\/+$/, '')} />
+                <link rel="canonical" href={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id}`} />
             </Helmet>
             <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
                 <div className="head-stick-offset"></div>
@@ -379,7 +380,7 @@ function Chapter() {
                 <section className="page-in content-wrap" ref={innerRef}>
                     <div className="titles">
                         <h1 itemProp="headline">
-                            <Link className="booktitle" to={`/novel/${novelSlug}/${sourceSlug}`} title={source.title} rel="up"
+                            <Link className="booktitle" to={`/novel/${source.novel.slug}/${sourceSlug}`} title={source.title} rel="up"
                                 itemProp="sameAs">{source.title}</Link>
                             <span hidden=""></span>
                             <br />
@@ -399,14 +400,14 @@ function Chapter() {
                             backgroundColor : backgroundColorCookie.backgroundColor,
                             color : fontColorCookie.fontColor
                         }} 
-                        dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="${API_URL}/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
+                        dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="${API_URL}/image/${decodeUrlParameter(source.novel.slug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
                     </div>
                     {
                         chapter.body.includes("<i>Failed to download chapter body</i>") ?
                             (
                                 <p>
                                     It seems like this chapter wasn't properly downloaded. <br />
-                                    You can try going to <Link to={`/novel/${novelSlug}/${sourceSlug}/`}>the index page</Link> and click on update to attempt a redownload.
+                                    You can try going to <Link to={`/novel/${source.novel.slug}/${sourceSlug}/`}>the index page</Link> and click on update to attempt a redownload.
                                     <br />
                                     You can also try <Link to="/addnovel">adding this novel again</Link> from a different source
                                     <br />
@@ -416,16 +417,16 @@ function Chapter() {
                     }
                     <div className="chapternav skiptranslate">
                         <Link rel="prev" className={`button prevchap ${response.is_prev ? "" : 'isDisabled'}`}
-                            to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
+                            to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
                             <i className="icon-left-open"></i>
                             <span>Prev</span>
                         </Link>
-                        <Link title={source.title} className="button chapindex" to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>
+                        <Link title={source.title} className="button chapindex" to={`/novel/${source.novel.slug}/${sourceSlug}/chapterlist/page-1`}>
                             <i className="icon-home"></i>
                             <span>Index</span>
                         </Link>
                         <Link rel="next" className={`button nextchap ${response.is_next ? "" : 'isDisabled'}`}
-                            to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}
+                            to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id + 1}`}
                             state={{ currentPreFetchedData: nextPrefetchedData }}>
                             <span>Next</span>
                             <i className="icon-right-open"></i>
@@ -440,7 +441,7 @@ function Chapter() {
                                 <path d="M6.975 13.3L12 20H9l-6-8 6-8h3l-5.025 6.7H21v2.6H6.975z"></path>
                             </svg></i>
                             <div className="bar-titles">
-                                <Link className="booktitle text1row" to={`/novel/${novelSlug}/${sourceSlug}`}
+                                <Link className="booktitle text1row" to={`/novel/${source.novel.slug}/${sourceSlug}`}
                                     title={source.title}>{source.title}
                                 </Link>
                                 <span className="chapter-title">{chapter.title}</span>
@@ -451,18 +452,18 @@ function Chapter() {
                         <nav className="action-items">
                             <div className="action-select">
                                 <Link rel="prev" className={(response.is_prev ? "" : 'isDisabled ') + "chnav prev"}
-                                    to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
+                                    to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
                                     <i className="icon-left-open"></i>
                                     <span>Prev</span>
                                 </Link>
-                                <Link className="chap-index" title="Chapter Index" to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>
+                                <Link className="chap-index" title="Chapter Index" to={`/novel/${source.novel.slug}/${sourceSlug}/chapterlist/page-1`}>
                                     <i className="icon-home"></i>
                                 </Link>
                                 <button className="nightmode_switch" title="Night mode" data-night="0" data-content="Dark Theme" onClick={switchDarkMode}>
                                     <i className="icon-moon"></i>
                                 </button>
                                 <Link rel="next" className={(response.is_next ? "" : 'isDisabled ') + "chnav next"}
-                                    to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}
+                                    to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id + 1}`}
                                     state={{ currentPreFetchedData: nextPrefetchedData }}>
                                     <span>Next</span>
                                     <i className="icon-right-open"></i>
@@ -595,7 +596,7 @@ function Chapter() {
                     </div>
                 </section>
                 <section className="rate-source">
-                    {/* <RateSource novelSlug={novelSlug} sourceSlug={sourceSlug} /> */}
+                    {/* <RateSource novelSlug={source.novel.slug} sourceSlug={sourceSlug} /> */}
                 </section>
             </article>
         </main>

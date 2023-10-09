@@ -44,6 +44,7 @@ function NovelInfo() {
             "ratings_count": 0,
             "source_count": 0,
             "sources": {},
+            "slug": novelSlug,
         },
         "slug": currentUrlSplitted[currentUrlSplitted.length - 1],
         "summary": "Loading ...",
@@ -71,7 +72,7 @@ function NovelInfo() {
     const sourceList = [];
     for (const [s, lang] of Object.entries(source.novel.sources)) {
         if (!(s === source.slug)) {
-            sourceList.push(<option key={s} value={`/novel/${novelSlug}/${s}`}>{toFlag(lang)} - {s}</option>) /* emoji_flag(source.language) */
+            sourceList.push(<option key={s} value={`/novel/${source.novel.slug}/${s}`}>{toFlag(lang)} - {s}</option>) /* emoji_flag(source.language) */
         }
 
 
@@ -147,7 +148,7 @@ function NovelInfo() {
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <Helmet>
                 <meta name="robots" content="index" />
-                <link rel="canonical" href={window.location.href.replace(/\/+$/, '')} />
+                <link rel="canonical" href={`/novel/${source.novel.slug}/${sourceSlug}`} />
             </Helmet>
             <article id="novel" itemProp="itemReviewed" itemScope="" itemType="http://schema.org/Book">
 
@@ -206,7 +207,7 @@ function NovelInfo() {
 
                             <div className="source-select">
                                 <select className="sel" onChange={e => routeChange(e.target.value)} >
-                                    <option value={`/novel/${source.novelSlug}/${source.slug}`}>{toFlag(source.language)} - {source.slug}</option>
+                                    <option value={`/novel/${source.novel.slug}/${source.slug}`}>{toFlag(source.language)} - {source.slug}</option>
                                     {sourceList}
                                 </select>
 
@@ -218,7 +219,7 @@ function NovelInfo() {
                 <div className="novel-body container">
                     <nav className="content-nav">
                         <Link className="grdbtn reviews-latest-container" title={source.title + "First Chapter"}
-                            to="chapter-1">
+                            to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-1`}>
                             <div className="body">
                                 <h4>FIRST CHAPTER</h4>
                                 <p className="latest text1row"> {firstChapterName}</p>
@@ -226,7 +227,7 @@ function NovelInfo() {
                             <i className="icon-right-open"></i>
                         </Link>
                         <Link className="grdbtn chapter-latest-container" title={source.title + "Chapters"}
-                            to="chapterlist/page-1">
+                            to={`/novel/${source.novel.slug}/${sourceSlug}/chapterlist/page-1`}>
                             <div className="body">
                                 <h4>Novel Chapters</h4>
                                 <p className="latest text1row">
@@ -245,7 +246,7 @@ function NovelInfo() {
 
                     </div>
                     <div className="download">
-                        <button onClick={() => download(`${API_URL}/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"} disabled>
+                        <button onClick={() => download(`${API_URL}/download?novel=${source.novel.slug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"} disabled>
                             DOWNLOAD
                         </button>
                     </div>
