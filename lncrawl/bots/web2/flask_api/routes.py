@@ -11,6 +11,7 @@ from .Novel import Novel
 import difflib
 from . import sanatize
 import os
+from . import naming_rules
 
 @flaskapp.app.route("/api/image/<path:file>")
 @flaskapp.app.route("/image/<path:file>")
@@ -22,24 +23,33 @@ def image(file: str):
 
     if os.path.exists(path) :
         return send_from_directory(lib.LIGHTNOVEL_FOLDER, file), 200
-    
-    else:
-        if (
-            file.endswith("/cover.min.jpg") and 
-            os.path.exists(path.replace("/cover.min.jpg", "/cover.jpg"))
-        ):
-            utils.create_miniature(path.replace("/cover.min.jpg", "/cover.jpg"), path, 200)
-        
-        elif (
-            file.endswith("/cover.sm.jpg") and 
-              os.path.exists(path.replace("/cover.sm.jpg", "/cover.jpg"))
-        ):
-            utils.create_miniature(path.replace("/cover.sm.jpg", "/cover.jpg"), path, 500)
+    else :
+        temp = file.split("/") 
+        alt_file = naming_rules.clean_name(temp[0]) + "/" + "/".join(temp[1:])
+        alt_path = os.path.join(
+            lib.LIGHTNOVEL_FOLDER, 
+            alt_file
+        )
+        if os.path.exists(alt_path):
+            return send_from_directory(lib.LIGHTNOVEL_FOLDER, alt_file), 200
         
         else :
-            return send_from_directory("static/assets",  "404.svg"), 200
+            if (
+                file.endswith("/cover.min.jpg") and 
+                os.path.exists(path.replace("/cover.min.jpg", "/cover.jpg"))
+            ):
+                utils.create_miniature(path.replace("/cover.min.jpg", "/cover.jpg"), path, 200)
+            
+            elif (
+                file.endswith("/cover.sm.jpg") and 
+                os.path.exists(path.replace("/cover.sm.jpg", "/cover.jpg"))
+            ):
+                utils.create_miniature(path.replace("/cover.sm.jpg", "/cover.jpg"), path, 500)
+            
+            else :
+                return send_from_directory("static/assets",  "404.svg"), 200
     
-    return send_from_directory(lib.LIGHTNOVEL_FOLDER, file), 200
+        return send_from_directory(lib.LIGHTNOVEL_FOLDER, file), 200
 
     
 
@@ -210,12 +220,12 @@ def get_chapter():
     if not novel_slug or not source_slug or not chapter_id:
         return "invalid request : novel, source or chapter missing", 400
     
-    chapter_folder = (
-        lib.LIGHTNOVEL_FOLDER
-        / unquote_plus(novel_slug)
-        / unquote_plus(source_slug)
-        / "json"
-    )
+    source = utils.get_source_with_slugs(novel_slug, source_slug)
+    if not source:
+        return "Unknown or unauthorized file", 404
+
+    chapter_folder = source.path / "json"
+
     chapter_path = chapter_folder / f"{str(chapter_id).zfill(5)}.json"
     if not os.path.exists(chapter_path) or not os.path.realpath(chapter_path).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
         return "Unknown or unauthorized file", 404
@@ -229,8 +239,6 @@ def get_chapter():
 
     is_next = (chapter_folder / f"{str(int(chapter_id) + 1).zfill(5)}.json").exists()
     is_prev = (chapter_folder / f"{str(int(chapter_id) - 1).zfill(5)}.json").exists()
-
-    source = utils.find_source_with_path(chapter_folder.parent)
 
     current_week = datetools.current_week()
     if current_week not in source.novel.clicks:
@@ -257,17 +265,14 @@ def get_chapter_list():
         page = 1
     page = int(page) - 1
 
-    meta_file = (
-        lib.LIGHTNOVEL_FOLDER
-        / unquote_plus(novel_slug)
-        / unquote_plus(source_slug)
-        / "meta.json"
-    )
+    source = utils.get_source_with_slugs(novel_slug, source_slug)
+    if not source:
+        return "Unknown or unauthorized file", 404
+    meta_file = source.path / "meta.json"
     
     if not os.path.exists(meta_file) or not os.path.realpath(meta_file).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
         return "Unknown or unauthorized file", 404
 
-    source = utils.find_source_with_path(meta_file.parent)
     current_week = datetools.current_week()
     if current_week not in source.novel.clicks:
         source.novel.clicks[current_week] = 0

@@ -4,13 +4,15 @@ from .Novel import Novel, NovelFromSource
 from . import database
 from . import sanatize
 from . import naming_rules
+import urllib.parse
 
 
 def get_novel_with_slug(novel_slug) -> Optional[Novel]:
     """
     Returns the novel with the given slug
     """
-    return next((n for n in database.all_novels if n.slug == novel_slug), None)
+    novel = naming_rules.clean_name(urllib.parse.unquote_plus(novel_slug))
+    return next((n for n in database.all_novels if n.cleaned_folder_name == novel), None)
 
 
 def get_novel_with_url(url: str) -> Optional[Novel]:
