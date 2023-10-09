@@ -16,6 +16,14 @@ def clean_name(string):
             string = string[: -len(end)]
         if string.endswith("(" + end + ")"):
             string = string[: -len(end) - 2]
+
+    general_replace = {
+        " i m ": " i'm ",
+        " im ": " i'm",
+    }
+    string = " " + string + " "
+    for key, value in general_replace.items():
+        string = string.replace(key, value)
     return string.strip()
 
 
