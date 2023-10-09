@@ -3,6 +3,7 @@ from typing import Optional
 from .Novel import Novel, NovelFromSource
 from . import database
 from . import sanatize
+from . import naming_rules
 
 
 def get_novel_with_slug(novel_slug) -> Optional[Novel]:
@@ -38,6 +39,7 @@ def find_source_with_path(novel_and_source_path: Path) -> Optional[NovelFromSour
     """
     Find the NovelFromSource object corresponding to the path
     """
+    novel_and_source_path = novel_and_source_path.parent.parent / naming_rules.clean_name(novel_and_source_path.parent.name) / novel_and_source_path.name
     novel = None
     for n in database.all_novels:
         if novel_and_source_path.parent == n.path:

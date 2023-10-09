@@ -189,8 +189,6 @@ def get_novel():
     source_path = (
         lib.LIGHTNOVEL_FOLDER / unquote_plus(novel_slug) / unquote_plus(source_slug)
     )
-    if not source_path.exists():
-        return "", 404
     source = utils.find_source_with_path(source_path)
     if not source:
         return "", 404
