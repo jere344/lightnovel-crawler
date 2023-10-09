@@ -228,6 +228,8 @@ function Chapter() {
     }
 
     window.addEventListener('resize', fixBackgroundColorDialogPosition);
+    fixBackgroundColorDialogPosition();
+    
 
     /* #endregion */
 
