@@ -387,9 +387,10 @@ def clean_name(string):
             string = string[: -len(end) - 2]
     return string.strip()
 
-
 for folder in pathlib.Path("Comments").iterdir():
     folder.rename(pathlib.Path("Comments") / clean_name(folder.name))
+
+for folder in pathlib.Path("Comments").iterdir():
     for file in folder.iterdir():
         file.rename(folder / (clean_name(file.stem) + file.suffix))
     
