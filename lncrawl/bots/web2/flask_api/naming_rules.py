@@ -1,3 +1,5 @@
+import re 
+
 def clean_name(string):
     string = (
         string.strip().lower().replace("’", "'").replace("“", '"').replace("”", '"')
@@ -20,12 +22,18 @@ def clean_name(string):
     general_replace = {
         " i m ": " i'm ",
         " im ": " i'm ",
-        " i'm": " i'm ",
         "  ": " ",
     }
     string = " " + string + " "
     for key, value in general_replace.items():
         string = string.replace(key, value)
+
+    regex_replace = {
+        re.compile(r"(?<=[a-z]) s ") : "'s ",
+    }
+    for key, value in regex_replace.items():
+        string = key.sub(value, string)
+        
     return string.strip()
 
 
