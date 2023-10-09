@@ -19,7 +19,9 @@ def clean_name(string):
 
     general_replace = {
         " i m ": " i'm ",
-        " im ": " i'm",
+        " im ": " i'm ",
+        " i'm": " i'm ",
+        "  ": " ",
     }
     string = " " + string + " "
     for key, value in general_replace.items():
