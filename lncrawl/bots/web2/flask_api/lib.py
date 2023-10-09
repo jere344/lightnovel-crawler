@@ -51,18 +51,22 @@ PORT = int(config["api_port"])
 
 MAX_EBOOK_SIZE = int(config["max_ebook_size"])
 
-# from . import naming_rules
-# naming_rules.fix_existing()
+from . import naming_rules
+naming_rules.fix_existing()
 
 database.all_novels: List[Novel] = []
-for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
+number_of_novel = len(list(LIGHTNOVEL_FOLDER.iterdir()))
+print("Loading novels")
+for i, novel_folder in enumerate(LIGHTNOVEL_FOLDER.iterdir()):
     try:
         if novel_folder.is_dir():
             novel = read_novel_info.get_novel_info(novel_folder)
             database.all_novels.append(novel)
             for tag in novel.tags:
                 utils.add_tag(tag)
-            print(f"Loaded novel: {novel.slug}")
+
+            print(f"Loaded {i+1}/{number_of_novel} : {novel_folder.name}")
+            print(f"\033[F\033[K", end="")
 
     except Exception as e:
         print(f"Error while reading novel info from {novel_folder.name}: {e}")
@@ -73,8 +77,7 @@ for novel_folder in LIGHTNOVEL_FOLDER.iterdir():
 
         # import sys
         # sys.exit(1)
-
-print("Loaded all novels")
+print(f"Loaded {number_of_novel}/{number_of_novel} : {novel_folder.name}")
 
 database.set_ranks()
 
