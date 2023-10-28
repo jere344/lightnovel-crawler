@@ -105,7 +105,6 @@ sitemap.generate_sitemap(sitemap_file)
 
 import threading, time
 import shutil
-import sys
 
 
 def _update_novel_stats(novel: Novel):
