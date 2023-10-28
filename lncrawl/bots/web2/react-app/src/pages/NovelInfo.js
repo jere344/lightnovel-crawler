@@ -14,7 +14,10 @@ import "../assets/stylesheets/novel.768.min.css"
 import "../assets/stylesheets/media-mobile.min.css"
 import "../assets/stylesheets/select.css"
 
-import {API_URL } from '../config.js'
+import { API_URL } from '../config.js'
+
+import RateSource from '../components/RateSource.js'
+import { useCookies } from 'react-cookie'
 
 function NovelInfo() {
     const currentUrlSplitted = window.location.href.split('/');
@@ -117,19 +120,6 @@ function NovelInfo() {
         return response
     }
 
-    const download = (url) => {
-        fetch(url, { method: 'GET' })
-            .then((response) => {
-                const filename = response.headers.get("Content-Disposition").split("filename=")[1];
-                return response.blob().then(blob => {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = filename;
-                    link.click();
-                });
-            });
-    };
-
 
     // eslint-disable-next-line no-extend-native
     String.prototype.replaceAll = function(strReplace, strWith) {
@@ -141,6 +131,25 @@ function NovelInfo() {
     
     const firstChapterName = source.first.replaceAll(source.title, '').trim() || source.first
     const latestChapterName = source.latest.replaceAll(source.title, '').trim() || source.latest
+
+    var updateBtn = <></>
+    // LnCrawler is the only source that cannot be updated
+    if (source.slug !== "LnCrawler") {
+         updateBtn = (<div className="minibtn-container">
+                <button onClick={() => update_novel()} className={"minibtn" + (updating ? " isDisabled" : "")}>
+                    UPDATE
+                </button>
+            {status ? <p className="updateStatus">{status}</p> : null}
+            </div>
+        )
+    }
+    
+    const [RateSourceElement, setRateSourceElement] = useState(<></>);
+
+    const [, setDoNotShowRateCookie] = useCookies(['doNotShowRate'])
+    function setDoNotShowRate(bool) {
+        setDoNotShowRateCookie('doNotShow', bool, { path: '/', sameSite: 'strict', maxAge: 2592000 });
+    }
 
     return (
 
@@ -238,21 +247,21 @@ function NovelInfo() {
                             <i className="icon-right-open"></i>
                         </Link>
                     </nav>
-                    <div className="update">
-                        <button onClick={() => update_novel()} className={"updatebtn" + (updating ? " isDisabled" : "")}>
-                            UPDATE
+                    {updateBtn}
+                    <div className="minibtn-container">
+                        <button 
+                            onClick={() => { 
+                                setDoNotShowRate(false);
+                                setRateSourceElement(<RateSource novelSlug={source.novel.slug} sourceSlug={sourceSlug} />);
+                            }} 
+                            className={"minibtn"}
+                        >
+                            RATE SOURCE
                         </button>
-                        {status ? <p className="updateStatus">{status}</p> : null}
-
                     </div>
-                    <div className="download">
-                        <button onClick={() => download(`${API_URL}/download?novel=${source.novel.slug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"} disabled>
-                            DOWNLOAD
-                        </button>
-                    </div>
-                    <p>
-                        Sorry, I don't have enough storage so download are disabled for now.
-                    </p>
+                    <section className="rate-source">
+                        {RateSourceElement}
+                    </section>
                     <section id="info">
                         <div className="summary">
                             <h4 className="lined">Summary</h4>

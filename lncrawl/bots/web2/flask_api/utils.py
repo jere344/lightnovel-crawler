@@ -93,6 +93,7 @@ def add_novel_to_database(novel: Novel):
         
     database.set_ranks()
     database.refresh_sorted_all()
+    database.set_prefered_sources()
 
     
 

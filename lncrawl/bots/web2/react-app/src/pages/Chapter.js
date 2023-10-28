@@ -12,6 +12,8 @@ import notFoundImage from "../assets/404.webp"
 
 import { API_URL } from '../config.js';
 
+import RateSource from '../components/RateSource.js'
+
 function Chapter() {
     const location = useLocation();
     const { currentPreFetchedData } = location.state || {};
@@ -325,11 +327,19 @@ function Chapter() {
         });
     }, [response, displayModeCookie]);
 
+    
+    
+    /* #endregion */
+    const [showRateSource, setShowRateSource] = useState(false);
 
+    useEffect(() => {
+        if (Math.random() < 0.01) {
+            setShowRateSource(true);
+        }
+        }, [location.pathname]); // Garrante a rerun when the component isn't unmounted
 
     /* #endregion */
-
-
+    
 
     if (response === undefined) {
         const title = "Chapter not found"
@@ -598,7 +608,7 @@ function Chapter() {
                     </div>
                 </section>
                 <section className="rate-source">
-                    {/* <RateSource novelSlug={source.novel.slug} sourceSlug={sourceSlug} /> */}
+                    {showRateSource ? <RateSource novelSlug={novelSlug} sourceSlug={sourceSlug} /> : null}
                 </section>
             </article>
         </main>
