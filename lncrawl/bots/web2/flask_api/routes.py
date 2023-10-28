@@ -387,7 +387,6 @@ def rate_source():
 
 
     if not rating in [-1, 1]:
-        print("a")
         return {"status": "error", "message": "Rating must be -1 or 1"}, 400
     
     novel = utils.get_novel_with_slug(novel_slug)
@@ -400,8 +399,8 @@ def rate_source():
 
     source.source_rating += rating
 
-    # ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-    # print(f"Rating added for {novel_slug} : {rating} (from {ip})")
+    ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    print(f"source {source_slug} rating added for {novel_slug} : {rating} (from {ip})")
 
     return {"status": "success", "message": "Rating added"}, 200
 

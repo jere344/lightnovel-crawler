@@ -3,7 +3,9 @@ from flask import request
 from .. import database
 from .. import lib
 from .Job import JobHandler, FinishedJob
-import shutil
+import logging
+
+logger = logging.getLogger(__name__)
 
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
 
@@ -108,8 +110,8 @@ def addnovel_download():
         url = ""
         try:
             url = job.url
-        except Exception as e:
-            print("failed to get url : ", e)
+        except Exception:
+            logger.warning("failed to get url")
 
         if job.success:
             return {
@@ -173,8 +175,8 @@ def direct_download():
         url = ""
         try:
             url = job.url
-        except Exception as e:
-            print(e)
+        except Exception:
+            logger.warning("Failed to get url")
 
         return {
             "status": "success",
@@ -292,9 +294,6 @@ def _update(url: str, job_id: str):
             break
 
     # endregion
-    print("missing_chapters:", missing_chapters)
-    print("missing_cover:", missing_cover)
-    print("missing_images:", missing_images)
     if missing_chapters or missing_cover or missing_images :
         # Ebook are disabled for now
         # We delete the ebook folders to force the creation of a new one
@@ -319,15 +318,15 @@ def load_snapshot():
     if job_id in database.jobs:
         job = database.jobs[job_id]
     else:
-        print("Job not found")
+        logger.info("Job not found")
         return {"status": "error", "message": "Invalid job_id"}, 400
 
     if not isinstance(job, FinishedJob):
-        print("Job not finished")
+        logger.info("Job not finished")
         return {"status": "error", "message": "Job is not finished"}, 400
 
     if not job.snapshot_exists():
-        print("Snapshot not found")
+        logger.info("Snapshot not found")
         return {"status": "error", "message": "No snapshot for this job"}, 400
 
     job.restore_snapshot()

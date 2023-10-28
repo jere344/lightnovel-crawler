@@ -43,7 +43,6 @@ class JobHandler:
 
     # -----------------------------------------------------------------------------
     def crash(self, reason: str):
-        print(f"{'-'*26}\n{reason}\n{'-'*26}")
         self.crashed = True
         self.set_last_action(reason)
         logger.exception(reason)
@@ -59,16 +58,18 @@ class JobHandler:
     def destroy_sync(self):
         try:
             success = not self.crashed
-            database.jobs[self.job_id] = FinishedJob(
+            finished_job = FinishedJob(
                 success,
                 self.last_action,
                 self.last_activity,
                 self.original_query,
                 self.job_id,
             )
+            database.jobs[self.job_id] = finished_job
+            # url will be used to redirect
             try:
                 if self.app.good_file_name and self.app.crawler.home_url:
-                    database.jobs[self.job_id].url = (
+                    finished_job.url = (
                         quote_plus(self.app.good_file_name)
                         + "/"
                         + quote_plus(
@@ -76,14 +77,13 @@ class JobHandler:
                         )
                     )
             except Exception as e:
-                print(f"{'-'*26}\n{e}\n{'-'*26}")
+                logger.exception(e)
 
             self.app.destroy()
             self.executor.shutdown(wait=False)
             if success:
                 self._delete_snapshot()
         except Exception as e:
-            print(f"{'-'*26}\nError while destroying: {e}\n{'-'*26}")
             logger.exception(f"While destroying JobHandler : {e}")
         finally:
             logger.info("Session destroyed: %s", self.job_id)
@@ -91,7 +91,7 @@ class JobHandler:
     # -----------------------------------------------------------------------------
 
     def set_last_action(self, action: str):
-        print("starting action : ", action)
+        logger.debug("starting action : ", action)
         self.last_action = action
         self.last_activity = datetime.now()
 
@@ -150,6 +150,7 @@ class JobHandler:
 
         try:
             self.set_last_action("Searching")
+            logger.info(f"Searching for : {query}")
             self.app.search_novel()
         except Exception as e:
             return self.crash(f"Fail to search novel : {e}")
@@ -312,7 +313,7 @@ class JobHandler:
             job.app.search_results = self.app.search_results
             job.last_action = self.last_action
         except Exception as e:
-            print("Failed to create snapshot : ", e)
+            logger.warning("Failed to create snapshot : ", e)
 
 
     def _delete_snapshot(self):
@@ -341,7 +342,6 @@ class FinishedJob:
         original_query: str,
         job_id: str,
     ):
-        print(f"FinishedJob: {success}, {message}, {end_date}")
         self.original_query = original_query
         self.success = success
         self.message = message
