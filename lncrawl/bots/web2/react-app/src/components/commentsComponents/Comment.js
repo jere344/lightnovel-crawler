@@ -72,6 +72,16 @@ function Comment ({ comment, setReplyTo, setCommenting }) {
     const updateDateInUserTimezone = new Date(new Date(comment.date).getTime() + serverOffset * 60 * 60 * 1000)
     const formatedTimeAgo = formatTimeAgo(new Date().getTime() - updateDateInUserTimezone.getTime())
 
+    var tier = 0
+
+    if (comment.rank === 'Owner') {
+        tier = 1
+    } 
+    else if (comment.name === 'Kim Jae') {
+        tier = 2
+        comment.rank = 'Apostle'
+    }
+
     return (
         <article className='comment-item  none' id={comment.id}>
             <div className='comment-body' itemProp='comment' itemScope='' itemType='http://schema.org/Comment'>
@@ -82,7 +92,7 @@ function Comment ({ comment, setReplyTo, setCommenting }) {
                             <span itemProp='name'>{comment.name}</span>
                         </div>
                         <div className='sub-items'>
-                            <span className={'tier ' + (comment.rank === 'Owner' ? 'tier1' : 'tier0')}>
+                            <span className={'tier tier' + tier}>
                                 {comment.rank}
                             </span>
                         </div>
