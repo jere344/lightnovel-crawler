@@ -348,11 +348,17 @@ class FinishedJob:
         self.end_date = end_date
         self.job_id = job_id
 
+        threading.Timer(36000, self.destroy).start()
+
     def get_status(self):
         return self.message
 
     def destroy(self):
-        pass
+        """
+        Delete the job from the database
+        """
+        if self.job_id in database.jobs:
+            del database.jobs[self.job_id]
 
     def restore_snapshot(self):
         """
