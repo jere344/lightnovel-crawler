@@ -37,8 +37,8 @@ class JobHandler:
         self.last_activity = datetime.now()
         self.executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix=job_id)
 
-        # Self destruct after 10 hour 
-        threading.Timer(36000, self.destroy).start()
+        # Self destruct after 1 hour 
+        threading.Timer(3600, self.destroy).start()
 
 
     # -----------------------------------------------------------------------------
@@ -348,7 +348,7 @@ class FinishedJob:
         self.end_date = end_date
         self.job_id = job_id
 
-        threading.Timer(36000, self.destroy).start()
+        threading.Timer(3600, self.destroy).start()
 
     def get_status(self):
         return self.message
