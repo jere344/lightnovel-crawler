@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import RatingStars from '../RatingStars'
 
 function NovelItemCompactRating({ novel }) {
-
-    const novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+    let novelUrl = ""
+    if (novel.slug) {
+        novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+    }
     const formatter = Intl.NumberFormat('en', { notation: 'compact' })
     return (
         <li className="novel-item compact">

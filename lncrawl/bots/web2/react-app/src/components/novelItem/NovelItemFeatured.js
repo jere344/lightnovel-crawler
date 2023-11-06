@@ -12,7 +12,10 @@ function NovelItemFeatured({ novel }) {
         return null
     }
 
-    const novelUrl = `/novel/${source.novel.slug}/${source.slug}`
+    let novelUrl = ""
+    if (source.novel.slug) {
+        novelUrl = `/novel/${source.novel.slug}/${source.slug}`
+    }
     const formatter = Intl.NumberFormat('en', { notation: 'compact' })
 
 

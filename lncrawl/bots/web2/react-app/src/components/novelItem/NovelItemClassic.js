@@ -14,7 +14,10 @@ function NovelItemClassic(novel) {
     );
   }
 
-  const novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+  let novelUrl = ""
+  if (novel.slug) {
+      novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+  }
 
   return (
     <li className="novel-item" >

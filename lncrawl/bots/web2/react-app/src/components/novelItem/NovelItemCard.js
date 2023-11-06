@@ -11,8 +11,10 @@ function NovelItemCard({ novel }) {
             <span className="flag-wrap" key={i}><img src={`${API_URL}/flags/${languages[i]}`} alt={`${languages[i]} flag`} /></span>
         );
     }
-
-    const novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+    let novelUrl = ""
+    if (novel.slug) {
+        novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+    }
 
     return (
 
