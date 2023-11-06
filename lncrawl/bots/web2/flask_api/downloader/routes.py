@@ -274,27 +274,31 @@ def _update(url: str, job_id: str):
 
     # region missing images
     meta_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "meta.json"
-    with open(str(meta_folder), "r", encoding="utf-8") as f:
-        meta = json.load(f)
+    missing_meta = False
+    if meta_folder.exists():
+        with open(str(meta_folder), "r", encoding="utf-8") as f:
+            meta = json.load(f)
 
-    image_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "images"
+        image_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "images"
 
-    missing_images = False
-    for chapter in (meta["novel"]["chapters"]) if ("novel" in meta) else meta["chapters"]:
-        # {"3e14b82305271562c7e800d612cff023.jpg": "https://cdn1.mangaclash.com/temp/manga_62d6697ba3072/80980f031c78a3c45513ddabf083b99a/1.jpg"}
-        if "images" in chapter:
-            for image_id in chapter["images"]:
-                image_path = image_folder / image_id
+        missing_images = False
+        for chapter in (meta["novel"]["chapters"]) if ("novel" in meta) else meta["chapters"]:
+            # {"3e14b82305271562c7e800d612cff023.jpg": "https://cdn1.mangaclash.com/temp/manga_62d6697ba3072/80980f031c78a3c45513ddabf083b99a/1.jpg"}
+            if "images" in chapter:
+                for image_id in chapter["images"]:
+                    image_path = image_folder / image_id
 
-                if not image_path.exists():
-                    missing_images = True
-                    break
+                    if not image_path.exists():
+                        missing_images = True
+                        break
 
-        if missing_images:
-            break
+            if missing_images:
+                break
+    else:
+        missing_meta = True
 
     # endregion
-    if missing_chapters or missing_cover or missing_images :
+    if missing_chapters or missing_cover or missing_images or missing_meta:
         # Ebook are disabled for now
         # We delete the ebook folders to force the creation of a new one
         # ebook_folders_path = [source_folder_path / "epub"]
