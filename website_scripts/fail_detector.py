@@ -18,11 +18,12 @@ else:
     success = []
 
 for novel in pathlib.Path("../Lightnovels").iterdir():
-    if novel.name in success:
-        continue
 
-    failed = False
-    for source in novel.iterdir():
+    for source in sorted(novel.iterdir(), key=lambda x: x.name, reverse=True):
+        failed = False
+        if novel.name + "/" + source.name in success:
+            continue
+
         if not source.is_dir():
             continue
 
@@ -65,6 +66,6 @@ for novel in pathlib.Path("../Lightnovels").iterdir():
                     failed = True
                     break
 
-    if not failed:
-        with open("success.txt", "a") as f:
-            f.write(novel.name + "\n")
+        if not failed:
+            with open("success.txt", "a") as f:
+                f.write(novel.name + "/" + source.name + "\n")
