@@ -6,6 +6,7 @@ from typing import Any, List, Optional
 
 from . import datetools
 from . import sanatize
+from . import naming_rules
 
 
 @dataclass
@@ -66,10 +67,14 @@ class Novel:
     source_count: int = field(
         init=False, default=property(lambda self: len(self.sources))
     )
-    slug: str = field(
-        init=False, default=property(lambda self: quote_plus(self.path.name))
-    )
     str_path: str = field(init=False, default=property(lambda self: str(self.path)))
+    cleaned_folder_name: str = field(
+        init=False,
+        default=property(lambda self: naming_rules.clean_name(self.path.name)),
+    )
+    slug: str = field(
+        init=False, default=property(lambda self: quote_plus(self.cleaned_folder_name))
+    )
 
     def __eq__(self, other: Any) -> bool:
         """

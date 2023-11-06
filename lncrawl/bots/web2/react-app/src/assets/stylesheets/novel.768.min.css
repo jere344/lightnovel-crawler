@@ -329,8 +329,8 @@
 
 	.novel-body .content-nav {
 		flex-direction: row;
-		margin-right: -26px;
-		margin-bottom: 26px;
+		margin-right: -20px;
+		margin-bottom: 20px;
 	}
 
 	.novel-body .content-nav .grdbtn {

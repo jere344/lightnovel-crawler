@@ -250,11 +250,14 @@
     color: var(--text-color-2);
 }
 
-.comment-list ul li .comment-item .comment-body .header .comment-info .tier.tier1,
-.comment-list ul li .comment-item .comment-body .header .comment-info .tier.tier2,
-.comment-list ul li .comment-item .comment-body .header .comment-info .tier.tier3 {
+.comment-list ul li .comment-item .comment-body .header .comment-info .tier.tier1 {
     background-color: var(--bg-color-secondary-2);
     color: var(--text-color-secondary-2);
+}
+
+.comment-list ul li .comment-item .comment-body .header .comment-info .tier.tier2 {
+    background-color: var(--bg-color-6);
+    color: #ad3a3a;
 }
 
 .comment-list ul li .comment-item .comment-body .header .comment-info .tier.tier4,

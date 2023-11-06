@@ -9,6 +9,7 @@ import uuid
 from . import datetools
 from . import sanatize
 import urllib.parse
+from . import naming_rules
 
 
 def get_newest_comments(url: str, count: int = 5, offset: int = 0):
@@ -47,13 +48,13 @@ def get_path_from_url(url: str):
     if url[0] != "novel" and url[0] != "chat":
         return None
     if len(url) == 3:  # novel info page
-        url_1 = sanatize.pathify(url[1])
+        url_1 = naming_rules.clean_name(sanatize.pathify(url[1]))
         path = lib.COMMENT_FOLDER / url_1 / f"{url_1}.json"
     elif len(url) == 4:  # chapter page
         chap_number = url[3].split("-")[-1]
         path = (
             lib.COMMENT_FOLDER
-            / sanatize.pathify(url[1])
+            / naming_rules.clean_name(sanatize.pathify(url[1]))
             / f"{chap_number.zfill(5)}.json"
         )
     else:

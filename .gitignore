@@ -34,3 +34,4 @@ log.txt
 sources/*
 success.txt
 config.json
+website_scripts/*.txt

@@ -14,7 +14,10 @@ import "../assets/stylesheets/novel.768.min.css"
 import "../assets/stylesheets/media-mobile.min.css"
 import "../assets/stylesheets/select.css"
 
-import {API_URL } from '../config.js'
+import { API_URL } from '../config.js'
+
+import RateSource from '../components/RateSource.js'
+import { useCookies } from 'react-cookie'
 
 function NovelInfo() {
     const currentUrlSplitted = window.location.href.split('/');
@@ -44,6 +47,7 @@ function NovelInfo() {
             "ratings_count": 0,
             "source_count": 0,
             "sources": {},
+            "slug": novelSlug,
         },
         "slug": currentUrlSplitted[currentUrlSplitted.length - 1],
         "summary": "Loading ...",
@@ -71,7 +75,7 @@ function NovelInfo() {
     const sourceList = [];
     for (const [s, lang] of Object.entries(source.novel.sources)) {
         if (!(s === source.slug)) {
-            sourceList.push(<option key={s} value={`/novel/${novelSlug}/${s}`}>{toFlag(lang)} - {s}</option>) /* emoji_flag(source.language) */
+            sourceList.push(<option key={s} value={`/novel/${source.novel.slug}/${s}`}>{toFlag(lang)} - {s}</option>) /* emoji_flag(source.language) */
         }
 
 
@@ -96,6 +100,13 @@ function NovelInfo() {
             if (response.status === "success") {
                 finished = true;
                 setStatus("success");
+                if (response.url !== "") {
+                    let new_url = response.url.split('/');
+                    console.log(new_url);
+                    if (new_url[0] !== novelSlug || new_url[1] !== sourceSlug) {
+                        routeChange(`/novel/${new_url[0]}/${new_url[1]}`);
+                    }
+                }
                 sleep(1000).then(() => { setStatus(null); setUpdating(false); setUpdateHook(updateHook + 1); });
             } else if (response.status === "pending") {
                 setStatus(response.message)
@@ -103,6 +114,7 @@ function NovelInfo() {
             } else if (response.status === "error") {
                 finished = true;
                 setStatus(response.message)
+                await sleep(1000).then(() => { setStatus(null); setUpdating(false); });
             } else {
                 console.log("Unexpected response :", response);
                 setStatus("Unexpected response", response);
@@ -116,19 +128,6 @@ function NovelInfo() {
         return response
     }
 
-    const download = (url) => {
-        fetch(url, { method: 'GET' })
-            .then((response) => {
-                const filename = response.headers.get("Content-Disposition").split("filename=")[1];
-                return response.blob().then(blob => {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = filename;
-                    link.click();
-                });
-            });
-    };
-
 
     // eslint-disable-next-line no-extend-native
     String.prototype.replaceAll = function(strReplace, strWith) {
@@ -141,16 +140,34 @@ function NovelInfo() {
     const firstChapterName = source.first.replaceAll(source.title, '').trim() || source.first
     const latestChapterName = source.latest.replaceAll(source.title, '').trim() || source.latest
 
+    var updateBtn = <></>
+    // LnCrawler is the only source that cannot be updated
+    if (source.slug !== "LnCrawler") {
+         updateBtn = (<div className="minibtn-container">
+                <button onClick={() => update_novel()} className={"minibtn" + (updating ? " isDisabled" : "")}>
+                    UPDATE
+                </button>
+            {status ? <p className="updateStatus">{status}</p> : null}
+            </div>
+        )
+    }
+    
+    const [RateSourceElement, setRateSourceElement] = useState(<></>);
+
+    const [, setDoNotShowRateCookie] = useCookies(['doNotShowRate'])
+    function setDoNotShowRate(bool) {
+        setDoNotShowRateCookie('doNotShow', bool, { path: '/', sameSite: 'strict', maxAge: 2592000 });
+    }
+
     return (
 
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <Helmet>
                 <meta name="robots" content="index" />
-                <link rel="canonical" href={window.location.href} />
+                <link rel="canonical" href={`/novel/${source.novel.slug}/${sourceSlug}`} />
             </Helmet>
-            <article id="novel" data-novelid="1370" data-volbased="False" itemProp="itemReviewed" itemScope=""
-                itemType="http://schema.org/Book">
+            <article id="novel" itemProp="itemReviewed" itemScope="" itemType="http://schema.org/Book">
 
                 <header className="novel-header">
                     <div className="glass-background">
@@ -207,7 +224,7 @@ function NovelInfo() {
 
                             <div className="source-select">
                                 <select className="sel" onChange={e => routeChange(e.target.value)} >
-                                    <option value={`/novel/${source.novelSlug}/${source.slug}`}>{toFlag(source.language)} - {source.slug}</option>
+                                    <option value={`/novel/${source.novel.slug}/${source.slug}`}>{toFlag(source.language)} - {source.slug}</option>
                                     {sourceList}
                                 </select>
 
@@ -219,7 +236,7 @@ function NovelInfo() {
                 <div className="novel-body container">
                     <nav className="content-nav">
                         <Link className="grdbtn reviews-latest-container" title={source.title + "First Chapter"}
-                            to="chapter-1">
+                            to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-1`}>
                             <div className="body">
                                 <h4>FIRST CHAPTER</h4>
                                 <p className="latest text1row"> {firstChapterName}</p>
@@ -227,7 +244,7 @@ function NovelInfo() {
                             <i className="icon-right-open"></i>
                         </Link>
                         <Link className="grdbtn chapter-latest-container" title={source.title + "Chapters"}
-                            to="chapterlist/page-1">
+                            to={`/novel/${source.novel.slug}/${sourceSlug}/chapterlist/page-1`}>
                             <div className="body">
                                 <h4>Novel Chapters</h4>
                                 <p className="latest text1row">
@@ -238,21 +255,21 @@ function NovelInfo() {
                             <i className="icon-right-open"></i>
                         </Link>
                     </nav>
-                    <div className="update">
-                        <button onClick={() => update_novel()} className={"updatebtn" + (updating ? " isDisabled" : "")}>
-                            UPDATE
+                    {updateBtn}
+                    <div className="minibtn-container">
+                        <button 
+                            onClick={() => { 
+                                setDoNotShowRate(false);
+                                setRateSourceElement(<RateSource novelSlug={source.novel.slug} sourceSlug={sourceSlug} />);
+                            }} 
+                            className={"minibtn"}
+                        >
+                            RATE SOURCE
                         </button>
-                        {status ? <p className="updateStatus">{status}</p> : null}
-
                     </div>
-                    <div className="download">
-                        <button onClick={() => download(`${API_URL}/download?novel=${novelSlug}&source=${sourceSlug}&format=epub`)} className={"downloadbtn"} disabled>
-                            DOWNLOAD
-                        </button>
-                    </div>
-                    <p>
-                        Sorry, I don't have enough storage so download are disabled for now.
-                    </p>
+                    <section className="rate-source">
+                        {RateSourceElement}
+                    </section>
                     <section id="info">
                         <div className="summary">
                             <h4 className="lined">Summary</h4>

@@ -12,10 +12,21 @@ import notFoundImage from "../assets/404.webp"
 
 import { API_URL } from '../config.js';
 
+import RateSource from '../components/RateSource.js'
+
 function Chapter() {
     const location = useLocation();
     const { currentPreFetchedData } = location.state || {};
     const { novelSlug, sourceSlug, chapterId } = useParams();
+
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    useEffect(() => {
+        function handleResize() {
+            setIsMobile(window.innerWidth < 768);
+        }
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
 
     // A placeholder for the chapter data
     var initialResponseValue = {
@@ -33,6 +44,7 @@ function Chapter() {
             "cover": undefined,
             "novel": {
                 "language": "en",
+                "slug": novelSlug,
             },
             "title": "Loading...",
         }
@@ -68,7 +80,8 @@ function Chapter() {
 
     function setFontSize(size) {
         setFontSizeCookie('fontSize', size.toString(), { path: '/', sameSite: 'strict', maxAge: 2592000 });
-        document.getElementById("fontsize-slider").value = size
+        const slider = document.getElementById("fontsize-slider")
+        if (slider !== null) slider.value = size
     }
 
     if (fontSizeCookie.fontSize === undefined) {
@@ -120,12 +133,23 @@ function Chapter() {
 
     /* #region Setting pannel */
 
+    
+
     const [menuOpen, setMenuOpen] = useState(false);
-
-
+    // close fontColorMenuOpen and backgroundColorMenuOpen when menuOpen is closed
+    
     const innerRef = useOuterClick(ev => {
         setMenuOpen(false);
     });
+
+    const [fontColorMenuOpen, setFontColorMenuOpen] = useState(false);
+    const [backgroundColorMenuOpen, setBackgroundColorMenuOpen] = useState(false);
+    useEffect(() => {
+        if (!menuOpen) {
+            setFontColorMenuOpen(false);
+            setBackgroundColorMenuOpen(false);
+        }
+    }, [menuOpen]);
 
     /* #endregion */
 
@@ -140,6 +164,98 @@ function Chapter() {
         setFont("font_default");
     }
 
+
+    /* #endregion */
+
+    /* #region Background color */
+
+    const [backgroundColorCookie, setBackgroundColorCookie] = useCookies(['backgroundColor']);
+    
+    function isValidColor(color) {
+        const s = new Option().style;
+        s.color = color;
+        return s.color !== '';
+      }
+
+    function setBackgroundColor(color) {
+        const valid = isValidColor(color);
+        if (!valid && isValidColor("#" + color)) {
+            color = "#" + color;
+        }
+        else if (!valid) {
+            color = "";
+        }
+        setBackgroundColorCookie('backgroundColor', color, { path: '/', sameSite: 'strict', maxAge: 2592000 });
+    }
+
+    if (backgroundColorCookie.backgroundColor === undefined) {
+        setBackgroundColor("");
+    }
+    
+    function getActualBackgroundColor() {
+        if (backgroundColorCookie.backgroundColor === "") {
+            if (isMobile) {
+                return "var(--bg-color-main)";
+            }
+            else {
+                return "var(--bg-color-2)";
+            }
+        }
+        else {
+            return backgroundColorCookie.backgroundColor;
+        }
+    }
+    /* #region fix out of bound background color edit dialog */
+
+    // when the window is small, combo-dialog can overflow out of the screen right side
+    // 530 -> 50%
+    // 453 -> 23%
+
+    // 87 -> 27%
+
+    // 87 / 27 = 3.22
+
+    // left = ((window width - 453) / 3.22)%
+    // left = ((window width / 3.22) - 140.6)%
+    function fixBackgroundColorDialogPosition() {
+        if (!isMobile) return
+        
+        const windowWidth = window.innerWidth
+        if (windowWidth >= 540) return;
+        
+        const comboDialog = document.getElementsByClassName("combo-dialog")[1];
+        if (comboDialog === undefined) return;
+
+        comboDialog.style.left = (((windowWidth / 3.22) - 140.6) + 23) + "%";
+    }
+
+    window.addEventListener('resize', fixBackgroundColorDialogPosition);
+    fixBackgroundColorDialogPosition();
+    
+
+    /* #endregion */
+
+    /* #region font color */
+
+    const [fontColorCookie, setFontColorCookie] = useCookies(['fontColor']);
+    function setFontColor(color) {
+        const valid = isValidColor(color);
+        if (!valid && isValidColor("#" + color)) {
+            color = "#" + color;
+        }
+        else if (!valid) {
+            color = "";
+        }
+        setFontColorCookie('fontColor', color, { path: '/', sameSite: 'strict', maxAge: 2592000 });
+    }
+
+    if (fontColorCookie.fontColor === undefined) {
+        setFontColor("");
+    }
+
+    function getActualFontColor() {
+        return (fontColorCookie.fontColor === "") ? "var(--text-color)" : fontColorCookie.fontColor;
+    }
 
     /* #endregion */
 
@@ -211,11 +327,19 @@ function Chapter() {
         });
     }, [response, displayModeCookie]);
 
+    
+    
+    /* #endregion */
+    const [showRateSource, setShowRateSource] = useState(false);
 
+    useEffect(() => {
+        if (Math.random() < 0.01) {
+            setShowRateSource(true);
+        }
+        }, [location.pathname]); // Garrante a rerun when the component isn't unmounted
 
     /* #endregion */
-
-
+    
 
     if (response === undefined) {
         const title = "Chapter not found"
@@ -260,7 +384,7 @@ function Chapter() {
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
             <Helmet>
                 <meta name="robots" content="index" />
-                <link rel="canonical" href={window.location.href} />
+                <link rel="canonical" href={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id}`} />
             </Helmet>
             <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
                 <div className="head-stick-offset"></div>
@@ -268,7 +392,7 @@ function Chapter() {
                 <section className="page-in content-wrap" ref={innerRef}>
                     <div className="titles">
                         <h1 itemProp="headline">
-                            <Link className="booktitle" to={`/novel/${novelSlug}/${sourceSlug}`} title={source.title} rel="up"
+                            <Link className="booktitle" to={`/novel/${source.novel.slug}/${sourceSlug}`} title={source.title} rel="up"
                                 itemProp="sameAs">{source.title}</Link>
                             <span hidden=""></span>
                             <br />
@@ -282,15 +406,20 @@ function Chapter() {
 
                     </div>
                     <div id="chapter-container" className={"chapter-content " + fontCookie.font + " " + displayModeCookie.displayMode} itemProp="description"
-                        onClick={() => { window.innerWidth > 768 ? setMenuOpen(false) : setMenuOpen(!menuOpen) }}
-                        style={{ "fontSize": fontSizeCookie.fontSize + "px" }} dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="${API_URL}/image/${decodeUrlParameter(novelSlug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
+                        onClick={() => { isMobile ? setMenuOpen(!menuOpen) : setMenuOpen(false)  }}
+                        style={{ 
+                            "fontSize": fontSizeCookie.fontSize + "px" ,
+                            backgroundColor : backgroundColorCookie.backgroundColor,
+                            color : fontColorCookie.fontColor
+                        }} 
+                        dangerouslySetInnerHTML={{ __html: chapter.body.replaceAll('src="', `src="${API_URL}/image/${decodeUrlParameter(source.novel.slug)}/${decodeUrlParameter(sourceSlug)}/`) }}>
                     </div>
                     {
                         chapter.body.includes("<i>Failed to download chapter body</i>") ?
                             (
                                 <p>
                                     It seems like this chapter wasn't properly downloaded. <br />
-                                    You can try going to <Link to={`/novel/${novelSlug}/${sourceSlug}/`}>the index page</Link> and click on update to attempt a redownload.
+                                    You can try going to <Link to={`/novel/${source.novel.slug}/${sourceSlug}/`}>the index page</Link> and click on update to attempt a redownload.
                                     <br />
                                     You can also try <Link to="/addnovel">adding this novel again</Link> from a different source
                                     <br />
@@ -300,16 +429,16 @@ function Chapter() {
                     }
                     <div className="chapternav skiptranslate">
                         <Link rel="prev" className={`button prevchap ${response.is_prev ? "" : 'isDisabled'}`}
-                            to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
+                            to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
                             <i className="icon-left-open"></i>
                             <span>Prev</span>
                         </Link>
-                        <Link title={source.title} className="button chapindex" to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>
+                        <Link title={source.title} className="button chapindex" to={`/novel/${source.novel.slug}/${sourceSlug}/chapterlist/page-1`}>
                             <i className="icon-home"></i>
                             <span>Index</span>
                         </Link>
                         <Link rel="next" className={`button nextchap ${response.is_next ? "" : 'isDisabled'}`}
-                            to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}
+                            to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id + 1}`}
                             state={{ currentPreFetchedData: nextPrefetchedData }}>
                             <span>Next</span>
                             <i className="icon-right-open"></i>
@@ -318,35 +447,35 @@ function Chapter() {
                     <section id="info">
                         <CommentComponent currentUrl={window.location.pathname} />
                     </section>
-                    <dialog className="mobile-title-bar" style={{ "display": (window.innerWidth > 768 ? "none" : "block"), "transformOrigin": "top", "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
+                    <dialog className="mobile-title-bar" style={{ "display": (isMobile ? "block" : "none"), "transformOrigin": "top", "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
                         <div className="bar-body">
                             <i className="bar-nav-back"><svg viewBox="0 0 24 24" fill="none" width="30" height="30">
                                 <path d="M6.975 13.3L12 20H9l-6-8 6-8h3l-5.025 6.7H21v2.6H6.975z"></path>
                             </svg></i>
                             <div className="bar-titles">
-                                <Link className="booktitle text1row" to={`/novel/${novelSlug}/${sourceSlug}`}
+                                <Link className="booktitle text1row" to={`/novel/${source.novel.slug}/${sourceSlug}`}
                                     title={source.title}>{source.title}
                                 </Link>
                                 <span className="chapter-title">{chapter.title}</span>
                             </div>
                         </div>
                     </dialog>
-                    <dialog className="control-action" translate="no" style={{ "display": "block", "transformOrigin": (window.innerWidth > 768 ? "top" : "bottom"), "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
+                    <dialog className="control-action" translate="no" style={{ "display": "block", "transformOrigin": (isMobile ?  "bottom" : "top"), "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
                         <nav className="action-items">
                             <div className="action-select">
                                 <Link rel="prev" className={(response.is_prev ? "" : 'isDisabled ') + "chnav prev"}
-                                    to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
+                                    to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id - 1}`}>
                                     <i className="icon-left-open"></i>
                                     <span>Prev</span>
                                 </Link>
-                                <Link className="chap-index" title="Chapter Index" to={`/novel/${novelSlug}/${sourceSlug}/chapterlist/page-1`}>
+                                <Link className="chap-index" title="Chapter Index" to={`/novel/${source.novel.slug}/${sourceSlug}/chapterlist/page-1`}>
                                     <i className="icon-home"></i>
                                 </Link>
                                 <button className="nightmode_switch" title="Night mode" data-night="0" data-content="Dark Theme" onClick={switchDarkMode}>
                                     <i className="icon-moon"></i>
                                 </button>
                                 <Link rel="next" className={(response.is_next ? "" : 'isDisabled ') + "chnav next"}
-                                    to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter.id + 1}`}
+                                    to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter.id + 1}`}
                                     state={{ currentPreFetchedData: nextPrefetchedData }}>
                                     <span>Next</span>
                                     <i className="icon-right-open"></i>
@@ -404,6 +533,70 @@ function Chapter() {
                                     <label htmlFor="radioWebtoon">Webtoon</label>
                                 </div>
                             </div>
+                            <div className="option-select">
+                                <div className="combo-wrap">
+                                    <label>Font color : </label>
+                                    <div className="combo-select">
+                                        <button onClick={() => { setFontColorMenuOpen(!fontColorMenuOpen) }}>
+                                            <span className="color-swatch" 
+                                                style={{
+                                                    "backgroundColor":getActualFontColor()
+                                                }}>
+                                            </span>
+                                        </button>
+                                        <div className="combo-dialog left" style={{ 
+                                            transform: fontColorMenuOpen ? "scaleY(1) translateX(-50%)" : "scaleY(0) translateX(-50%)",
+                                        }}>
+                                            <div className="color-button" style={{ "backgroundColor": "var(--text-color)" }} onClick={() => { setFontColor("") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#000000" }} onClick={() => { setFontColor("#000000") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#333333" }} onClick={() => { setFontColor("#333333") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#666666" }} onClick={() => { setFontColor("#666666") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#777777" }} onClick={() => { setFontColor("#777777") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#CCCCCC" }} onClick={() => { setFontColor("#CCCCCC") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#FFFFFF" }} onClick={() => { setFontColor("#FFFFFF") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#F0F0F0" }} onClick={() => { setFontColor("#F0F0F0") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#CCCCCC" }} onClick={() => { setFontColor("#CCCCCC") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#E5E5E5" }} onClick={() => { setFontColor("#E5E5E5") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#DDDDDD" }} onClick={() => { setFontColor("#DDDDDD") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#FAFAFA" }} onClick={() => { setFontColor("#FAFAFA") }}></div>
+                                            <input type="text" id="custom-hex-input" placeholder="#ffffff" onKeyDown={(event) => { if (event.key === 'Enter') { setFontColor(document.getElementById("custom-hex-input").value) } }} />
+                                            
+                                            <span className="background"></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <label>Background color : </label>
+                                    <div className="combo-select" style={{marginRight: "0px"}}>
+                                        <button onClick={() => { setBackgroundColorMenuOpen(!backgroundColorMenuOpen) }}>
+                                        
+                                            <span className="color-swatch" 
+                                                style={{
+                                                "backgroundColor":getActualBackgroundColor()
+                                            }}>
+                                            </span>
+                                        </button>
+                                        <div className="combo-dialog" style={{ 
+                                            transform: backgroundColorMenuOpen ? "scaleY(1) translateX(-50%)" : "scaleY(0) translateX(-50%)",
+                                        }}>
+                                            <div className="color-button" style={{ "backgroundColor": "var(--bg-color-main)" }} onClick={() => { setBackgroundColor("") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#000000" }} onClick={() => { setBackgroundColor("#000000") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#333333" }} onClick={() => { setBackgroundColor("#333333") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#666666" }} onClick={() => { setBackgroundColor("#666666") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#777777" }} onClick={() => { setBackgroundColor("#777777") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#CCCCCC" }} onClick={() => { setBackgroundColor("#CCCCCC") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#FFFFFF" }} onClick={() => { setBackgroundColor("#FFFFFF") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#F0F0F0" }} onClick={() => { setBackgroundColor("#F0F0F0") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#CCCCCC" }} onClick={() => { setBackgroundColor("#CCCCCC") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#E5E5E5" }} onClick={() => { setBackgroundColor("#E5E5E5") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#DDDDDD" }} onClick={() => { setBackgroundColor("#DDDDDD") }}></div>
+                                            <div className="color-button" style={{ "backgroundColor": "#FAFAFA" }} onClick={() => { setBackgroundColor("#FAFAFA") }}></div>
+                                            <input type="text" id="custom-hex-input" placeholder="#ffffff" onKeyDown={(event) => { if (event.key === 'Enter') { setBackgroundColor(document.getElementById("custom-hex-input").value) } }} />
+                                        
+                                            <span className="background"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </nav>
                     </dialog>
 
@@ -415,7 +608,7 @@ function Chapter() {
                     </div>
                 </section>
                 <section className="rate-source">
-                    {/* <RateSource novelSlug={novelSlug} sourceSlug={sourceSlug} /> */}
+                    {showRateSource ? <RateSource novelSlug={novelSlug} sourceSlug={sourceSlug} /> : null}
                 </section>
             </article>
         </main>

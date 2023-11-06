@@ -3,13 +3,16 @@ from typing import Optional
 from .Novel import Novel, NovelFromSource
 from . import database
 from . import sanatize
+from . import naming_rules
+import urllib.parse
 
 
 def get_novel_with_slug(novel_slug) -> Optional[Novel]:
     """
     Returns the novel with the given slug
     """
-    return next((n for n in database.all_novels if n.slug == novel_slug), None)
+    novel = naming_rules.clean_name(urllib.parse.unquote_plus(novel_slug))
+    return next((n for n in database.all_novels if n.cleaned_folder_name == novel), None)
 
 
 def get_novel_with_url(url: str) -> Optional[Novel]:
@@ -38,6 +41,7 @@ def find_source_with_path(novel_and_source_path: Path) -> Optional[NovelFromSour
     """
     Find the NovelFromSource object corresponding to the path
     """
+    novel_and_source_path = novel_and_source_path.parent.parent / naming_rules.clean_name(novel_and_source_path.parent.name) / novel_and_source_path.name
     novel = None
     for n in database.all_novels:
         if novel_and_source_path.parent == n.path:
@@ -89,6 +93,7 @@ def add_novel_to_database(novel: Novel):
         
     database.set_ranks()
     database.refresh_sorted_all()
+    database.set_prefered_sources()
 
     
 

@@ -60,7 +60,20 @@ def refresh_sorted_all():
         value.cache_clear()
     for key, value in sorted_all_sources.items():
         value.cache_clear()
-        
+
+def set_ranks():
+    all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
+    for i, n in enumerate(all_novels, start=1):
+        n.rank = i
+
+def set_prefered_sources():
+    """Set the prefered source for each novel
+    Prefered source is the source with the highest rating
+    """
+    for novel in all_novels:
+        novel:Novel
+        if novel.sources:
+            novel.prefered_source = max(novel.sources, key=lambda x: x.source_rating)    
 
 from typing import TYPE_CHECKING
 
@@ -72,8 +85,3 @@ if TYPE_CHECKING:
 
 jobs = {}
 jobs_snapshots = {}
-
-def set_ranks():
-    all_novels.sort(key=lambda x: sum(x.clicks.values()), reverse=True)
-    for i, n in enumerate(all_novels, start=1):
-        n.rank = i

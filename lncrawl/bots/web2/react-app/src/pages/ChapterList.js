@@ -2,6 +2,7 @@ import Metadata from '../components/Metadata';
 import Pagination from '../components/Pagination';
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 
 
 import "../assets/stylesheets/navbar.min.css"
@@ -23,6 +24,7 @@ function ChapterList() {
     const imageUrl = "WEBSITE_URL + '/static/assets/logo.png'"
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"
+    const { novelSlug, sourceSlug, page } = useParams();
 
     const [response, setResponse] = useState({
         "content": [
@@ -45,13 +47,15 @@ function ChapterList() {
             "summary": "",
             "tags": [],
             "title": "Loading...",
+            "novel": {
+                "slug": novelSlug,
+            },
         }
     }
     );
     const chapter = response.content;
     const source = response.source;
 
-    const { novelSlug, sourceSlug, page } = useParams();
     useEffect(() => {
         fetch(`${API_URL}/chapterlist/?novel=${novelSlug}&source=${sourceSlug}&page=${page}`).then(
             response => response.json()
@@ -67,20 +71,10 @@ function ChapterList() {
 
 
     const chapterList = [];
-    // {% for chapter in chapters %}
-    //     <li data-chapterno="{{ chapter['id'] }}" data-volumeno="{{ chapter['volume'] }}"
-    //         data-orderno="{{ chapter['id'] }}">
-    //         <a href="../chapter-{{ chapter['id'] }}" title="{{ chapter['title'] }}">
-    //             <span className="chapter-no ">{{ chapter['id'] }}</span>
-    //             <strong className="chapter-title">
-    //                 {{ chapter['title'] }} </strong>
-    //         </a>
-    //     </li>
-    // {% endfor %}
     for (let i = 0; i < chapter.length; i++) {
         chapterList.push(
             <li data-chapterno={chapter[i].id} data-volumeno={chapter[i].volume} data-orderno={chapter[i].id} key={chapter[i].id}>
-                <Link to={`/novel/${novelSlug}/${sourceSlug}/chapter-${chapter[i].id}`} title={chapter[i].title}>
+                <Link to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${chapter[i].id}`} title={chapter[i].title}>
                     <span className="chapter-no ">{chapter[i].id}</span>
                     <strong className="chapter-title">
                         {chapter[i].title} </strong>
@@ -95,7 +89,7 @@ function ChapterList() {
     let navigate = useNavigate();
     const routeChange = () => {
         if (goToChapNoValue) {
-            navigate(`/novel/${novelSlug}/${sourceSlug}/chapter-${goToChapNoValue}`);
+            navigate(`/novel/${source.novel.slug}/${sourceSlug}/chapter-${goToChapNoValue}`);
         }
     }
 
@@ -104,11 +98,14 @@ function ChapterList() {
     return (
         <main role="main">
             <Metadata description={description} title={title} imageUrl={imageUrl} imageAlt={imageAlt} imageType={imageType} />
+            <Helmet>
+               <link rel="canonical" href={`/novel/${source.novel.slug}/${sourceSlug}/chapterlist/page-1`} />
+            </Helmet>
             <article id="chapter-list-page">
                 <header className="container">
                     <div className="novel-item">
                         <div className="cover-wrap">
-                            <Link title={source.title} to={`/novel/${novelSlug}/${sourceSlug}`}>
+                            <Link title={source.title} to={`/novel/${source.novel.slug}/${sourceSlug}`}>
                                 <figure className="novel-cover">
                                     <img src={source.cover ? `${API_URL}/image/${source.cover}` : undefined} alt={source.title} />
                                 </figure>
@@ -116,7 +113,7 @@ function ChapterList() {
                         </div>
                         <div className="item-body">
                             <h1>
-                                <Link className="text2row" title={source.title} to={`/novel/${novelSlug}/${sourceSlug}`}>{source.title}</Link>
+                                <Link className="text2row" title={source.title} to={`/novel/${source.novel.slug}/${sourceSlug}`}>{source.title}</Link>
                             </h1>
                         </div>
                     </div>
@@ -126,7 +123,7 @@ function ChapterList() {
                     <br />
                     <p>
                         Latest Release:<br />
-                        <Link to={`/novel/${novelSlug}/${sourceSlug}/chapter-${source.chapter_count}`} title={source.latest}>{source.latest}</Link>
+                        <Link to={`/novel/${source.novel.slug}/${sourceSlug}/chapter-${source.chapter_count}`} title={source.latest}>{source.latest}</Link>
                     </p>
                 </header>
                 <section className="container" id="chpagedlist" data-load="0">

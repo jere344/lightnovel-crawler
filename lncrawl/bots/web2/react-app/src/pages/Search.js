@@ -20,7 +20,7 @@ function Search() {
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"
 
-
+    const [status, setStatus] = useState(null);
     const [response, setResponse] = useState(
         {
             "status": "",
@@ -41,6 +41,7 @@ function Search() {
     const [searchQuery, setSearchQuery] = useState("");
 
     function searchNovel(e) {
+        setStatus(<div className="loading">Loading...</div>);
         fetch(`${API_URL}/search/?query=${e}`).then(
             (response) => { return ((response.status === 404) ? undefined : response.json()) }
         ).then(
@@ -103,7 +104,7 @@ function Search() {
                     </form>
                     <section id="novelListBase">
                         <ul className="novel-list horizontal col2">
-                            {novelListBase}
+                            {novelListBase.length === 0 ? status : novelListBase}
                         </ul>
                     </section>
                 </div>

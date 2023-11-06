@@ -3,7 +3,9 @@ from flask import request
 from .. import database
 from .. import lib
 from .Job import JobHandler, FinishedJob
-import shutil
+import logging
+
+logger = logging.getLogger(__name__)
 
 # ----------------------------------------------- Search Novel ----------------------------------------------- #
 
@@ -108,8 +110,8 @@ def addnovel_download():
         url = ""
         try:
             url = job.url
-        except Exception as e:
-            print("failed to get url : ", e)
+        except Exception:
+            logger.warning("failed to get url")
 
         if job.success:
             return {
@@ -173,8 +175,8 @@ def direct_download():
         url = ""
         try:
             url = job.url
-        except Exception as e:
-            print(e)
+        except Exception:
+            logger.warning("Failed to get url")
 
         return {
             "status": "success",
@@ -206,7 +208,7 @@ def update():
     if job_id in database.jobs:
         job = database.jobs[job_id]
         if isinstance(job, FinishedJob):
-            return {"status": "success", "message": job.get_status()}, 200
+            return {"status": "success", "message": job.get_status(), "url": job.url}, 200
         else:
             return {"status": "pending", "message": job.get_status()}, 202
     else:
@@ -272,30 +274,31 @@ def _update(url: str, job_id: str):
 
     # region missing images
     meta_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "meta.json"
-    with open(str(meta_folder), "r", encoding="utf-8") as f:
-        meta = json.load(f)
+    missing_meta = False
+    if meta_folder.exists():
+        with open(str(meta_folder), "r", encoding="utf-8") as f:
+            meta = json.load(f)
 
-    image_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "images"
+        image_folder = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug / "images"
 
-    missing_images = False
-    for chapter in (meta["novel"]["chapters"]) if ("novel" in meta) else meta["chapters"]:
-        # {"3e14b82305271562c7e800d612cff023.jpg": "https://cdn1.mangaclash.com/temp/manga_62d6697ba3072/80980f031c78a3c45513ddabf083b99a/1.jpg"}
-        if "images" in chapter:
-            for image_id in chapter["images"]:
-                image_path = image_folder / image_id
+        missing_images = False
+        for chapter in (meta["novel"]["chapters"]) if ("novel" in meta) else meta["chapters"]:
+            # {"3e14b82305271562c7e800d612cff023.jpg": "https://cdn1.mangaclash.com/temp/manga_62d6697ba3072/80980f031c78a3c45513ddabf083b99a/1.jpg"}
+            if "images" in chapter:
+                for image_id in chapter["images"]:
+                    image_path = image_folder / image_id
 
-                if not image_path.exists():
-                    missing_images = True
-                    break
+                    if not image_path.exists():
+                        missing_images = True
+                        break
 
-        if missing_images:
-            break
+            if missing_images:
+                break
+    else:
+        missing_meta = True
 
     # endregion
-    print("missing_chapters:", missing_chapters)
-    print("missing_cover:", missing_cover)
-    print("missing_images:", missing_images)
-    if missing_chapters or missing_cover or missing_images :
+    if missing_chapters or missing_cover or missing_images or missing_meta:
         # Ebook are disabled for now
         # We delete the ebook folders to force the creation of a new one
         # ebook_folders_path = [source_folder_path / "epub"]
@@ -319,15 +322,15 @@ def load_snapshot():
     if job_id in database.jobs:
         job = database.jobs[job_id]
     else:
-        print("Job not found")
+        logger.info("Job not found")
         return {"status": "error", "message": "Invalid job_id"}, 400
 
     if not isinstance(job, FinishedJob):
-        print("Job not finished")
+        logger.info("Job not finished")
         return {"status": "error", "message": "Job is not finished"}, 400
 
     if not job.snapshot_exists():
-        print("Snapshot not found")
+        logger.info("Snapshot not found")
         return {"status": "error", "message": "No snapshot for this job"}, 400
 
     job.restore_snapshot()
