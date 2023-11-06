@@ -100,6 +100,13 @@ function NovelInfo() {
             if (response.status === "success") {
                 finished = true;
                 setStatus("success");
+                if (response.url !== "") {
+                    let new_url = response.url.split('/');
+                    console.log(new_url);
+                    if (new_url[0] !== novelSlug || new_url[1] !== sourceSlug) {
+                        routeChange(`/novel/${new_url[0]}/${new_url[1]}`);
+                    }
+                }
                 sleep(1000).then(() => { setStatus(null); setUpdating(false); setUpdateHook(updateHook + 1); });
             } else if (response.status === "pending") {
                 setStatus(response.message)
@@ -107,6 +114,7 @@ function NovelInfo() {
             } else if (response.status === "error") {
                 finished = true;
                 setStatus(response.message)
+                await sleep(1000).then(() => { setStatus(null); setUpdating(false); });
             } else {
                 console.log("Unexpected response :", response);
                 setStatus("Unexpected response", response);

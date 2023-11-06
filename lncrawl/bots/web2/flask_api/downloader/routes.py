@@ -208,7 +208,7 @@ def update():
     if job_id in database.jobs:
         job = database.jobs[job_id]
         if isinstance(job, FinishedJob):
-            return {"status": "success", "message": job.get_status()}, 200
+            return {"status": "success", "message": job.get_status(), "url": job.url}, 200
         else:
             return {"status": "pending", "message": job.get_status()}, 202
     else:
