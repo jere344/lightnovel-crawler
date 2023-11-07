@@ -38,6 +38,11 @@ for novel in pathlib.Path("../Lightnovels").iterdir():
             break
 
         chapters = sorted((source / "json").iterdir(), reverse=True)
+        if len(chapters) == 0:
+            print("deleting source: " + str(novel.name + "/" + source.name))
+            delete_folder(source)
+            break
+
         chapter = chapters[0]
 
         with open(chapter, "r", encoding="utf-8") as f:
