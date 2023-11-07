@@ -45,7 +45,7 @@ class JobHandler:
     def crash(self, reason: str):
         self.crashed = True
         self.set_last_action(reason)
-        logger.exception(reason)
+        logger.error(reason)
         self.destroy()
         return reason
 
@@ -77,7 +77,7 @@ class JobHandler:
                         )
                     )
             except Exception as e:
-                logger.exception(e)
+                logger.error(e)
 
             self.app.destroy()
             self.executor.shutdown(wait=False)
