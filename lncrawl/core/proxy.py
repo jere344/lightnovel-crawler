@@ -178,6 +178,6 @@ def start_proxy_fetcher():
     Thread(target=__find_proxies, daemon=False).start()
 
 
-def stop_proxy_fetcher():
+def stop_proxy_fetcher(*args, **kwargs):
     global __has_exit
     __has_exit = True
