@@ -29,6 +29,7 @@ def _chapter_file(
 
 def _save_chapter(app, chapter: Chapter):
     from .app import App
+
     assert isinstance(app, App)
 
     if not chapter.body:
@@ -46,7 +47,7 @@ def _save_chapter(app, chapter: Chapter):
     title = "&gt;".join(title.split(">"))
     title = f"<h1>{title}</h1>"
     if not chapter.body.startswith(title):
-        chapter.body = title + chapter.body
+        chapter.body = "".join([title, chapter.body])
 
     file_name = _chapter_file(
         chapter,
@@ -60,6 +61,7 @@ def _save_chapter(app, chapter: Chapter):
 
 def fetch_chapter_body(app):
     from .app import App
+
     assert isinstance(app, App)
     assert app.crawler is not None
 
@@ -92,7 +94,7 @@ def fetch_chapter_body(app):
     for progress in app.crawler.download_chapters(app.chapters, app=app):
         # app.progress += progress
         pass
-    
+
     for chapter in app.chapters:
         _save_chapter(app, chapter)
 
@@ -110,11 +112,12 @@ def _fetch_content_image(app, url, image_file):
             os.makedirs(os.path.dirname(image_file), exist_ok=True)
             if img.mode not in ("L", "RGB", "YCbCr", "RGBX"):
                 if img.mode == "RGBa":
-                    #RGBa -> RGB isn't supported so we go through RGBA first
+                    # RGBa -> RGB isn't supported so we go through RGBA first
                     img.convert("RGBA").convert("RGB")
                 else:
                     img = img.convert("RGB")
             img.save(image_file, "JPEG", optimized=True)
+            img.close()
             logger.debug("Saved image: %s", image_file)
         finally:
             app.progress += 1
