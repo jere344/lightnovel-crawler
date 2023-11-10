@@ -8,7 +8,7 @@ from .Novel import Novel
 from . import database
 from . import read_novel_info
 from . import utils
-import constants
+from .... import constants
 
 LIGHTNOVEL_FOLDER = Path(constants.DEFAULT_OUTPUT_PATH)
 COMMENT_FOLDER = LIGHTNOVEL_FOLDER.parent / "Comments"
