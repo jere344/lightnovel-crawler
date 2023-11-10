@@ -1,7 +1,7 @@
-
 import pathlib
 import json
 import random
+
 
 def delete_folder(folder):
     for f in folder.iterdir():
@@ -11,6 +11,7 @@ def delete_folder(folder):
             f.unlink()
     folder.rmdir()
 
+
 if pathlib.Path("success.txt").exists():
     with open("success.txt", "r") as f:
         success = f.read().splitlines()
@@ -18,8 +19,7 @@ else:
     success = []
 
 for novel in pathlib.Path("../Lightnovels").iterdir():
-
-    for source in sorted(novel.iterdir(), key=lambda x: x.name, reverse=True):
+    for source in novel.iterdir():
         failed = False
         if novel.name + "/" + source.name in success:
             continue
@@ -39,8 +39,8 @@ for novel in pathlib.Path("../Lightnovels").iterdir():
             failed = True
             break
 
-
-        for chapter in (source / "json").iterdir():
+        # for chapter in (source / "json").iterdir():
+        for chapter in sorted((source / "json").iterdir(), reverse=True):
             with open(chapter, "r", encoding="utf-8") as f:
                 if "Failed to download chapter body" in f.read():
                     # print("Failed: " + str(novel.name + "/" + source.name + "\t" + chapter.name))
@@ -52,7 +52,10 @@ for novel in pathlib.Path("../Lightnovels").iterdir():
                         elif "url" in meta:
                             url = meta["url"]
                         else:
-                            print("glitched source: " + str(novel.name + "/" + source.name))
+                            print(
+                                "glitched source: "
+                                + str(novel.name + "/" + source.name)
+                            )
                             failed = True
                             break
 

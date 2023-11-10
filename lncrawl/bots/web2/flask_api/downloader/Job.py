@@ -12,6 +12,7 @@ from pathlib import Path
 import json
 from lncrawl.core.sources import prepare_crawler
 import threading
+import gc
 
 logger = logging.getLogger(__name__)
 from .. import lib
@@ -31,6 +32,9 @@ class JobHandler:
     destroyed = False
 
     def __init__(self, job_id: str):
+        # Before we start, first collect garbage to free up memory of previous jobs 
+        #   because I couldn't find a way to trigger the collector automatically when a job is destroyed
+        gc.collect() 
         self.app = App()
         self.app.output_formats = {"json": True, "epub":True}
         self.job_id = job_id
@@ -45,7 +49,7 @@ class JobHandler:
     def crash(self, reason: str):
         self.crashed = True
         self.set_last_action(reason)
-        logger.exception(reason)
+        logger.error(reason)
         self.destroy()
         return reason
 
@@ -77,7 +81,7 @@ class JobHandler:
                         )
                     )
             except Exception as e:
-                logger.exception(e)
+                logger.error(e)
 
             self.app.destroy()
             self.executor.shutdown(wait=False)
@@ -119,7 +123,7 @@ class JobHandler:
 
             else:
                 if not self.chapters_to_download:
-                    self.chapters_to_download = len(self.app.chapters)
+                    self.chapters_to_download = len([c for c in self.app.chapters if not c.success])
                 return f"Downloading chapters ({self.app.progress}/{self.chapters_to_download})"
 
         elif self.last_action == "Searching":

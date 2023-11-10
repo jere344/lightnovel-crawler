@@ -8,7 +8,7 @@ from .Novel import Novel
 from . import database
 from . import read_novel_info
 from . import utils
-import constants
+from .... import constants
 
 LIGHTNOVEL_FOLDER = Path(constants.DEFAULT_OUTPUT_PATH)
 COMMENT_FOLDER = LIGHTNOVEL_FOLDER.parent / "Comments"
@@ -57,6 +57,7 @@ naming_rules.fix_existing()
 database.all_novels: List[Novel] = []
 number_of_novel = len(list(LIGHTNOVEL_FOLDER.iterdir()))
 print("Loading novels")
+novel_folder = None
 for i, novel_folder in enumerate(LIGHTNOVEL_FOLDER.iterdir()):
     try:
         if novel_folder.is_dir():
@@ -77,7 +78,8 @@ for i, novel_folder in enumerate(LIGHTNOVEL_FOLDER.iterdir()):
 
         # import sys
         # sys.exit(1)
-print(f"Loaded {number_of_novel}/{number_of_novel} : {novel_folder.name}")
+if novel_folder: # When the novel folder is empty, novel_folder is null
+    print(f"Loaded {number_of_novel}/{number_of_novel} : {novel_folder.name}")
 
 database.set_ranks()
 

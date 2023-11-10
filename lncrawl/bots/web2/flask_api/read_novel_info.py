@@ -32,9 +32,9 @@ def get_novel_info(novel_folder: Path) -> Novel:
     novel_stats_file = Path(novel_folder / "stats.json")
 
     if not novel_stats_file.exists():
-        shutil.copy(str(Path(__file__).parent / "_stats.json"), str(novel_stats_file))
+        shutil.copyfile("./lncrawl/bots/web2/flask_api/_stats.json", novel_stats_file)
 
-    # Retry 2 times. If it crash it is reset to default and retried.
+    # Retry twice. If it crash it is reset to default and retried.
     for _ in range(2):
         try :
             with open(novel_stats_file, "r", encoding="utf-8") as f:
@@ -46,6 +46,8 @@ def get_novel_info(novel_folder: Path) -> Novel:
 
         except Exception as e:
             print(f"Resetting novel stats for {novel_folder.name}: {e}")
+            with open(novel_stats_file, "r", encoding="utf-8") as f:
+                print("old stats:\n", f.read())
             shutil.copyfile("./lncrawl/bots/web2/flask_api/_stats.json", novel_stats_file)
             continue
 

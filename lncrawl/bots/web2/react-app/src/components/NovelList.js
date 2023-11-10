@@ -15,7 +15,7 @@ const placeholderSource = {
     'cover': null,
     'author': 'Loading...',
     'chapter_count': 0,
-    'slug': 'loading',
+    'slug': '',
     'first': 'Loading...',
     'latest': 'Loading...',
     'summary': 'Loading...',
@@ -35,12 +35,12 @@ const placeholderNovel = {
     'clicks': 0,
     'current_week_clicks': 0,
     'rank': 0,
-    'prefered_source': 'Loading...',
+    'prefered_source': '',
     'sources': {},
     'overall_rating': 0,
     'ratings_count': 0,
     'source_count': 0,
-    'slug': 'loading',
+    'slug': '',
     'comment_count': 0,
 }
 placeholderSource.novel = placeholderNovel;

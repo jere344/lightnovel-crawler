@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 
 function NovelItemCompactClicks({ novel }) {
 
-    const novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+    let novelUrl = ""
+    if (novel.slug) {
+        novelUrl = `/novel/${novel.slug}/${novel.prefered_source}`
+    }
     const formatter = Intl.NumberFormat('en', { notation: 'compact' })
 
     return (

@@ -38,7 +38,7 @@ def clean_name(string):
 
 
 def fix_existing():
-    import constants
+    from .... import constants
     from pathlib import Path
     import json
     import os
