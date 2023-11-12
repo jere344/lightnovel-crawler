@@ -90,7 +90,7 @@ class Novel:
         """
         return hash(self.title)
 
-    def asdict(self) -> dict:
+    def asdict(self, *args, **kwargs) -> dict:
         """
         Returns a dictionary representation of the novel.
         """
@@ -119,6 +119,7 @@ class Novel:
             # "ratings": self.ratings,
             # "search_words": self.search_words,
             "overall_rating": self.overall_rating,
+            "user_rating": self.ratings.get(kwargs.get("user")),
             "ratings_count": self.ratings_count,
             "source_count": self.source_count,
             "slug": self.slug,
@@ -166,13 +167,13 @@ class NovelFromSource:
         ),
     )
 
-    def asdict(self) -> dict:
+    def asdict(self, *args, **kwargs) -> dict:
         """
         Returns a dictionary representation of the novel from source.
         """
         return {
             # "path": self.path,
-            "novel": self.novel.asdict(),
+            "novel": self.novel.asdict(*args, **kwargs),
             "title": self.title,
             "cover": self.cover,
             "author": self.author,

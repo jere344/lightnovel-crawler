@@ -6,6 +6,7 @@ function RatingStars(param) {
     const [ratingHovered, setRatingHovered] = useState(false);
     const rating = param.rating;
     const count = param.count;
+    const display_average = param.display_average !== false;
     const ratingStars = [];
 
     const formatter = Intl.NumberFormat('en', { notation: 'compact' })
@@ -59,11 +60,19 @@ function RatingStars(param) {
         }
     }
 
+    const strongAverage = []
+    if (display_average) {
+        strongAverage.push(
+            <strong key="average">
+                {formatter.format(rating)} {count ? ("(" + formatter.format(count) + ")") : ""}
+            </strong>
+        )
+    }
 
     return (
         <div className="rating-star-container">
             <p>{ratingStars}
-                <strong>{formatter.format(rating)} ({formatter.format(count)})</strong>
+                {strongAverage}
             </p>
             <div className={"thanks-panel" + (thanksPanelActive ? " active" : "")}>
                 <div className="thanks-panel-rating-text">

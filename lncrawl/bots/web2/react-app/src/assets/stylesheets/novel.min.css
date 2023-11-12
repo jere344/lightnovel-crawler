@@ -136,6 +136,11 @@
 	vertical-align: middle;
 }
 
+.novel-header .novel-info .user-rating {
+	display: flex;
+	margin-top:5px;
+}
+
 .novel-header .novel-info .rating .rating-star .star-wrap {
 	font-size: 1.3rem;
 	margin-bottom: 5px;

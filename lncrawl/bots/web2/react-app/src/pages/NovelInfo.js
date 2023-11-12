@@ -43,6 +43,7 @@ function NovelInfo() {
             "first": "Loading ...",
             "latest": "Loading ...",
             "overall_rating": 0,
+            "user_rating": null,
             "rank": 0,
             "ratings_count": 0,
             "source_count": 0,
@@ -197,6 +198,16 @@ function NovelInfo() {
                                         <RatingStars rating={source.novel.overall_rating} count={source.novel.ratings_count} novel={source.novel.slug} />
                                     </div>
                                 </div>
+                                {/* <div className="user-note">
+                                    <span className="note">Note: </span>
+                                    <span className="text">{source.novel.note}</span>
+                                </div> */}
+                                {source.novel.user_rating ? (
+                                    <div className="user-rating">
+                                        <span className="user-note">Your note: </span>
+                                        <RatingStars rating={source.novel.user_rating} novel={source.novel.slug} display_average={false} />
+                                    </div>
+                                ) : null}
 
                             </div>
 

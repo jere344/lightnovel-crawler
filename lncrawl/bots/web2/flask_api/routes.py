@@ -209,7 +209,7 @@ def get_novel():
 
     source.novel.clicks[current_week] += 1
 
-    return source.asdict(), 200
+    return source.asdict(user=utils.shuffle_ip(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))), 200
 
 @flaskapp.app.route("/api/chapter/")
 @flaskapp.app.route("/chapter/")
