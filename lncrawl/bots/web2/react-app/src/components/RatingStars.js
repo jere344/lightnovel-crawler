@@ -6,8 +6,10 @@ function RatingStars(param) {
     const [ratingHovered, setRatingHovered] = useState(false);
     const rating = param.rating;
     const count = param.count;
-    const display_average = param.display_average !== false;
+    const displayAverage = param.displayAverage !== false;
     const ratingStars = [];
+    // function to call with the user's rating
+    const passUserRateAfterVote = param.passUserRateAfterVote || (() => { });
 
     const formatter = Intl.NumberFormat('en', { notation: 'compact' })
 
@@ -27,7 +29,7 @@ function RatingStars(param) {
             }),
         });
 
-
+        passUserRateAfterVote(rating);
         setThanksPanelActive(true);
         setTimeout(function () { console.log("thanks panel inactive"); setThanksPanelActive(false); }, 3000);
     }
@@ -61,7 +63,7 @@ function RatingStars(param) {
     }
 
     const strongAverage = []
-    if (display_average) {
+    if (displayAverage) {
         strongAverage.push(
             <strong key="average">
                 {formatter.format(rating)} {count ? ("(" + formatter.format(count) + ")") : ""}
