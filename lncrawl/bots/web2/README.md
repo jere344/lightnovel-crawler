@@ -102,8 +102,8 @@ python lncrawl --bot web2
 
 - Build the frontend
 ```bash
-$ cd lncrawl/bots/web2/react-app
-$ npm run build
+cd lncrawl/bots/web2/react-app
+npm run build
 ```
 
 - Serve the frontend server
