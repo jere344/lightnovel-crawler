@@ -1,3 +1,9 @@
+For the website README go here :  
+[/lncrawl/bots/web2/README.md](/lncrawl/bots/web2/README.md)
+
+------
+
+
 # Lightnovel Crawler
 
 [![download win](https://img.shields.io/badge/download-lncrawl.exe-red?logo=windows&style=for-the-badge)](https://rebrand.ly/lncrawl)

@@ -128,4 +128,5 @@ def create_miniature(path, output_path, size=200):
     img = Image.open(path)
     img.thumbnail((size, size))
     img.save(output_path)
+    img.close()
     return output_path

@@ -389,7 +389,9 @@ function Chapter() {
             <article id="chapter-article" itemScope="" itemType="https://schema.org/CreativeWorkSeries">
                 <div className="head-stick-offset"></div>
                 <div className="container"></div>
-                <section className="page-in content-wrap" ref={innerRef}>
+                <section className="page-in content-wrap" ref={innerRef} style={{ 
+                    backgroundColor : backgroundColorCookie.backgroundColor,
+                }} >
                     <div className="titles">
                         <h1 itemProp="headline">
                             <Link className="booktitle" to={`/novel/${source.novel.slug}/${sourceSlug}`} title={source.title} rel="up"

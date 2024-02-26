@@ -43,6 +43,7 @@ function NovelInfo() {
             "first": "Loading ...",
             "latest": "Loading ...",
             "overall_rating": 0,
+            "user_rating": null,
             "rank": 0,
             "ratings_count": 0,
             "source_count": 0,
@@ -159,6 +160,12 @@ function NovelInfo() {
         setDoNotShowRateCookie('doNotShow', bool, { path: '/', sameSite: 'strict', maxAge: 2592000 });
     }
 
+
+    const [userRating, setUserRating] = useState(source.novel.user_rating);
+    useEffect(() => {
+        setUserRating(source.novel.user_rating);
+    }, [source.novel.user_rating]);
+
     return (
 
         <main role="main">
@@ -194,9 +201,19 @@ function NovelInfo() {
                                         <span><i className="icon-award"></i> Rank {source.novel.rank}</span>
                                     </div>
                                     <div className="rating-star" itemProp="aggregateRating" itemScope="" itemType="https://schema.org/AggregateRating">
-                                        <RatingStars rating={source.novel.overall_rating} count={source.novel.ratings_count} novel={source.novel.slug} />
+                                        <RatingStars rating={source.novel.overall_rating} count={source.novel.ratings_count} novel={source.novel.slug} passUserRateAfterVote={setUserRating}/>
                                     </div>
                                 </div>
+                                {/* <div className="user-note">
+                                    <span className="note">Note: </span>
+                                    <span className="text">{source.novel.note}</span>
+                                </div> */}
+                                {source.novel.user_rating ? (
+                                    <div className="user-rating">
+                                        <span className="user-note">Your note: </span>
+                                        <RatingStars rating={userRating} novel={source.novel.slug} displayAverage={false} passUserRateAfterVote={setUserRating} />
+                                    </div>
+                                ) : null}
 
                             </div>
 

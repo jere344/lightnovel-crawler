@@ -3701,6 +3701,7 @@ svg {
 	font-size: 0;
 	opacity: 0;
 	z-index: 0;
+	pointer-events: none;
 }
 
 .thanks-panel.active {

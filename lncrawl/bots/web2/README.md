@@ -36,20 +36,22 @@ You will need
 - First clone the repository:
 
 ```bash
-$ git clone https://github.com/jere344/lightnovel-crawler.git
+git clone https://github.com/jere344/lightnovel-crawler.git
 ```
 
 - Open command prompt inside of the project folder and install requirements:
 
 ```bash
-$ pip install -r requirements.txt
-$ pip install -r requirements-bot.txt
+pip install -r requirements.txt
+pip install -r requirements-bot.txt
+pip install -r requirements-website.txt
 ```
 
 - Move into lncrawl/bots/web2/react-app/ and install requirements :
 
 ```bash
-$ npm install
+cd lncrawl/bots/web2/react-app
+npm install
 ```
 
 ## Start the website
@@ -64,8 +66,8 @@ python lncrawl --bot web2
 
 - Then start the frontend server
 ```bash
-$ cd lncrawl/bots/web2/react-app
-$ npm start
+cd lncrawl/bots/web2/react-app
+npm start
 ```
 
 ### Adding a novel to the server
@@ -79,7 +81,7 @@ $ npm start
 You will need to install serve
 ```bash
 cd lncrawl/bots/web2/react-app
-$ npm install -g serve
+npm install -g serve
 ```
 
 - Edit the configuration file `lncrawl/bot/web2/flask_api/config.json` with your domain name:
@@ -90,7 +92,7 @@ $ npm install -g serve
 
 - Copy the configuration file to the frontend folder :
 ```bash
-$ cp "lncrawl/bots/web2/flask_api/config.json" "lncrawl/bots/web2/react-app/src/"
+cp "lncrawl/bots/web2/flask_api/config.json" "lncrawl/bots/web2/react-app/src/"
 ```
 
 - Start the backend bot
@@ -100,14 +102,14 @@ python lncrawl --bot web2
 
 - Build the frontend
 ```bash
-$ cd lncrawl/bots/web2/react-app
-$ npm run build
+cd lncrawl/bots/web2/react-app
+npm run build
 ```
 
 - Serve the frontend server
 ```bash
-$ cd lncrawl/bots/web2/react-app
-$ serve -s build
+cd lncrawl/bots/web2/react-app
+serve -s build
 ```
 
 For the rest you will need some kind of reverse proxy like nginx or apache2 to serve the backend and the frontend.
