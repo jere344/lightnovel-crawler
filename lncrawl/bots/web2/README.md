@@ -44,6 +44,7 @@ git clone https://github.com/jere344/lightnovel-crawler.git
 ```bash
 pip install -r requirements.txt
 pip install -r requirements-bot.txt
+pip install -r requirements-website.txt
 ```
 
 - Move into lncrawl/bots/web2/react-app/ and install requirements :
