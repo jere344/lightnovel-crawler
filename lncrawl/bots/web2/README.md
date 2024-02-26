@@ -50,6 +50,7 @@ pip install -r requirements-website.txt
 - Move into lncrawl/bots/web2/react-app/ and install requirements :
 
 ```bash
+cd lncrawl/bots/web2/react-app
 npm install
 ```
 
