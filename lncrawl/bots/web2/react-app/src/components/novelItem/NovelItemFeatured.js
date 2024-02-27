@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import '../../assets/stylesheets/featured.css'
 function NovelItemFeatured ({ novel }) {
-    const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768)
-    useEffect(() => {
-        window.addEventListener('resize', setColumnHeight)
-        return () => window.removeEventListener('resize', setColumnHeight)
-    }, [])
-
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
     const source = novel
+    window.addEventListener('resize', () => {
+        setIsMobile(window.innerWidth < 768)
+    })
+
     if (source.novel === undefined) {
         return null
     }
@@ -18,17 +17,6 @@ function NovelItemFeatured ({ novel }) {
         novelUrl = `/novel/${source.novel.slug}/${source.slug}`
     }
     const formatter = Intl.NumberFormat('en', { notation: 'compact' })
-
-    function setColumnHeight () {
-        const image = document.getElementById('featured-cover')
-        if (!image) return
-        const height = image.clientHeight
-        if (!height || height < 100) return
-
-        document.querySelectorAll('.featured-column').forEach(column => {
-            column.style.height = `${height}px`
-        })
-    }
 
     function formatTimeAgo (timeAgo) {
         const seconds = Math.floor(timeAgo / 1000)
@@ -62,17 +50,13 @@ function NovelItemFeatured ({ novel }) {
     const formatedTimeAgo = formatTimeAgo(new Date().getTime() - updateDateInUserTimezone.getTime())
 
     return (
-        <li className='novel-item-featured'>
-            <Link className='item-cover featured-column' title={source.title} to={novelUrl} style={{ height: '698px' }}>
-                <img
-                    id='featured-cover'
-                    src={source.cover}
-                    alt={source.title}
-                    data-src={source.cover}
-                    onLoad={setColumnHeight}
-                />
+        <li className='novel-item-featured' key={source.slug}>
+            <Link className='item-cover featured-column' title={source.title} to={novelUrl}>
+                <figure className='novel-cover'>
+                    <img id='featured-cover' src={source.cover} alt={source.title} data-src={source.cover} />
+                </figure>
             </Link>
-            <div className='item-body featured-column' style={{ height: '698px' }}>
+            <div className='item-body featured-column'>
                 <Link title={source.title} to={novelUrl}>
                     <h2 className='novel-title text1row'>{source.title}</h2>
                 </Link>

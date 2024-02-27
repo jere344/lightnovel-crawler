@@ -24,7 +24,8 @@ function ChapterList() {
     const imageUrl = "WEBSITE_URL + '/static/assets/logo.png'"
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"
-    const { novelSlug, sourceSlug, page } = useParams();
+    const { novelSlug, sourceSlug, page: rawPage } = useParams();
+    const page = parseInt(rawPage.replace('page-', '')) || 1;
 
     const [response, setResponse] = useState({
         "content": [
