@@ -20,9 +20,7 @@ function Search() {
     const imageAlt = "LnCrawler"
     const imageType = "image/bmp"
 
-    const [status, setStatus] = useState(null);
-    const [response, setResponse] = useState(
-        {
+    const placeholder = {
             "status": "",
             "content": [
                 // {
@@ -36,16 +34,24 @@ function Search() {
                 // }
             ]
         }
-    );
+
+    const [status, setStatus] = useState(null);
+    const [response, setResponse] = useState(placeholder);
 
     const [searchQuery, setSearchQuery] = useState("");
 
     function searchNovel(e) {
+        setResponse(placeholder);
+        if (e.length < 3) {
+            setStatus("Please enter at least 3 characters");
+            return;
+        }
         setStatus(<div className="loading">Loading...</div>);
         fetch(`${API_URL}/search/?query=${e}`).then(
             (response) => { return ((response.status === 404) ? undefined : response.json()) }
         ).then(
             data => {
+                setStatus("No results");
                 setResponse(data);
             }
         )
