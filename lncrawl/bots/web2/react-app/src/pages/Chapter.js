@@ -448,7 +448,7 @@ function Chapter() {
                         </Link>
                     </div>
                     <section id="info">
-                        <CommentComponent currentUrl={window.location.pathname} />
+                        <CommentComponent currentUrl={window.location.pathname} setMenuOpen={setMenuOpen} />
                     </section>
                     <dialog className="mobile-title-bar" style={{ "display": (isMobile ? "block" : "none"), "transformOrigin": "top", "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
                         <div className="bar-body">

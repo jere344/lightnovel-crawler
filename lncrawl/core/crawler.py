@@ -4,6 +4,7 @@ from abc import abstractmethod
 from typing import Generator, List, Optional
 from pathlib import Path
 
+from .arguments import get_args
 from ..models import Chapter, SearchResult, Volume
 from .cleaner import TextCleaner
 from .scraper import Scraper
@@ -125,21 +126,27 @@ class Crawler(Scraper):
         return 0
 
     def extract_chapter_images(self, chapter: Chapter) -> None:
+        ignore_images = get_args().ignore_images
+        if ignore_images:
+            return
+
         if not chapter.body:
             return
 
+        has_changes = False
         chapter.setdefault("images", {})
         soup = self.make_soup(chapter.body)
         for img in soup.select("img[src]"):
             full_url = self.absolute_url(img["src"], page_url=chapter["url"])
             if not full_url.startswith("http"):
                 continue
-
             filename = hashlib.md5(full_url.encode()).hexdigest() + ".jpg"
             img.attrs = {"src": "images/" + filename, "alt": filename}
             chapter.images[filename] = full_url
+            has_changes = True
 
-        chapter.body = soup.find("body").decode_contents()
+        if has_changes:
+            chapter.body = soup.find("body").decode_contents()
 
     def download_chapters(
         self,

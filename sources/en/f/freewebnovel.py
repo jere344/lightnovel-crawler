@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from concurrent.futures import Future
-from typing import List
+import unicodedata
+import re
 
 from bs4 import BeautifulSoup, Tag
 
@@ -11,15 +10,24 @@ from lncrawl.templates.soup.searchable import SearchableSoupTemplate
 
 
 class FreeWebNovelCrawler(SearchableSoupTemplate, ChapterOnlySoupTemplate):
-    base_url = ["https://freewebnovel.com/"]
+    base_url = [
+        "https://freewebnovel.com/",
+        "https://bednovel.com/",
+        "https://innread.com/",
+        "https://innnovel.com/",
+        "https://libread.com/",
+        "https://libread.org/",
+    ]
 
     def initialize(self) -> None:
-        self.init_executor(1)
+        self.init_executor(ratelimit=2)
         self.cleaner.bad_tags.update(["h4", "sub"])
         self.cleaner.bad_tag_text_pairs.update(
             {
                 "p": [
                     r"freewebnovel\.com",
+                    r"innread\.com",
+                    r"bednovel\.com",
                     r"Updates by Freewebnovel\. com",
                     r"” Search Freewebnovel\.com\. on google”\.",
                     r"\/ Please Keep reading on MYFreeWebNovel\.C0M",
@@ -77,19 +85,9 @@ class FreeWebNovelCrawler(SearchableSoupTemplate, ChapterOnlySoupTemplate):
             yield a.text.strip()
 
     def select_chapter_tags(self, soup: BeautifulSoup):
-        pages = soup.select("#indexselect > option")
-
-        futures: List[Future] = []
-        for page in pages:
-            url = self.absolute_url(page["value"])
-            f = self.executor.submit(self.get_soup, url)
-            futures.append(f)
-
-        self.resolve_futures(futures, desc="TOC", unit="page")
-        for i, future in enumerate(futures):
-            assert future.done(), f"Failed to get page {i + 1}"
-            soup = future.result()
-            yield from soup.select(".m-newest2 li > a")
+        chapters = soup.select("#idData")
+        for chapter in chapters:
+            yield from chapter.select("li > a")
 
     def parse_chapter_item(self, tag: Tag, id: int) -> Chapter:
         return Chapter(
@@ -98,5 +96,21 @@ class FreeWebNovelCrawler(SearchableSoupTemplate, ChapterOnlySoupTemplate):
             title=tag.text.strip(),
         )
 
+    def normalize_text(self, text: str) -> str:
+        return unicodedata.normalize("NFKC", text)
+
     def select_chapter_body(self, soup: BeautifulSoup) -> Tag:
-        return soup.select_one(".m-read .txt")
+        body_tag = soup.select_one(".m-read .txt")
+        # style element on page that hides usually last paragraph which contains randomised self-promo text
+        has_promo = soup.find("style", text=re.compile("p:nth-last-child\\(\\d\\)"))
+        if body_tag:
+            normalized_body = self.normalize_text(str(body_tag))
+            normalized_soup = BeautifulSoup(normalized_body, "html.parser")
+            if has_promo:
+                # get index out of css selector and manually remove it via decompose
+                idx = int(re.match(re.compile(".+p:nth-last-child\\((\\d)\\).+"), has_promo.text)[1])
+                random_self_promo = normalized_soup.find_all("p")[-idx]
+                if isinstance(random_self_promo, Tag):
+                    random_self_promo.decompose()
+            return normalized_soup
+        return body_tag
