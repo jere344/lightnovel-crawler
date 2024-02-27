@@ -18,7 +18,7 @@ function Chapter() {
     const location = useLocation();
     const { currentPreFetchedData } = location.state || {};
     const { novelSlug, sourceSlug, chapterId:rawChapterId } = useParams();
-    const chapterId = parseInt(rawChapterId) || 1;
+    const chapterId = parseInt(rawChapterId.replace('chapter-', '')) || 1;
 
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     useEffect(() => {
