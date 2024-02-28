@@ -75,7 +75,7 @@ function NovelItemChapter ({ novel }) {
                 </Link>
                 <div className='novel-stats'>
                     <span>
-                        <i className='icon-pencil-2'></i>{' '}
+                        <i className='icon-pencil'></i>{' '}
                         <time dateTime={updateDateInUserTimezone}>{formatedTimeAgo}</time>
                     </span>
                 </div>
