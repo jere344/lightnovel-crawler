@@ -86,10 +86,12 @@ def add_novel_to_database(novel: Novel):
         database.all_novels.remove(novel)
     database.all_novels.append(novel)
 
-    for source in novel.sources:
-        if source in database.all_sources:
-            database.all_sources.remove(source)
-        database.all_sources.append(source)
+    for new_source in novel.sources:
+        for existing_source in database.all_sources:
+            if new_source == existing_source and new_source.last_update_date > existing_source.last_update_date:
+                database.all_sources.remove(existing_source)
+
+        database.all_sources.append(new_source)
         
     database.set_ranks()
     database.refresh_sorted_all()
