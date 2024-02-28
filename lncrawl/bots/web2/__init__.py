@@ -5,7 +5,9 @@ from . import flask_api
 
 def start():
     if flask_api.lib.config["dev_mode"] == "true":
-        flask_api.flaskapp.app.run()
+        flask_api.flaskapp.app.run(
+            host=flask_api.lib.HOST, port=flask_api.lib.PORT, debug=True
+        )
 
     elif flask_api.lib.config["dev_mode"] == "false":
         from waitress import serve
