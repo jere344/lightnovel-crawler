@@ -204,7 +204,10 @@ import time
 def run_tasks(tasks):
     len_tasks = len(tasks)
     for i, (task, args) in enumerate(tasks, 1):
-        print(f"Task {i}/{len_tasks} started")
-        task(*args)
+        result = task(*args)
+        if result:
+            print(f"Task {i}/{len_tasks} done")
+        else:
+            print(f"Task {i}/{len_tasks} failed")
         time.sleep(5)
     print("All tasks done")
