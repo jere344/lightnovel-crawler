@@ -86,10 +86,12 @@ def add_novel_to_database(novel: Novel):
         database.all_novels.remove(novel)
     database.all_novels.append(novel)
 
-    for source in novel.sources:
-        if source in database.all_sources:
-            database.all_sources.remove(source)
-        database.all_sources.append(source)
+    for new_source in novel.sources:
+        for existing_source in database.all_sources:
+            if new_source == existing_source and new_source.last_update_date > existing_source.last_update_date:
+                database.all_sources.remove(existing_source)
+
+        database.all_sources.append(new_source)
         
     database.set_ranks()
     database.refresh_sorted_all()
@@ -130,3 +132,79 @@ def create_miniature(path, output_path, size=200):
     img.save(output_path)
     img.close()
     return output_path
+
+
+import subprocess
+import shutil
+
+COMPRESSION_LEVEL = 5
+COMPRESSION_ALGORITHM = "LZMA2"
+def compress_folder_to_tar_7zip(source_folder:Path, json_folder:str, tarfile_path:Path):
+    try :
+        # result = subprocess.run(["7z", "a", tarfile_path, json_folder], cwd=source_folder)
+        result = subprocess.run(["7z", "a", tarfile_path, json_folder, f"-mx={COMPRESSION_LEVEL}", f"-m0={COMPRESSION_ALGORITHM}", "-bso0"], cwd=source_folder)
+        if result.returncode == 0:
+            print(f"Compression successful. Deleting {source_folder}/{json_folder}")
+            shutil.rmtree(f"{source_folder}/{json_folder}")
+        else:
+            print("Compression failed. Folder not deleted.")
+        return result.returncode == 0
+    except Exception as e:
+        print(f"Error while compressing {source_folder}/{json_folder} to {tarfile_path}: {e}")
+        return False
+
+def extract_tar_7zip_folder(tar_file_path:Path, output_folder:Path):
+    try :
+        result = subprocess.run(["7z", "x", tar_file_path, f"-o{output_folder}", "-bso0"])
+        if result.returncode == 0:
+            print(f"Extraction successful. Deleting {tar_file_path}")
+            tar_file_path.unlink()
+        else:
+            print("Extraction failed. Folder not deleted.")
+        return result.returncode == 0
+    except Exception as e:
+        print(f"Error while extracting {tar_file_path} to {output_folder}: {e}")
+        return False
+        
+
+
+def get_file_content_from_tar_7zip(tar_file_path:Path, target_file_name:str):
+    try:
+        result = subprocess.run(["7z", "e", tar_file_path, f"-so", target_file_name], capture_output=True)
+        return result.stdout.decode("utf-8")
+    except Exception as e:
+        print(f"Error while extracting {target_file_name} from {tar_file_path}: {e}")
+        return None
+
+
+import json
+
+def get_chapter(source: NovelFromSource, chapter_number: int) -> dict:
+    """
+    Returns the chapter with the given number
+    """
+    if (source.path / "json" / f"{chapter_number:05}.json").exists():
+        with open(source.path / "json" / f"{chapter_number:05}.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    tar_file_path = source.path / "json.7z"
+
+    if tar_file_path.exists():
+        chapter_path_in_tar = f"json/{chapter_number:05}.json"
+        chapter = get_file_content_from_tar_7zip(tar_file_path, chapter_path_in_tar)
+        if chapter:
+            return json.loads(chapter)
+    
+    return None
+
+# utils.extract_tar_7zip_folder(LIGHTNOVEL_FOLDER / "a transmigrator's privilege\\readlightnovel-app\json.7z", LIGHTNOVEL_FOLDER /"a transmigrator's privilege\\readlightnovel-app")
+# utils.compress_folder_to_tar_7zip(LIGHTNOVEL_FOLDER / "a transmigrator's privilege\\readlightnovel-app", "json", LIGHTNOVEL_FOLDER / "a transmigrator's privilege\\readlightnovel-app\\json.7z")
+
+import time
+def run_tasks(tasks):
+    len_tasks = len(tasks)
+    for i, (task, args) in enumerate(tasks, 1):
+        print(f"Task {i}/{len_tasks} started")
+        task(*args)
+        time.sleep(5)
+    print("All tasks done")

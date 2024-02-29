@@ -6,5 +6,6 @@
     "api_url": "https://api.lncrawler.monster",
     "max_ebook_size": 300000000,
     "api_host" : "localhost",
-    "api_port" : 5000
+    "api_port" : 5000,
+    "compression_enabled": "true"
 }
