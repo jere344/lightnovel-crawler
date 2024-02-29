@@ -244,6 +244,13 @@ class JobHandler:
         self.is_busy = False
         self.metadata_downloaded = True
 
+        if lib.COMPRESSION_ENABLED:
+            # If the novel is already downloaded, we will still download it again, but first we need to 
+            # extract the compressed json files and delete the compressed file
+            # else it would download everything again and we would have the files twice
+            if output_path.exists() and (output_path / "json.7z").exists():
+                utils.extract_tar_7zip_folder(output_path / "json.7z", output_path)
+
     def start_download(self, update_website=True, destroy_after=True):
         self.is_busy = True
         self._select_range()

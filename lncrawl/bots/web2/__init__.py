@@ -6,7 +6,7 @@ from . import flask_api
 def start():
     if flask_api.lib.config["dev_mode"] == "true":
         flask_api.flaskapp.app.run(
-            host=flask_api.lib.HOST, port=flask_api.lib.PORT, debug=True
+            host=flask_api.lib.HOST, port=flask_api.lib.PORT, debug=True, use_reloader=False
         )
 
     elif flask_api.lib.config["dev_mode"] == "false":

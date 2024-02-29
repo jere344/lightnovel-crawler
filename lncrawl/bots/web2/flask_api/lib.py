@@ -32,6 +32,7 @@ if not config_file.exists():
                 "max_ebook_size": 300000000,
                 "api_host": "localhost",
                 "api_port": 5000,
+                "compression_enabled": "true",
             },
             f,
             indent=4,
@@ -51,10 +52,13 @@ PORT = int(config["api_port"])
 
 MAX_EBOOK_SIZE = int(config["max_ebook_size"])
 
+COMPRESSION_ENABLED = config["compression_enabled"] == "true"
+
 from . import naming_rules
+
 naming_rules.fix_existing()
 
-database.all_novels: List[Novel] = []
+database.all_novels: List[Novel] = []  # type: ignore
 number_of_novel = len(list(LIGHTNOVEL_FOLDER.iterdir()))
 print("Loading novels")
 novel_folder = None
@@ -78,7 +82,7 @@ for i, novel_folder in enumerate(LIGHTNOVEL_FOLDER.iterdir()):
 
         # import sys
         # sys.exit(1)
-if novel_folder: # When the novel folder is empty, novel_folder is null
+if novel_folder:  # When the novel folder is empty, novel_folder is null
     print(f"Loaded {number_of_novel}/{number_of_novel} : {novel_folder.name}")
 
 database.set_ranks()
@@ -105,7 +109,39 @@ from . import sitemap
 sitemap_file = Path("lncrawl/bots/web2/sitemap.xml")
 sitemap.generate_sitemap(sitemap_file)
 
-import threading, time
+import threading
+
+if COMPRESSION_ENABLED:
+    # Create a new thread that will compress all json folder to 7z in the background
+
+    tasks = []
+    for novel in database.all_novels:
+        for source in novel.sources:
+            if (source.path / "json").exists() and not (
+                source.path / "json.7z"
+            ).exists():
+                tasks.append(
+                    (
+                        utils.compress_folder_to_tar_7zip,
+                        (source.path, "json", source.path / "json.7z"),
+                    )
+                )
+                # tasks.append(
+                #     (
+                #         utils.extract_tar_7zip_folder,
+                #         (source.path / "json.7z", source.path),
+                #     )
+                # )
+
+    # Start the thread
+    threading.Thread(
+        target=utils.run_tasks,
+        args=(tasks,),
+        daemon=True,
+    ).start()
+
+
+import time
 import shutil
 
 

@@ -225,21 +225,12 @@ def get_chapter():
     if not source:
         return "Unknown or unauthorized file", 404
 
-    chapter_folder = source.path / "json"
-
-    chapter_path = chapter_folder / f"{str(chapter_id).zfill(5)}.json"
-    if not os.path.exists(chapter_path) or not os.path.realpath(chapter_path).startswith(os.path.realpath(lib.LIGHTNOVEL_FOLDER)):
+    chapter = utils.get_chapter(source, chapter_id)
+    if not chapter:
         return "Unknown or unauthorized file", 404
 
-
-    with open(chapter_path, "r", encoding='utf-8') as f:
-        chapter = json.load(f)
-
-    if not chapter_path.exists():
-        return "", 404
-
-    is_next = (chapter_folder / f"{str(int(chapter_id) + 1).zfill(5)}.json").exists()
-    is_prev = (chapter_folder / f"{str(int(chapter_id) - 1).zfill(5)}.json").exists()
+    is_next = source.chapter_count > chapter_id
+    is_prev = chapter_id > 1
 
     current_week = datetools.current_week()
     if current_week not in source.novel.clicks:
