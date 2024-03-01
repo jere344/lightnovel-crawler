@@ -10,7 +10,7 @@ from . import datetools
 from . import sanatize
 import urllib.parse
 from . import naming_rules
-
+from . import discord_bot
 
 def get_newest_comments(url: str, count: int = 5, offset: int = 0):
     """Get the newest comments for a novel
@@ -204,6 +204,11 @@ def add_comment():
         novel.comment_count += 1
 
     print(f"Comment added to {url} by {name} ({text})")
+
+    if novel:
+        discord_bot.bot.send_comment(name, text, lib.WEBSITE_URL + url, novel.title)
+    else :
+        discord_bot.bot.send_comment(name, text, lib.WEBSITE_URL + url, url)
 
     return {"status": "success"}, 200
 
