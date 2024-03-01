@@ -205,7 +205,10 @@ def add_comment():
 
     print(f"Comment added to {url} by {name} ({text})")
 
-    discord_bot.bot.send_comment(name, text, lib.WEBSITE_URL + url, novel.title)
+    if novel:
+        discord_bot.bot.send_comment(name, text, lib.WEBSITE_URL + url, novel.title)
+    else :
+        discord_bot.bot.send_comment(name, text, lib.WEBSITE_URL + url, url)
 
     return {"status": "success"}, 200
 
