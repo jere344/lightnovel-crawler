@@ -25,6 +25,6 @@ async def _send_comment(author: str, content: str, url: str, novel_title: str):
     print("Sending comment")
     if "chapter-" in url:
         chapter = url.split("chapter-")[-1].split("/")[0]
-        await channel.send(f"**__{author}__** commented on [{novel_title}]({url}) chapter **{chapter}**\n{content}\n")
+        await channel.send(f"**__{author}__** commented on [{novel_title}](<{url}>) chapter **{chapter}**\n{content}\n")
     else :
-        await channel.send(f"**__{author}__** commented on [{novel_title}]({url})\n{content}\n")
+        await channel.send(f"**__{author}__** commented on [{novel_title}](<{url}>)\n{content}\n")
