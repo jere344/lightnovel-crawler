@@ -21,3 +21,8 @@ try :
     COMMENTS_CHANNEL_ID = int(discord_config["comments_channel_id"])
 except :
     COMMENTS_CHANNEL_ID = 0
+
+try :
+    RELEASES_CHANNEL_ID = int(discord_config["releases_channel_id"])
+except :
+    RELEASES_CHANNEL_ID = 0

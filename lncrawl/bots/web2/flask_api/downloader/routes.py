@@ -221,7 +221,7 @@ def update():
                 if job.end_date + datetime.timedelta(hours=1) > datetime.datetime.now():
                     return {
                         "status": "error",
-                        "message": "Novel aldready updating or recently updated",
+                        "message": "Novel recently updated, please wait a bit before retrying",
                     }, 409
 
         Thread(target=_update, args=(url, job_id)).start()
