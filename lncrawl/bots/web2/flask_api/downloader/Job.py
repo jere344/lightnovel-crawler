@@ -19,6 +19,7 @@ from .. import lib
 from .. import database
 from .. import read_novel_info
 from .. import utils
+from .. import discord_bot
 
 
 class JobHandler:
@@ -30,6 +31,7 @@ class JobHandler:
     last_action: str = "Created job"
     metadata_downloaded = False
     destroyed = False
+    novel_info: Optional[read_novel_info.Novel] = None
 
     def __init__(self, job_id: str):
         # Before we start, first collect garbage to free up memory of previous jobs 
@@ -279,6 +281,8 @@ class JobHandler:
             if update_website:
                 self.set_last_action("Updating website")
                 self._update_website()
+                self.set_last_action("Updating discord")
+                self._update_discord()
 
         except Exception as ex:
             return self.crash(f"Download failed : {ex}")
@@ -292,11 +296,11 @@ class JobHandler:
     def _update_website(self):
         try:
             self.set_last_action("reading metadata")
-            novel_info = read_novel_info.get_novel_info(
+            self.novel_info = read_novel_info.get_novel_info(
                 Path(self.app.output_path).parent
             )
             # If the source is already in the database, update the last_update_date
-            for source in novel_info.sources:
+            for source in self.novel_info.sources:
                 if source.slug == self.source_slug:
                     source.last_update_date = datetools.utc_str_date()
                     meta_path = source.path / "meta.json"
@@ -310,9 +314,24 @@ class JobHandler:
                         json.dump(metadata, f, indent=4)
 
             self.set_last_action("Adding novel to database")
-            utils.add_novel_to_database(novel_info)
+            utils.add_novel_to_database(self.novel_info)
         except Exception as ex:
             return self.crash(f"Failed to update website : {ex}")
+
+    def _update_discord(self):
+        """
+        Send a message to the discord bot to notify the release of a new chapter
+        Require _update_website to have been called before to set the novel_info
+        """
+        # Searching the source that just got updated
+        for source in self.novel_info.sources:
+            if source.slug == self.source_slug:
+                discord_bot.bot.send_release(
+                    source.title,
+                    lib.WEBSITE_URL + "/novel/" + source.novel.slug + "/" + source.slug,
+                    source.latest,
+                    lib.WEBSITE_URL + "/novel/" + source.novel.slug + "/" + source.slug + "/chapter-" + str(source.chapter_count),
+                )
 
     # -----------------------------------------------------------------------------
     def _create_snapshot(self):
