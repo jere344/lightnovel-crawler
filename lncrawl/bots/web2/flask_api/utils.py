@@ -88,7 +88,7 @@ def add_novel_to_database(novel: Novel):
 
     for new_source in novel.sources:
         for existing_source in database.all_sources:
-            if new_source == existing_source and new_source.last_update_date > existing_source.last_update_date:
+            if new_source == existing_source :
                 database.all_sources.remove(existing_source)
 
         database.all_sources.append(new_source)
