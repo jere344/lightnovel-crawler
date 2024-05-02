@@ -39,7 +39,7 @@ import '../../assets/stylesheets/comments.min.css'
 //     },
 // }
 
-function CommentComponent ({ currentUrl, defaultSort = 'reactions'}) {
+function CommentComponent ({ currentUrl, defaultSort = 'reactions', setMenuOpen }) {
     const url = `${API_URL}/get_comments?page=${currentUrl}`
     const [comments, setComments] = useState([])
     const [adjacents, setAdjacents] = useState([])
@@ -65,6 +65,7 @@ function CommentComponent ({ currentUrl, defaultSort = 'reactions'}) {
                     className='button'
                     title='You must be logged in to post a comment.'
                     onClick={() => {
+                        if (setMenuOpen) setMenuOpen(false)
                         setReplyTo(false)
                         setCommenting(true)
                     }}
@@ -76,6 +77,7 @@ function CommentComponent ({ currentUrl, defaultSort = 'reactions'}) {
                 <button
                     id='comment-policy-show'
                     onClick={() => {
+                        if (setMenuOpen) setMenuOpen(false)
                         setReplyTo(false)
                         setCommenting(true)
                     }}

@@ -17,7 +17,8 @@ import RateSource from '../components/RateSource.js'
 function Chapter() {
     const location = useLocation();
     const { currentPreFetchedData } = location.state || {};
-    const { novelSlug, sourceSlug, chapterId } = useParams();
+    const { novelSlug, sourceSlug, chapterId:rawChapterId } = useParams();
+    const chapterId = parseInt(rawChapterId.replace('chapter-', '')) || 1;
 
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     useEffect(() => {
@@ -447,7 +448,7 @@ function Chapter() {
                         </Link>
                     </div>
                     <section id="info">
-                        <CommentComponent currentUrl={window.location.pathname} />
+                        <CommentComponent currentUrl={window.location.pathname} setMenuOpen={setMenuOpen} />
                     </section>
                     <dialog className="mobile-title-bar" style={{ "display": (isMobile ? "block" : "none"), "transformOrigin": "top", "transition": "transform 0.25s ease", "transform": menuOpen ? "scaleY(1)" : "scaleY(0)" }}>
                         <div className="bar-body">

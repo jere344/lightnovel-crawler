@@ -84,8 +84,9 @@ cd lncrawl/bots/web2/react-app
 npm install -g serve
 ```
 
-- Edit the configuration file `lncrawl/bot/web2/flask_api/config.json` with your domain name:
-```json 
+- Edit the configuration file `lncrawl/bot/web2/flask_api/config.json` with your domain name, and set dev_mode to `false`:
+```json
+"dev_mode": "false",
 "website_url": "https://lncrawler.monster",
 "api_url": "https://api.lncrawler.monster",
 ```
@@ -111,8 +112,23 @@ npm run build
 cd lncrawl/bots/web2/react-app
 serve -s build
 ```
-
 For the rest you will need some kind of reverse proxy like nginx or apache2 to serve the backend and the frontend.
+
+--- 
+For example, this is my config.json :
+```json
+{
+    "dev_mode": "false",
+    "dev_website_url": "http://localhost:3000",
+    "dev_api_url": "http://localhost:5000",
+    "website_url": "https://lncrawler.monster",
+    "api_url": "https://api.lncrawler.monster",
+    "max_ebook_size": 300000000,
+    "api_host" : "192.168.2.18",
+    "api_port" : 5000
+}
+```
+
 
 ## Build with
 

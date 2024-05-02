@@ -105,6 +105,21 @@
 	margin-bottom: 1rem;
 }
 
+#chapter-article .chapter-content table {
+	width: 100%;
+	border-collapse: collapse;
+	border: 2px solid var(--border-color-3);
+}
+
+#chapter-article .chapter-content table th,
+#chapter-article .chapter-content table td {
+	border: 2px solid var(--border-color-3);
+	padding: 4px;
+}
+#chapter-article .chapter-content table td p {
+	margin: 10px;
+}
+
 #chapter-article .chapternav {
 	display: -webkit-box;
 	display: -ms-flexbox;

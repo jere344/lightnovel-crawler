@@ -63,8 +63,10 @@ class TextCleaner:
         )
         self.bad_css: Set[str] = set(
             [
-                # css selector to select and remoe tags
+                # css selector to select and remove tags
                 ".adblock-service",
+                ".sharedaddy",
+                ".saboxplugin-wrap",
                 ".adbox",
                 ".ads-middle",
                 ".ads",

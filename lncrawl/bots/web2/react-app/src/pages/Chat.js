@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import logo from '../assets/logo.png'
 
 function Chat() {
-    const { subject } = useParams();
+    const { subject } = useParams().subject.replace('chat-', '');
 
     const title = `LnCrawler ${subject} Chat | LnCrawler`;
     const description = "Request novel, report error, chat with other readers and get latest updates on LnCrawler."

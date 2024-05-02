@@ -1,9 +1,12 @@
-
 .novel-item-featured {
     display: flex;
     flex-direction: row;
-    width: 100%;
     padding-left: 2%;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: space-between;
+    width:70%;
+    margin-top: 20px;
 }
 
 .featured-column {
@@ -12,6 +15,7 @@
     flex-direction: column;
     justify-content: center;
     height: auto;
+    aspect-ratio: 1.618;
 }
 
 .featured-column .novel-title {
@@ -27,6 +31,9 @@
 .scroll {
     overflow-y: auto;
     max-height: 100%;
+    scrollbar-width: thin;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 .item-body.featured-column {
@@ -46,8 +53,11 @@
     padding-right: 20px;
 }
 
+.novel-list {
+    width: 100%;
+}
 
-.item-cover.featured-column img {
+.item-cover.featured-column .novel-cover {
     width: 100%
 }
 
@@ -55,7 +65,12 @@
     .featured-column .novel-title {
         font-size: 1rem;
         margin-bottom: 0;
-        margin-top:-5px;
+        margin-top: -5px;
+    }
+
+    .novel-item-featured {
+        width:100%;
+        margin-top: 0px;
     }
 
     .item-body.featured-column i {
@@ -72,10 +87,10 @@
         font-size: .75rem;
     }
 
-    .item-body.featured-column  {
-        width:60%;
+    .item-body.featured-column {
+        width: 60%;
     }
-    
+
     .item-cover.featured-column {
         width: 36%;
     }

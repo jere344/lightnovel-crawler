@@ -197,6 +197,7 @@ def direct_download():
 import time
 from threading import Thread
 import datetime
+from .. import utils
 
 
 @app.route("/api/addnovel/update")
@@ -220,7 +221,7 @@ def update():
                 if job.end_date + datetime.timedelta(hours=1) > datetime.datetime.now():
                     return {
                         "status": "error",
-                        "message": "Novel aldready updating or recently updated",
+                        "message": "Novel recently updated, please wait a bit before retrying",
                     }, 409
 
         Thread(target=_update, args=(url, job_id)).start()
@@ -237,6 +238,14 @@ def _update(url: str, job_id: str):
         time.sleep(0.1)
 
     source_folder_path = lib.LIGHTNOVEL_FOLDER / job.novel_slug / job.source_slug
+    if lib.COMPRESSION_ENABLED:
+        # Before we can start checking we need to extract the json files
+        if (source_folder_path / "json.7z").exists():
+            result = utils.extract_tar_7zip_folder(source_folder_path / "json.7z", source_folder_path)
+            if not result:
+                job.set_last_action("Failed to extract json files")
+                job.destroy()
+                return
 
     json_folder_path = source_folder_path / "json"
 

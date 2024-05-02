@@ -193,7 +193,7 @@ function AddNovel() {
                                 </svg>
                             </button>
                             <input id="inputContent" name="inputContent" type="search" className="form-control"
-                                placeholder="Search Light Novel By Title" aria-label="Novel Search"
+                                placeholder="Add Light Novel By Title or direct URL" aria-label="Novel Search"
                                 aria-describedby="basic-addon1"
                                 value={searchQuery} onInput={e => setSearchQuery(e.target.value)} />
                             <input type="submit" hidden />
