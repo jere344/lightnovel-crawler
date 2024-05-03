@@ -105,7 +105,7 @@ class Scraper(TaskManager, SoupMaker):
         headers.setdefault("Referer", self.last_soup_url or self.home_url)
         headers.setdefault("User-Agent", self.user_agent)
         kwargs["headers"] = {
-            str(k).encode("ascii"): str(v).encode("ascii")
+            str(k).encode("utf-8"): str(v).encode("utf-8")
             for k, v in headers.items()
             if v
         }
@@ -303,7 +303,7 @@ class Scraper(TaskManager, SoupMaker):
             "Accept",
             "text/html,application/xhtml+xml,application/xml;q=0.9",
         )
-        response = self.get_response(url, **kwargs)
+        response = self.get_response(url, headers=headers, **kwargs)
         self.last_soup_url = url
         return self.make_soup(response, encoding)
 
