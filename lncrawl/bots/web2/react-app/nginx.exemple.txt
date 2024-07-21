@@ -1,0 +1,45 @@
+server {
+        listen 3000;
+
+        location /googlefae799a21c33add3.html {
+                alias /home/jere344/lightnovel-crawler/lncrawl/bots/web2/react-app/;
+                try_files googlefae799a21c33add3.html =404;
+        }
+
+        location /BingSiteAuth.xml {
+                alias /home/jere344/lightnovel-crawler/lncrawl/bots/web2/react-app/;
+                try_files BingSiteAuth.xml =404;
+        }
+
+        location ~* ^/sitemap\.xml$ { 
+                alias /home/jere344/lightnovel-crawler/lncrawl/bots/web2/;
+                add_header Content-Type application/xml;
+                add_header charset utf-8;
+                try_files sitemap.xml =404;
+        }
+
+        location ~* ^/robots\.txt$ {
+                alias /home/jere344/lightnovel-crawler/lncrawl/bots/web2/;
+                add_header Content-Type text/plain;
+                add_header charset utf-8;
+                try_files robots.txt =404;
+        }
+
+        location / {
+                include proxy_params;
+                proxy_pass http://localhost:2000;
+                add_header Cache-Control "no-cache";
+        }
+
+        location /static {
+                include proxy_params;
+                proxy_pass http://localhost:2000;
+                expires 1y;
+                add_header Cache-Control "public";
+        }
+
+        location /api {
+                include proxy_params;
+                proxy_pass http://localhost:5000;
+        }
+}
